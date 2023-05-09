@@ -4,33 +4,18 @@ importers:
 
   .:
     devDependencies:
-      '@types/eslint':
-        specifier: ^8.21.3
-        version: 8.21.3
       '@types/node':
         specifier: ^18.15.5
         version: 18.15.5
       '@types/prettier':
         specifier: ^2.7.2
         version: 2.7.2
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.56.0
-        version: 5.56.0(@typescript-eslint/parser@5.56.0)(eslint@8.36.0)(typescript@5.0.2)
-      '@typescript-eslint/parser':
-        specifier: ^5.56.0
-        version: 5.56.0(eslint@8.36.0)(typescript@5.0.2)
       aws-cdk-lib:
         specifier: 2.72.1
         version: 2.72.1(constructs@10.1.156)
       constructs:
         specifier: 10.1.156
         version: 10.1.156
-      eslint:
-        specifier: ^8.36.0
-        version: 8.36.0
-      eslint-config-next:
-        specifier: ^13.4.1
-        version: 13.4.1(eslint@8.36.0)(typescript@5.0.2)
       prettier:
         specifier: ^2.8.6
         version: 2.8.6
@@ -83,15 +68,30 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
+      '@types/eslint':
+        specifier: ^8.21.3
+        version: 8.21.3
       '@types/react':
         specifier: ^18.0.28
         version: 18.0.28
       '@types/react-dom':
         specifier: ^18.0.11
         version: 18.0.11
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.56.0
+        version: 5.56.0(@typescript-eslint/parser@5.56.0)(eslint@8.36.0)(typescript@5.0.2)
+      '@typescript-eslint/parser':
+        specifier: ^5.56.0
+        version: 5.56.0(eslint@8.36.0)(typescript@5.0.2)
       autoprefixer:
         specifier: ^10.4.14
         version: 10.4.14(postcss@8.4.21)
+      eslint:
+        specifier: ^8.36.0
+        version: 8.36.0
+      eslint-config-next:
+        specifier: ^13.4.1
+        version: 13.4.1(eslint@8.36.0)(typescript@5.0.2)
       postcss:
         specifier: ^8.4.21
         version: 8.4.21
