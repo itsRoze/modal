@@ -18,6 +18,11 @@ const config = {
       rootDir: ["apps/*/"],
     },
   },
+  ignorePatterns: [
+    "**/*.config.js",
+    "**/*.config.cjs",
+    "packages/eslint-config-custom/**",
+  ],
 };
 
 module.exports = config;

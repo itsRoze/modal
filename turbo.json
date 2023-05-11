@@ -30,5 +30,5 @@
       "cache": false
     }
   },
-  "globalEnv": ["CI", "NODE_ENV", "SKIP_ENV_VALIDATION", "DATABASE_URL"]
+  "globalEnv": ["CI", "NODE_ENV", "SKIP_ENV_VALIDATION", "DATABASE_URL", "PORT"]
 }

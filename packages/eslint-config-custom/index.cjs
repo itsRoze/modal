@@ -8,22 +8,19 @@ const config = {
     "prettier",
   ],
   rules: {
-    "@next/next/no-html-link-for-pages": "off",
-    "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "warn",
       {
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-        caughtErrorsIgnorePattern: "^_",
+        prefer: "type-imports",
+        fixStyle: "inline-type-imports",
       },
     ],
-    "@typescript-eslint/consistent-type-imports": [
+    "@typescript-eslint/no-misused-promises": [
       "error",
-      { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      { checksVoidReturn: { attributes: false } },
     ],
   },
-  ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
+  ignorePatterns: ["**/*.config.js", "**/*.config.cjs"],
   reportUnusedDisableDirectives: true,
 };
 
