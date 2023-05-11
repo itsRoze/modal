@@ -12,7 +12,8 @@
     "format": "prettier --write \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --ignore-path .gitignore",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
-    "sst": "sst"
+    "sst": "sst",
+    "sst build": "pnpm db:generate && sst build"
   },
   "devDependencies": {
     "prettier": "^2.8.8",

@@ -11,6 +11,7 @@ const config = {
       "./tsconfig.json",
       "./apps/*/tsconfig.json",
       "./packages/*/tsconfig.json",
+      "./stacks/*",
     ],
   },
   settings: {
