@@ -2,25 +2,26 @@
   "name": "modal",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "build": "turbo build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
+    "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push db:generate",
+    "dev": "turbo dev --parallel",
+    "format": "prettier --write \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --ignore-path .gitignore",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
     "sst": "sst"
   },
   "devDependencies": {
-    "eslint": "^8.40.0",
-    "eslint-config-custom": "workspace:*",
     "prettier": "^2.8.8",
-    "turbo": "^1.9.3"
-  },
-  "packageManager": "pnpm@8.5.0",
-  "dependencies": {
+    "turbo": "^1.9.3",
     "aws-cdk-lib": "^2.78.0",
     "constructs": "^10.2.18",
     "sst": "^2.8.17",
-    "typescript": "^5.0.4"
-  }
+    "typescript": "^5.0.4",
+    "eslint-config-custom": "^1.0.0"
+  },
+  "packageManager": "pnpm@8.5.0"
 }
