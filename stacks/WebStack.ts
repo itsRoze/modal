@@ -7,6 +7,7 @@ export function WebStack({ stack }: StackContext) {
     environment: {
       DATABASE_URL: process.env.DATABASE_URL!,
     },
+    buildCommand: "pnpm db:generate && next build",
   });
 
   stack.addOutputs({
