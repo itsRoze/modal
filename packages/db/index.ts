@@ -1,16 +1,35 @@
-import { PrismaClient } from "@prisma/client";
+import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { connect } from "@planetscale/database";
+import { counters } from "./schema";
+import { eq, sql } from "drizzle-orm";
 
-export * from "@prisma/client";
+const connection = connect({
+  host: process.env.DB_HOST,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+});
 
-const globalForPrisma = globalThis as { prisma?: PrismaClient };
+export const db = drizzle(connection);
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
-  });
+export async function getCounter(name: string) {
+  const result = await db
+    .select()
+    .from(counters)
+    .where(eq(counters.counter, name));
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+  if (result.length < 1) {
+    throw new Error(`No results found for counter ${name}`);
+  }
+
+  return result[0];
+}
+
+export async function increaseCounter(name: string) {
+  await db
+    .update(counters)
+    .set({
+      tally: sql`${counters.tally}
+            + 1`,
+    })
+    .where(eq(counters.counter, name));
+}

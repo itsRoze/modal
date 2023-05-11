@@ -15,7 +15,7 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { prisma } from "db";
+import { db } from "db";
 
 type CreateContextOptions = Record<string, never>;
 
@@ -31,7 +31,7 @@ type CreateContextOptions = Record<string, never>;
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
-    prisma,
+    db,
   };
 };
 

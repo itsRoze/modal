@@ -20,15 +20,16 @@
     },
     "type-check": {
       "cache": false
-    },
-    "db:generate": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
-    },
-    "db:push": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
     }
   },
-  "globalEnv": ["CI", "NODE_ENV", "SKIP_ENV_VALIDATION", "DATABASE_URL", "PORT"]
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "SKIP_ENV_VALIDATION",
+    "DATABASE_URL",
+    "PORT",
+    "DB_HOST",
+    "DB_USERNAME",
+    "DB_PASSWORD"
+  ]
 }
