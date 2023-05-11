@@ -15,9 +15,9 @@ export function PrismaStack({ stack, app }: StackContext) {
 
     // Copy files to the layer
     const toCopy = [
-      'node_modules/.prisma',
-      'node_modules/@prisma/client',
-      'node_modules/prisma/build',
+      '../packages/db/node_modules/.prisma',
+      '../packages/db/node_modules/@prisma/client',
+      '../packages/db/node_modules/prisma/build',
     ];
     for (const file of toCopy) {
       fs.copySync(file, path.join(layerPath, 'nodejs', file), {
