@@ -16,7 +16,7 @@ export function WebStack({ stack, app }: StackContext) {
 
     // Copy files to the layer
     const toCopy = [
-      "node_modules/.prisma",
+      // "node_modules/.prisma",
       "node_modules/@prisma/client",
       "node_modules/prisma/build",
     ];
