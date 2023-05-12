@@ -1,5 +1,6 @@
 import { type SSTConfig } from "sst";
 import { WebStack } from "./stacks/WebStack";
+import { Secrets } from "./stacks/Secrets";
 
 export default {
   config(_input) {
@@ -9,6 +10,6 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(WebStack);
+    app.stack(Secrets).stack(WebStack);
   },
 } satisfies SSTConfig;

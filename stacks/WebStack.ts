@@ -1,15 +1,15 @@
-import type { StackContext } from "sst/constructs";
-import { NextjsSite } from "sst/constructs";
+import { type StackContext, NextjsSite, use } from "sst/constructs";
+import { Secrets } from "./Secrets";
 
-export function WebStack({ stack }: StackContext) {
+export function WebStack({ stack, app }: StackContext) {
+  const { database } = use(Secrets);
+
   const site = new NextjsSite(stack, "modal-web", {
     path: "apps/web",
     environment: {
-      DATABASE_URL: process.env.DATABASE_URL!,
-      DB_HOST: process.env.DB_HOST!,
-      DB_USERNAME: process.env.DB_USERNAME!,
-      DB_PASSWORD: process.env.DB_PASSWORD!,
+      NODE_ENV: app.mode === "dev" ? "development" : "production",
     },
+    bind: [database.DB_HOST, database.DB_USERNAME, database.DB_PASSWORD],
   });
 
   stack.addOutputs({

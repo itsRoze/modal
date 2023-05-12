@@ -2,11 +2,12 @@ import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { connect } from "@planetscale/database";
 import { counters } from "./schema";
 import { eq, sql } from "drizzle-orm";
+import { Config } from "sst/node/config";
 
 const connection = connect({
-  host: process.env.DB_HOST,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
+  host: Config.DB_HOST,
+  username: Config.DB_USERNAME,
+  password: Config.DB_PASSWORD,
 });
 
 export const db = drizzle(connection);
