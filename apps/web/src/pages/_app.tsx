@@ -1,5 +1,5 @@
 import { type AppProps } from "next/app";
-import { api } from "~/utils/api";
+import { api } from "@/utils/api";
 
 import { type NextPage } from "next";
 import { type ReactElement, type ReactNode } from "react";

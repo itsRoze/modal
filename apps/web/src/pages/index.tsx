@@ -1,4 +1,4 @@
-import { api } from "~/utils/api";
+import { api } from "@/utils/api";
 
 const Home = () => {
   // const { data, isLoading } = api.example.hello.useQuery({ text: "Hello!!" });
