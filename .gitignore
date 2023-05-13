@@ -6,8 +6,9 @@ node_modules
 /.pnp
 .pnp.js
 
-# sst
-.sst
+# sst (but include the types)
+.sst/*
+!.sst/types/
 .build
 
 # opennext
