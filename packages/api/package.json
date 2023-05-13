@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@modal/api",
   "version": "1.0.0",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -14,11 +14,11 @@
     "@trpc/server": "^10.25.1",
     "superjson": "^1.12.3",
     "zod": "^3.21.4",
-    "db": "1.0.0"
+    "@modal/db": "1.0.0"
   },
   "devDependencies": {
     "eslint": "^8.40.0",
     "typescript": "^5.0.4",
-    "eslint-config-custom": "1.0.0"
+    "@modal/eslint-config": "1.0.0"
   }
 }

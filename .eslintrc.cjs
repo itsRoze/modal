@@ -2,27 +2,27 @@
 const config = {
   root: true,
   // This tells ESLint to load the config from the package `eslint-config-custom`
-  extends: ['./packages/eslint-config-custom'],
-  parser: '@typescript-eslint/parser',
+  extends: ["./packages/eslint-config"],
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 'latest',
+    ecmaVersion: "latest",
     tsconfigRootDir: __dirname,
     project: [
-      './tsconfig.json',
-      './apps/*/tsconfig.json',
-      './packages/*/tsconfig.json',
+      "./tsconfig.json",
+      "./apps/*/tsconfig.json",
+      "./packages/*/tsconfig.json",
     ],
   },
   settings: {
     next: {
-      rootDir: ['apps/*/'],
+      rootDir: ["apps/web"],
     },
   },
   ignorePatterns: [
-    '**/*.config.js',
-    '**/*.config.cjs',
-    'packages/eslint-config-custom/**',
-    'stacks/*',
+    "**/*.config.js",
+    "**/*.config.cjs",
+    "packages/eslint-config/**",
+    "stacks/*",
   ],
 };
 

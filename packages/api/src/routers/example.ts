@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import { getCounter, increaseCounter } from "db";
+import { getCounter, increaseCounter } from "@modal/db";
 
 export const exampleRouter = createTRPCRouter({
   hello: publicProcedure

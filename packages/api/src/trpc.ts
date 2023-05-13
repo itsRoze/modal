@@ -15,7 +15,7 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { db } from "db";
+import { db } from "@modal/db";
 
 type CreateContextOptions = Record<string, never>;
 
