@@ -2,7 +2,7 @@
 const config = {
   reactStrictMode: true,
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["api", "db"],
+  transpilePackages: ["@modal/api", "@modal/db", "@modal/common"],
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

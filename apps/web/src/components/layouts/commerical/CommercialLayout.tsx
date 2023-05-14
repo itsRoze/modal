@@ -1,4 +1,7 @@
 import Head from "next/head";
+import SiteNavigation from "./SiteNavigation";
+import Link from "next/link";
+import { inter } from "@/utils/fonts";
 
 interface ICommericalLayout {
   children: React.ReactNode;
@@ -31,7 +34,17 @@ const CommercialLayout: React.FC<ICommericalLayout> = ({ children }) => {
           href="/favicon-16x16.png"
         />
       </Head>
-      <main>{children}</main>
+      <main
+        className={`${inter.variable} font-sans flex min-h-screen flex-col`}
+      >
+        <article>
+          <SiteNavigation />
+          <div className="w-full">{children}</div>
+        </article>
+        <footer className="flex flex-grow items-end justify-center py-8">
+          <Link href="/">© Roze 🌹 {new Date().getFullYear()}</Link>
+        </footer>
+      </main>
     </>
   );
 };
