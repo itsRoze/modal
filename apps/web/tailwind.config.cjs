@@ -7,10 +7,18 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
     },
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1400px",
+      "3xs": "320px",
+      "2xs": "375px",
+      xs: "425px",
+    },
+
     extend: {
       colors: {
         logo: "#F6BF5F",
@@ -55,6 +63,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
+        mono: ["var(--font-anybody)", ...fontFamily.mono],
       },
       keyframes: {
         "accordion-down": {
@@ -72,5 +81,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/line-clamp")],
 };

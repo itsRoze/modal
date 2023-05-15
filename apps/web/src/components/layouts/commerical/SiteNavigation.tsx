@@ -20,7 +20,7 @@ const SiteNavigation = () => {
   const [openMenu, setMenu] = useState(false);
 
   return (
-    <nav className="mx-auto">
+    <nav className="w-full mx-auto">
       <div className="flex h-16 items-center justify-start">
         {/* Full Menu*/}
         <div className="w-full hidden md:block">
