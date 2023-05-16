@@ -1,6 +1,7 @@
 import { type SSTConfig } from "sst";
-import { WebStack } from "./stacks/WebStack";
+
 import { Secrets } from "./stacks/Secrets";
+import { WebStack } from "./stacks/WebStack";
 
 export default {
   config(_input) {

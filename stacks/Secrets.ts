@@ -6,7 +6,7 @@ export function Secrets(ctx: StackContext) {
       ctx.stack,
       "DB_HOST",
       "DB_USERNAME",
-      "DB_PASSWORD"
+      "DB_PASSWORD",
     ),
   };
 }

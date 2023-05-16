@@ -4,11 +4,11 @@
  *
  * We also create a few inference helpers for input and output types.
  */
+
+import { type AppRouter } from "@modal/api";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
-
-import { type AppRouter } from "@modal/api";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url

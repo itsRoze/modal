@@ -1,7 +1,8 @@
 import Head from "next/head";
-import SiteNavigation from "./SiteNavigation";
 import Link from "next/link";
 import { inter } from "@/utils/fonts";
+
+import SiteNavigation from "./SiteNavigation";
 
 interface ICommericalLayout {
   children: React.ReactNode;
@@ -35,7 +36,7 @@ const CommercialLayout: React.FC<ICommericalLayout> = ({ children }) => {
         />
       </Head>
       <main
-        className={`${inter.variable} font-sans flex min-h-screen flex-col`}
+        className={`${inter.variable} flex min-h-screen flex-col font-sans`}
       >
         <article>
           <SiteNavigation />

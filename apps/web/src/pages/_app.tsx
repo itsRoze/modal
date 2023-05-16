@@ -1,8 +1,8 @@
+import { type ReactElement, type ReactNode } from "react";
+import { type NextPage } from "next";
 import { type AppProps } from "next/app";
 import { api } from "@/utils/api";
 
-import { type NextPage } from "next";
-import { type ReactElement, type ReactNode } from "react";
 import "../styles/globals.css";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
