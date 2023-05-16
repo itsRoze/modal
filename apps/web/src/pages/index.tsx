@@ -31,20 +31,20 @@ const Home: NextPageWithLayout = () => {
         <section
           className={`${anybody.variable} font-mono flex flex-col md:flex-row gap-4 mt-16 items-center md:items-start md:justify-center w-full md:px-6 2xl:px-28 md:pb-8`}
         >
-          <div className='md:w-1/2 w-3/4 flex justify-center'>
+          <div className='md:w-1/2 w-3/4 flex md:justify-center'>
             <div className='space-y-4'>
               <h3 className={`font-medium md:text-4xl`}>Priority Focused</h3>
-              <p className='font-light text-sm md:text-2xl w-96'>
+              <p className='font-light text-sm md:text-2xl lg:w-96'>
                 Based on the Eisenhower method of time management
               </p>
             </div>
           </div>
-          <div className='md:w-1/2 w-3/4  flex justify-center'>
+          <div className='md:w-1/2 w-3/4 flex md:justify-center'>
             <div className='space-y-4'>
               <h3 className={`font-medium md:text-4xl`}>
                 Organize with Spaces
               </h3>
-              <p className='font-light text-sm md:text-2xl w-96'>
+              <p className='font-light text-sm md:text-2xl lg:w-96'>
                 Use spaces to group different projects and tasks with shared
                 responsibilities (e.g. Work, Personal Life, Hobbies, etc)
               </p>
