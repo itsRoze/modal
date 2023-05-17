@@ -1,13 +1,27 @@
 import Image from "next/image";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import { anybody } from "@/utils/fonts";
+import { motion } from "framer-motion";
 
 import { type NextPageWithLayout } from "./_app";
 
 const Home: NextPageWithLayout = () => {
+  const variants = {
+    hidden: { opacity: 0, x: -200, y: 0 },
+    enter: { opacity: 1, x: 0, y: 0 },
+    exit: { opacity: 0, x: 0, y: -100 },
+  };
+
   return (
     <>
-      <article className="2xs:items-center bg-blur-screenshot flex flex-col bg-cover bg-fixed bg-no-repeat ">
+      <motion.article
+        variants={variants} // Pass the variant object into Framer Motion
+        initial="hidden" // Set the initial state to variants.hidden
+        animate="enter" // Animated state to variants.enter
+        exit="exit" // Exit state (used later) to variants.exit
+        transition={{ type: "linear" }} // Set the transition to linear
+        className="2xs:items-center bg-blur-screenshot flex flex-col bg-cover bg-fixed bg-no-repeat "
+      >
         <section
           className={`${anybody.variable} 2xs:items-center flex w-full flex-col space-y-4 font-mono md:space-y-8 `}
         >
@@ -27,7 +41,7 @@ const Home: NextPageWithLayout = () => {
           </div>
           <Screenshot />
         </section>
-      </article>
+      </motion.article>
       <article className="2xs:items-center flex w-full flex-col justify-center bg-white">
         <section
           className={`${anybody.variable} mt-16 flex w-full flex-col items-center gap-4 font-mono md:flex-row md:items-start md:justify-center md:px-6 md:pb-8 2xl:px-28`}
