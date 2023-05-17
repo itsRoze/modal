@@ -64,14 +64,15 @@ const SiteNavigation = () => {
           <button onClick={() => setMenu((open) => !open)} className="mr-2">
             {openMenu ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div className="h-auto w-28">
+          <Link href="/">
             <Image
               src="/images/Logo.png"
-              alt="Modal logo"
+              alt="Modal Logo"
               width={1025}
               height={237}
+              className="h-auto w-28"
             />
-          </div>
+          </Link>
         </div>
       </div>
       {/* Mobile Menu*/}
