@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import { anybody } from "@/utils/fonts";
 import { motion } from "framer-motion";
@@ -65,6 +66,15 @@ const Home: NextPageWithLayout = () => {
               </p>
             </div>
           </div>
+        </section>
+        <section className="mt-4 flex justify-center">
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.8 }}
+            className="bg-logo w-fit rounded-lg p-2 text-white shadow-xl md:p-4 md:text-3xl"
+          >
+            <Link href="/sign-up">Sign up today</Link>
+          </motion.div>
         </section>
       </article>
     </>

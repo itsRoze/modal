@@ -22,12 +22,12 @@ const About: NextPageWithLayout = () => {
       className={`${anybody.variable} font-mono`}
     >
       <section className="flex flex-col items-center justify-center ">
-        <h2 className="text-2xl font-semibold text-gray-700 md:text-4xl">
+        <h1 className="text-2xl font-semibold text-gray-700 md:text-4xl">
           Hello 👋🏼
-        </h2>
-        <h2 className="text-2xl font-semibold text-gray-700 md:text-4xl">
+        </h1>
+        <h1 className="text-2xl font-semibold text-gray-700 md:text-4xl">
           My name is Roze{" "}
-        </h2>
+        </h1>
         <Image
           src="/images/profile.png"
           width={552}
