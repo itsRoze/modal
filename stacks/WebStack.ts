@@ -1,4 +1,5 @@
-import { type StackContext, NextjsSite, use } from "sst/constructs";
+import { NextjsSite, use, type StackContext } from "sst/constructs";
+
 import { Secrets } from "./Secrets";
 
 export function WebStack({ stack, app }: StackContext) {

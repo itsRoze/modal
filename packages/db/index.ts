@@ -1,8 +1,9 @@
-import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { connect } from "@planetscale/database";
-import { counters } from "./schema";
 import { eq, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { Config } from "sst/node/config";
+
+import { counters } from "./schema";
 
 const connection = connect({
   host: Config.DB_HOST,

@@ -1,11 +1,11 @@
-import { Anybody, Inter } from 'next/font/google';
+import { Anybody, Inter } from "next/font/google";
 
 export const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
+  variable: "--font-inter",
+  subsets: ["latin"],
 });
 
 export const anybody = Anybody({
-  variable: '--font-anybody',
-  subsets: ['latin'],
+  variable: "--font-anybody",
+  subsets: ["latin"],
 });
