@@ -4,11 +4,12 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "clean": "rm -rf .turbo node_modules"
+    "clean": "rm -rf .turbo node_modules",
+    "db:push": "sst bind drizzle-kit push:mysql"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.17.6",
     "@modal/eslint-config": "1.0.0",
+    "drizzle-kit": "0.17.6-76e73f3",
     "typescript": "^5.0.4"
   },
   "dependencies": {

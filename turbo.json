@@ -20,6 +20,9 @@
     },
     "type-check": {
       "cache": false
+    },
+    "db:push": {
+      "cache": false
     }
   },
   "globalEnv": [
