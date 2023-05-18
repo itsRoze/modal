@@ -1,0 +1,20 @@
+{
+  "name": "@modal/auth",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@modal/eslint-config": "1.0.0",
+    "eslint": "^8.40.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "firebase": "^9.22.0"
+  }
+}
