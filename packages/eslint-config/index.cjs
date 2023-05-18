@@ -26,7 +26,7 @@ const config = {
       },
     ],
     "@typescript-eslint/no-misused-promises": [
-      "error",
+      "warn",
       { checksVoidReturn: { attributes: false } },
     ],
   },

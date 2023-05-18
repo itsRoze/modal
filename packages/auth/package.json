@@ -1,20 +1,20 @@
 {
-  "name": "@modal/db",
-  "version": "1.0.0",
+  "name": "@modal/auth",
   "main": "./index.ts",
   "types": "./index.ts",
+  "version": "1.0.0",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "db:push": "sst bind drizzle-kit push:mysql"
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@modal/eslint-config": "1.0.0",
-    "drizzle-kit": "0.17.6-76e73f3",
+    "eslint": "^8.40.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@planetscale/database": "^1.7.0",
-    "drizzle-orm": "^0.25.4",
-    "mysql2": "^3.3.0"
+    "firebase": "^9.22.0"
   }
 }

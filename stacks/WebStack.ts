@@ -4,7 +4,6 @@ import { Secrets } from "./Secrets";
 
 export function WebStack({ stack, app }: StackContext) {
   const { database } = use(Secrets);
-
   const site = new NextjsSite(stack, "modal-web", {
     path: "apps/web",
     environment: {
@@ -14,6 +13,6 @@ export function WebStack({ stack, app }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.url,
+    SiteUrl: site.url || "https://localhost:3000",
   });
 }

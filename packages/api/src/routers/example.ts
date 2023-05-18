@@ -1,4 +1,3 @@
-import { getCounter, increaseCounter } from "@modal/db";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -11,11 +10,4 @@ export const exampleRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
-  getAll: publicProcedure.query(async () => {
-    await increaseCounter("hits");
-    const counter = await getCounter("hits");
-    return {
-      count: counter?.tally ?? 0,
-    };
-  }),
 });
