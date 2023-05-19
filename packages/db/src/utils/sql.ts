@@ -13,7 +13,4 @@ export const timestamps = {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`)
     .onUpdateNow(),
-  timeDeleted: timestamp("time_deleted", {
-    mode: "string",
-  }),
 };

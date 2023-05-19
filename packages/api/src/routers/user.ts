@@ -15,7 +15,9 @@ export const userRouter = createTRPCRouter({
             providerUserId: input.email,
             password: null,
           },
-          attributes: {},
+          attributes: {
+            email: input.email,
+          },
         });
       } catch (error) {
         console.log(error);

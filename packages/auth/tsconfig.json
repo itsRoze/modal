@@ -1,4 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*.ts", "lucia.d.ts"]
+  "include": ["**/*.ts"]
 }

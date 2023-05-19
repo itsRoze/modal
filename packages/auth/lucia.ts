@@ -16,6 +16,10 @@ export const auth = lucia({
   adapter: planetscale(connection),
   env,
   middleware: node(),
+  transformDatabaseUser: (userData) => ({
+    userId: userData.id,
+    email: userData.email,
+  }),
 });
 
 export type Auth = typeof auth;
