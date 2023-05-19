@@ -50,4 +50,5 @@ export const getServerSideProps: GetServerSideProps = async (
 };
 
 SignUp.getLayout = (page) => <CommercialLayout>{page}</CommercialLayout>;
+
 export default SignUp;

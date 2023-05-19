@@ -8,6 +8,9 @@ const config = {
     "@modal/common",
     "@modal/auth",
   ],
+  /** We already do linting and typechecking as separate tasks in CI */
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
