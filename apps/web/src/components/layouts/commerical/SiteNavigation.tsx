@@ -53,9 +53,11 @@ const SiteNavigation = () => {
                   {link.name}
                 </Link>
               ))}
-              <Button className="bg-logo hover:bg-logo shadow-md hover:opacity-75 md:text-lg 2xl:text-2xl">
-                Get Started
-              </Button>
+              <Link href="/signup">
+                <Button className="bg-logo hover:bg-logo shadow-md hover:opacity-75 md:text-lg 2xl:text-2xl">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
