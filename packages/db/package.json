@@ -13,8 +13,11 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@modal/auth": "workspace:*",
     "@planetscale/database": "^1.7.0",
     "drizzle-orm": "^0.25.4",
-    "mysql2": "^3.3.0"
+    "drizzle-zod": "^0.4.1",
+    "mysql2": "^3.3.0",
+    "zod": "^3.21.4"
   }
 }

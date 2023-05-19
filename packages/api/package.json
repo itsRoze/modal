@@ -14,7 +14,8 @@
     "@trpc/server": "^10.25.1",
     "superjson": "^1.12.3",
     "zod": "^3.21.4",
-    "@modal/db": "1.0.0"
+    "@modal/db": "1.0.0",
+    "@modal/auth": "workspace:*"
   },
   "devDependencies": {
     "eslint": "^8.40.0",
