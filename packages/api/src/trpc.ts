@@ -15,6 +15,7 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 
+import { auth } from "@modal/auth";
 import { db } from "@modal/db";
 /**
  * 2. INITIALIZATION
@@ -43,6 +44,7 @@ type CreateContextOptions = Record<string, never>;
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
     db,
+    auth,
   };
 };
 

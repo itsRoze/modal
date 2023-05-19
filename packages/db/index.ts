@@ -1,11 +1,10 @@
 import { connect } from "@planetscale/database";
-import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { Config } from "sst/node/config";
 
 // import { counters } from "./schema";
 
-const connection = connect({
+export const connection = connect({
   host: Config.DB_HOST,
   username: Config.DB_USERNAME,
   password: Config.DB_PASSWORD,
@@ -13,6 +12,7 @@ const connection = connect({
 
 export const db = drizzle(connection);
 
+export { User } from "./src/user";
 // export async function getCounter(name: string) {
 //   const result = await db
 //     .select()
