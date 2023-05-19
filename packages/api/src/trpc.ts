@@ -29,7 +29,11 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-type CreateContextOptions = Record<string, never>;
+type AuthRequest = ReturnType<(typeof auth)["handleRequest"]>;
+type Session = ReturnType<AuthRequest["validate"]>;
+type CreateContextOptions = {
+  session: Session | null;
+};
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -41,10 +45,10 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
+    session: opts.session,
     db,
-    auth,
   };
 };
 
@@ -54,8 +58,12 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
+  const { req, res } = opts;
+  const authRequest = auth.handleRequest(req, res);
+  const session = authRequest.validate();
+
+  return createInnerTRPCContext({ session });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({

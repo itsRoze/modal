@@ -21,7 +21,7 @@
     "constructs": "^10.2.18",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
-    "sst": "^2.8.17",
+    "sst": "^2.8.27",
     "turbo": "^1.9.3",
     "typescript": "^5.0.4"
   },
