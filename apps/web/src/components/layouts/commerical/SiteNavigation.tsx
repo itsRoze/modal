@@ -19,6 +19,15 @@ const SiteNavigation = () => {
 
   const [openMenu, setMenu] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+      return router.push("/login");
+    } catch (error) {}
+  };
+
   return (
     <nav className="mx-auto w-full md:h-36 md:px-12 md:py-2 2xl:px-32">
       <div className="flex h-16 items-center justify-start">
@@ -53,6 +62,7 @@ const SiteNavigation = () => {
                   {link.name}
                 </Link>
               ))}
+              <Button onClick={handleLogout}>Logout</Button>
               <Link href="/signup">
                 <Button className="bg-logo hover:bg-logo shadow-md hover:opacity-75 md:text-lg 2xl:text-2xl">
                   Get Started

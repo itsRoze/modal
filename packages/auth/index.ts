@@ -1,2 +1,3 @@
-export { auth } from "./lucia";
-export type { Auth } from "./lucia";
+export { auth } from "./src/lucia";
+export { otpToken } from "./src/token";
+export type { Auth } from "./src/lucia";
