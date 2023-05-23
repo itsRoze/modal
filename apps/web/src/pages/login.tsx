@@ -20,22 +20,9 @@ import { ZodError, z, type TypeOf } from "zod";
 
 import { type NextPageWithLayout } from "./_app";
 
-type ResponseData = {
-  token: string;
-  userId: string;
-};
 const Login: NextPageWithLayout = () => {
   const [userId, setUserId] = useState<string | null>(null);
-
-  const onIssue = async () => {
-    const response = await fetch("/api/auth/login/issue", {
-      method: "POST",
-      body: JSON.stringify({ email: "example@email.com" }),
-    });
-
-    const data = (await response.json()) as ResponseData;
-    setUserId(data.userId);
-  };
+  const [token, setToken] = useState("");
 
   const onValidate = async () => {
     await fetch("/api/auth/login/validate", {
@@ -47,13 +34,28 @@ const Login: NextPageWithLayout = () => {
   return (
     <article className="flex flex-col items-center justify-center">
       <section className="border-logo flex flex-col items-center justify-center space-y-4 rounded-lg border bg-white  p-4 shadow-lg md:p-10">
-        <TokenForm />
+        {!userId ? (
+          <EmailForm setUserId={setUserId} />
+        ) : (
+          <TokenForm otp={token} setOtp={setToken} />
+        )}
       </section>
     </article>
   );
 };
 
-const EmailForm = () => {
+type ResponseData = {
+  userId?: string;
+  error?: string;
+};
+
+const EmailForm = ({
+  setUserId,
+}: {
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
+  const [error, setError] = useState<string | null>(null);
+
   const formSchema = z.object({
     email: z.string().email(),
   });
@@ -67,8 +69,20 @@ const EmailForm = () => {
     },
   });
 
-  const onSubmit = (data: FormInput) => {
-    console.log(data);
+  const onSubmit = async (formData: FormInput) => {
+    try {
+      const response = await fetch("/api/auth/login/issue", {
+        method: "POST",
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      const data = (await response.json()) as ResponseData;
+      if (!data.userId) throw new Error(data.error ?? "Something went wrong");
+      setUserId(data.userId);
+    } catch (error) {
+      if (error instanceof Error) setError(error.message);
+      else setError("Something went wrong");
+    }
   };
 
   return (
@@ -87,6 +101,12 @@ const EmailForm = () => {
             </FormItem>
           )}
         />
+        {error || form.formState.errors ? (
+          <p className="text-destructive text-sm font-medium">
+            {error ?? form.formState.errors.email?.message}
+          </p>
+        ) : null}
+
         <div className="flex justify-center">
           <Button type="submit">Submit</Button>
         </div>
@@ -95,11 +115,16 @@ const EmailForm = () => {
   );
 };
 
-const TokenForm = () => {
-  const [otp, setOtp] = useState("");
+const TokenForm = ({
+  otp,
+  setOtp,
+}: {
+  otp: string;
+  setOtp: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [error, setError] = useState<string | null>(null);
   const formSchema = z.object({
-    otp: z.string().length(6),
+    otp: z.string().length(8),
   });
 
   const variants = {
@@ -138,7 +163,10 @@ const TokenForm = () => {
     >
       <p>A code has been sent to your email</p>
 
-      <OtpInput value={otp} valueLength={6} onChange={onChange} />
+      <OtpInput value={otp} valueLength={8} onChange={onChange} />
+      {error ? (
+        <p className="text-destructive text-sm font-medium">{error}</p>
+      ) : null}
       <Button type="submit">Submit</Button>
     </motion.form>
   );

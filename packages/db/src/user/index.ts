@@ -1,7 +1,9 @@
 import { auth } from "@modal/auth";
+import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
+import { db } from "../..";
 import { zod } from "../utils/zod";
 import { user } from "./user.sql";
 
@@ -34,4 +36,15 @@ export const create = zod(
       },
     });
   },
+);
+
+export const fromEmail = zod(Info.shape.email, async (email) =>
+  db.transaction(async (tx) => {
+    return tx
+      .select()
+      .from(user)
+      .where(eq(user.email, email))
+      .execute()
+      .then((rows) => rows[0]);
+  }),
 );
