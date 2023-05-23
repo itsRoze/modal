@@ -29,30 +29,28 @@ export default async function handler(
   }
 
   try {
-    console.log("here1");
     const validateToken = await otpToken.validate(token, userId);
-    console.log(validateToken);
-    console.log("here2");
     if (validateToken) {
       const session = await auth.createSession(userId);
-      console.log("here3");
 
       const authRequest = auth.handleRequest(req, res);
-      console.log("here4");
 
       authRequest.setSession(session);
-      console.log("here5");
 
-      res.status(200).json({ message: "Valid token" });
+      res.redirect(302, "/");
     }
   } catch (error) {
     if (error instanceof LuciaTokenError && error.message === "EXPIRED_TOKEN") {
       res.status(400).json({ error: "Expired token" });
       // generate new password and send new email
-    }
-    if (error instanceof LuciaTokenError && error.message === "INVALID_TOKEN") {
+    } else if (
+      error instanceof LuciaTokenError &&
+      error.message === "INVALID_TOKEN"
+    ) {
       res.status(400).json({ error: "Invalid token" });
+    } else {
+      console.log(error);
+      res.status(400).json({ error: "Something went wrong" });
     }
-    console.log(error);
   }
 }

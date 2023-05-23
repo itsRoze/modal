@@ -1,12 +1,11 @@
 import { useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/router";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import OtpInput from "@/components/otp";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { ZodError, z, type TypeOf } from "zod";
+import { ZodError, z } from "zod";
 
 import { type NextPageWithLayout } from "./_app";
 
@@ -24,20 +23,13 @@ const Login: NextPageWithLayout = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState("");
 
-  const onValidate = async () => {
-    await fetch("/api/auth/login/validate", {
-      method: "POST",
-      body: JSON.stringify({ token: "33884488", userId }),
-    });
-  };
-
   return (
     <article className="flex flex-col items-center justify-center">
       <section className="border-logo flex flex-col items-center justify-center space-y-4 rounded-lg border bg-white  p-4 shadow-lg md:p-10">
         {!userId ? (
           <EmailForm setUserId={setUserId} />
         ) : (
-          <TokenForm otp={token} setOtp={setToken} />
+          <TokenForm otp={token} setOtp={setToken} userId={userId} />
         )}
       </section>
     </article>
@@ -118,10 +110,13 @@ const EmailForm = ({
 const TokenForm = ({
   otp,
   setOtp,
+  userId,
 }: {
   otp: string;
   setOtp: React.Dispatch<React.SetStateAction<string>>;
+  userId: string;
 }) => {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const formSchema = z.object({
     otp: z.string().length(8),
@@ -138,11 +133,22 @@ const TokenForm = ({
     setOtp(value);
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      formSchema.parse(otp);
+      formSchema.parse({ otp });
+      const response = await fetch("/api/auth/login/validate", {
+        method: "POST",
+        body: JSON.stringify({ token: otp, userId }),
+      });
+      if (response.redirected) return router.push(response.url);
+
+      const data = (await response.json()) as {
+        error: string;
+      };
+
+      throw new Error(data.error ?? "Something went wrong");
     } catch (error) {
       if (error instanceof ZodError) {
         setError(error.message);
@@ -162,7 +168,6 @@ const TokenForm = ({
       className="flex flex-col items-center space-y-4"
     >
       <p>A code has been sent to your email</p>
-
       <OtpInput value={otp} valueLength={8} onChange={onChange} />
       {error ? (
         <p className="text-destructive text-sm font-medium">{error}</p>
