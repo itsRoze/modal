@@ -81,6 +81,7 @@ module.exports = {
       },
       backgroundImage: {
         "blur-screenshot": "url('/images/bg/blur-screenshot.png')",
+        "blur-working": "url('/images/bg/working.png')",
       },
     },
   },

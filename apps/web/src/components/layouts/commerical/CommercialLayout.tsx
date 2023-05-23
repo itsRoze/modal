@@ -38,11 +38,11 @@ const CommercialLayout: React.FC<ICommericalLayout> = ({ children }) => {
       <main
         className={`${inter.variable} flex min-h-screen flex-col font-sans`}
       >
-        <article>
-          <SiteNavigation />
-          <div className="w-full">{children}</div>
-        </article>
-        <footer className="flex flex-grow items-end justify-center py-8">
+        <SiteNavigation />
+        <div className="flex flex-grow flex-col items-stretch justify-stretch">
+          {children}
+        </div>
+        <footer className="flex items-end justify-center pb-4 pt-8">
           <Link href="/">© Roze 🌹 {new Date().getFullYear()}</Link>
         </footer>
       </main>
