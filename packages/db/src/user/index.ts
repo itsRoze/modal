@@ -7,6 +7,8 @@ import { db } from "../..";
 import { zod } from "../utils/zod";
 import { user } from "./user.sql";
 
+export { user } from "./user.sql";
+
 export * as User from "./";
 
 export const Info = createSelectSchema(user, {
@@ -36,6 +38,17 @@ export const create = zod(
       },
     });
   },
+);
+
+export const fromId = zod(Info.shape.id, async (id) =>
+  db.transaction(async (tx) => {
+    return tx
+      .select()
+      .from(user)
+      .where(eq(user.id, id))
+      .execute()
+      .then((rows) => rows[0]);
+  }),
 );
 
 export const fromEmail = zod(Info.shape.email, async (email) =>
