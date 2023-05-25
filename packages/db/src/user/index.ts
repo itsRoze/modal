@@ -18,10 +18,6 @@ export const Info = createSelectSchema(user, {
 
 export type Info = z.infer<typeof Info>;
 
-export const userCreateSchema = Info.pick({ id: true, email: true }).partial({
-  id: true,
-});
-
 export const create = zod(
   Info.pick({ id: true, email: true }).partial({
     id: true,

@@ -152,12 +152,18 @@ importers:
       '@modal/db':
         specifier: 1.0.0
         version: link:../db
+      '@modal/stripe':
+        specifier: workspace:*
+        version: link:../stripe
       '@trpc/client':
         specifier: ^10.25.1
         version: 10.25.1(@trpc/server@10.25.1)
       '@trpc/server':
         specifier: ^10.25.1
         version: 10.25.1
+      drizzle-orm:
+        specifier: ^0.25.4
+        version: 0.25.4(@aws-sdk/client-rds-data@3.329.0)(@planetscale/database@1.7.0)(kysely@0.23.5)(mysql2@3.3.0)
       superjson:
         specifier: ^1.12.3
         version: 1.12.3
