@@ -14,3 +14,4 @@ export const db = drizzle(connection);
 export type db = typeof db;
 
 export { User } from "./src/user";
+export { StripeEvent } from "./src/stripe_event";

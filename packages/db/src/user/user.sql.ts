@@ -8,9 +8,9 @@ export const user = mysqlTable("auth_user", {
   }).primaryKey(),
   // other user attributes
   email: varchar("email", { length: 255 }).notNull(),
-  stripeCustomerId: varchar("stripe_customer_id", { length: 15 }).notNull(),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }).notNull(),
   stripeSubscriptionId: varchar("stripe_subscription_id", {
-    length: 15,
+    length: 255,
   }),
   stripeSubscriptionStatus: mysqlEnum("stripe_subscription_status", [
     "incomplete",

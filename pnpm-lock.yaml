@@ -55,6 +55,9 @@ importers:
       '@modal/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@modal/stripe':
+        specifier: workspace:*
+        version: link:../../packages/stripe
       '@radix-ui/react-label':
         specifier: ^2.0.1
         version: 2.0.1(react-dom@18.2.0)(react@18.2.0)
@@ -94,6 +97,9 @@ importers:
       lucide-react:
         specifier: ^0.216.0
         version: 0.216.0(react@18.2.0)
+      micro:
+        specifier: ^10.0.1
+        version: 10.0.1
       next:
         specifier: ^13.4.1
         version: 13.4.1(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
@@ -281,9 +287,6 @@ importers:
       drizzle-orm:
         specifier: ^0.25.4
         version: 0.25.4(@aws-sdk/client-rds-data@3.329.0)(@planetscale/database@1.7.0)(kysely@0.23.5)(mysql2@3.3.0)
-      micro:
-        specifier: ^10.0.1
-        version: 10.0.1
       stripe:
         specifier: ^12.6.0
         version: 12.6.0
