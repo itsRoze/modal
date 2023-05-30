@@ -60,13 +60,13 @@ const SignUp: NextPageWithLayout = () => {
         </h2>
       </section>
       <section className="mt-10 flex justify-center md:mt-5">
-        <div className="relative w-fit">
-          <div className="border-logo relative flex flex-col items-center space-y-12 rounded-lg border p-12 shadow-xl">
+        <div className="relative md:w-fit">
+          <div className="border-logo relative flex flex-col items-center space-y-12 rounded-lg border p-4 shadow-xl md:p-12">
             <div className="flex items-center justify-center">
               <SignupForm />
             </div>
           </div>
-          <div className="absolute -right-10 -top-5 rotate-6 transform rounded-md bg-orange-400 p-2 font-medium uppercase text-white md:p-4">
+          <div className="absolute -right-10 -top-5 rotate-6 transform rounded-md bg-orange-400 p-1 font-medium uppercase text-white md:p-4">
             Just need an email
           </div>
         </div>

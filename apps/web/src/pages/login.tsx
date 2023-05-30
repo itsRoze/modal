@@ -25,7 +25,7 @@ const Login: NextPageWithLayout = () => {
 
   return (
     <article className="flex flex-col items-center justify-center md:mx-20">
-      <section className="border-logo  flex w-full flex-col items-center justify-center space-y-4 rounded-lg border bg-white py-2  shadow-lg md:p-10">
+      <section className="border-logo flex w-full flex-col items-center justify-center space-y-4 rounded-lg border bg-white py-2  shadow-lg md:p-10">
         {!userId ? (
           <EmailForm setUserId={setUserId} />
         ) : (
