@@ -1,14 +1,9 @@
+import { useState } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { anybody } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,22 +15,6 @@ import { z } from "zod";
 import { type NextPageWithLayout } from "./_app";
 
 const SignUp: NextPageWithLayout = () => {
-  const router = useRouter();
-  const onSubmit = async () => {
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify({ email: "example@email.com" }),
-    });
-
-    if (response.redirected) return router.push("/");
-
-    const result = (await response.json()) as {
-      error: string;
-    };
-
-    console.log(result.error);
-  };
-
   const variants = {
     hidden: { opacity: 0, x: -200, y: 0 },
     enter: { opacity: 1, x: 0, y: 0 },
@@ -76,6 +55,10 @@ const SignUp: NextPageWithLayout = () => {
 };
 
 const SignupForm = () => {
+  const router = useRouter();
+
+  const [error, setError] = useState<string | null>(null);
+
   const formSchema = z.object({
     email: z.string().email(),
   });
@@ -89,8 +72,20 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = (value: FormInput) => {
-    console.log(value);
+  const onSubmit = async (values: FormInput) => {
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({ email: values.email }),
+    });
+
+    if (response.redirected) return router.push("/");
+
+    const result = (await response.json()) as {
+      error: string;
+    };
+
+    console.log(result.error);
+    setError(result.error);
   };
 
   return (
@@ -115,6 +110,12 @@ const SignupForm = () => {
             </FormItem>
           )}
         />
+        {error || form.formState.errors ? (
+          <p className="text-destructive text-sm font-medium">
+            {error ?? form.formState.errors.email?.message}
+          </p>
+        ) : null}
+
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.8 }}
