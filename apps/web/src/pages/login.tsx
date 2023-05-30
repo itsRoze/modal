@@ -24,8 +24,8 @@ const Login: NextPageWithLayout = () => {
   const [token, setToken] = useState("");
 
   return (
-    <article className="flex flex-col items-center justify-center">
-      <section className="border-logo flex flex-col items-center justify-center space-y-4 rounded-lg border bg-white  p-4 shadow-lg md:p-10">
+    <article className="flex flex-col items-center justify-center md:mx-20">
+      <section className="border-logo  flex w-full flex-col items-center justify-center space-y-4 rounded-lg border bg-white py-2  shadow-lg md:p-10">
         {!userId ? (
           <EmailForm setUserId={setUserId} />
         ) : (
@@ -79,7 +79,10 @@ const EmailForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col items-center space-y-8 md:w-80"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -87,7 +90,12 @@ const EmailForm = ({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="tim@apple.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="tim@apple.com"
+                  className="w-72 "
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,9 +107,13 @@ const EmailForm = ({
           </p>
         ) : null}
 
-        <div className="flex justify-center">
-          <Button type="submit">Submit</Button>
-        </div>
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.8 }}
+          className="w-fit rounded-lg shadow-xl "
+        >
+          <Button className="bg-logo hover:bg-orange-300">Submit</Button>
+        </motion.div>
       </form>
     </Form>
   );
@@ -158,22 +170,26 @@ const TokenForm = ({
   };
 
   return (
-    <motion.form
-      variants={variants} // Pass the variant object into Framer Motion
-      initial="hidden" // Set the initial state to variants.hidden
-      animate="enter" // Animated state to variants.enter
-      exit="exit" // Exit state (used later) to variants.exit
-      transition={{ type: "linear" }} // Set the transition to linear
+    <form
       onSubmit={onSubmit}
-      className="flex flex-col items-center space-y-4"
+      className="flex w-full justify-center space-y-8 md:w-80"
     >
-      <p>A code has been sent to your email</p>
-      <OtpInput value={otp} valueLength={8} onChange={onChange} />
-      {error ? (
-        <p className="text-destructive text-sm font-medium">{error}</p>
-      ) : null}
-      <Button type="submit">Submit</Button>
-    </motion.form>
+      <motion.div
+        variants={variants} // Pass the variant object into Framer Motion
+        initial="hidden" // Set the initial state to variants.hidden
+        animate="enter" // Animated state to variants.enter
+        exit="exit" // Exit state (used later) to variants.exit
+        transition={{ type: "linear" }} // Set the transition to linear
+        className="flex flex-col items-center space-y-8 "
+      >
+        <p>A code has been sent to your email</p>
+        <OtpInput value={otp} valueLength={8} onChange={onChange} />
+        {error ? (
+          <p className="text-destructive text-sm font-medium">{error}</p>
+        ) : null}
+        <Button type="submit">Submit</Button>
+      </motion.div>
+    </form>
   );
 };
 

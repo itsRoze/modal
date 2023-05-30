@@ -27,11 +27,9 @@ export default async function handler(
     const sig = req.headers["stripe-signature"] as string;
 
     let event: Stripe.Event;
-    console.log("HELLLO FROM WEBHOOK");
 
     try {
       event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
-      console.log(event);
 
       switch (event.type) {
         case "invoice.paid":

@@ -24,9 +24,9 @@ const Pricing: NextPageWithLayout = () => {
     >
       <section className="flex flex-col items-center justify-center px-16">
         <h1 className="text-center text-2xl font-medium md:text-7xl">
-          Less than a cup of{" "}
+          Less than a{" "}
           <span className="relative">
-            coffee
+            latte
             <Image
               src="/images/coffee.png"
               width={114}

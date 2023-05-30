@@ -9,23 +9,32 @@ import { type NextPageWithLayout } from "../_app";
 const AccountPage: NextPageWithLayout = () => {
   const { mutateAsync: createCheckoutSession } =
     api.stripe.createCheckoutSession.useMutation();
+
+  const { mutateAsync: createBillingPortalSession } =
+    api.stripe.createBillingPortalSession.useMutation();
+
   const { push } = useRouter();
 
   const handleUpgrade = async () => {
     try {
       const { checkoutUrl } = await createCheckoutSession();
-      console.log(checkoutUrl);
       if (checkoutUrl) void push(checkoutUrl);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleManageSubscription = async () => {
+    const { billingPortalUrl } = await createBillingPortalSession();
+    if (billingPortalUrl) void push(billingPortalUrl);
+  };
+
   return (
     <article>
       <h1>Account Page</h1>
       <div className="flex">
         <Button onClick={handleUpgrade}>Upgrade</Button>
-        <Button>Manage Subscription</Button>
+        <Button onClick={handleManageSubscription}>Manage Subscription</Button>
       </div>
     </article>
   );

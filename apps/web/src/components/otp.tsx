@@ -124,7 +124,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
   };
 
   return (
-    <div className="flex w-full gap-x-1 md:gap-x-3">
+    <div className="flex w-full justify-center gap-x-1 md:gap-x-3">
       {valueItems.map((digit, idx) => (
         <input
           key={idx}
