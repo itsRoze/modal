@@ -124,7 +124,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
   };
 
   return (
-    <div className="flex w-full justify-center gap-x-1 md:gap-x-3">
+    <div className="mx-2 flex w-full justify-center gap-x-1 lg:gap-x-3">
       {valueItems.map((digit, idx) => (
         <input
           key={idx}
@@ -133,7 +133,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
           autoComplete="one-time-code"
           pattern="\d{1}"
           maxLength={valueLength}
-          className="h-8 w-8 rounded-md border border-gray-400 text-center font-medium md:h-14 md:w-14"
+          className="h-8 w-8 rounded-md border border-gray-400 text-center font-medium md:h-10 md:w-10 lg:h-14 lg:w-14"
           value={digit}
           onChange={(e) => inputOnChange(e, idx)}
           onKeyDown={inputOnKeyDown}
