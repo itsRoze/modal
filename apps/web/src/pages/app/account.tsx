@@ -15,6 +15,15 @@ const AccountPage: NextPageWithLayout = () => {
 
   const { push } = useRouter();
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+      return push("/login");
+    } catch (error) {}
+  };
+
   const handleUpgrade = async () => {
     try {
       const { checkoutUrl } = await createCheckoutSession();
@@ -35,6 +44,7 @@ const AccountPage: NextPageWithLayout = () => {
       <div className="flex">
         <Button onClick={handleUpgrade}>Upgrade</Button>
         <Button onClick={handleManageSubscription}>Manage Subscription</Button>
+        <Button onClick={handleLogout}>Logout</Button>
       </div>
     </article>
   );

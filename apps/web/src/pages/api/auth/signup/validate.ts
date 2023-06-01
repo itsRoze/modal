@@ -39,7 +39,7 @@ export default async function handler(
       const session = await auth.createSession(validateToken.userId);
       const authRequest = auth.handleRequest(req, res);
       authRequest.setSession(session);
-      res.redirect(302, "/app/account");
+      res.redirect(302, "/app");
     }
   } catch (error) {
     if (error instanceof LuciaTokenError && error.message === "EXPIRED_TOKEN") {

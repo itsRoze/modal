@@ -33,8 +33,8 @@ export const stripeRouter = createTRPCRouter({
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/account?checkoutSuccess=true`,
-      cancel_url: `${baseUrl}/account?checkoutCanceled=true`,
+      success_url: `${baseUrl}/app/account?checkoutSuccess=true`,
+      cancel_url: `${baseUrl}/app/account?checkoutCanceled=true`,
       subscription_data: {
         metadata: {
           userId: session.userId,

@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { auth, otpToken } from "@modal/auth";
+import { LuciaError } from "lucia-auth";
 
 type Data = {
   error?: string;
@@ -23,8 +24,6 @@ export default async function handler(
     });
   }
 
-  console.log("IN API");
-
   try {
     const user = await auth.createUser({
       primaryKey: {
@@ -45,7 +44,19 @@ export default async function handler(
 
     res.status(200).json({ message: "OTP sent", userId: user.userId });
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof LuciaError) {
+      let errorMsg;
+      switch (error.message) {
+        case "AUTH_DUPLICATE_KEY_ID":
+          errorMsg = "Email is already registered";
+          break;
+
+        default:
+          errorMsg = "Unknown error occurred";
+          break;
+      }
+      res.status(400).json({ error: errorMsg });
+    } else if (error instanceof Error) {
       res.status(400).json({ error: error.message });
     } else {
       console.log(error);
