@@ -23,7 +23,7 @@ export const create = zod(
     id: true,
   }),
   async (input) => {
-    await auth.createUser({
+    return await auth.createUser({
       primaryKey: {
         providerId: "email",
         providerUserId: input.email,

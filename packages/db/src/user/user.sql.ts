@@ -1,5 +1,5 @@
 import {
-  boolean,
+  datetime,
   mysqlEnum,
   mysqlTable,
   varchar,
@@ -13,7 +13,9 @@ export const user = mysqlTable("auth_user", {
   }).primaryKey(),
   // other user attributes
   email: varchar("email", { length: 255 }).notNull(),
-  email_verified: boolean("email_verified").notNull().default(false),
+  time_email_verified: datetime("time_email_verified", {
+    mode: "string",
+  }),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   stripeSubscriptionId: varchar("stripe_subscription_id", {
     length: 255,

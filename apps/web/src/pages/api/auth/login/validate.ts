@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { LuciaTokenError } from "@lucia-auth/tokens";
 import { auth, otpToken } from "@modal/auth";
+import { dateToMySqlFormat } from "@modal/common";
 
 type Data = {
   error?: string;
@@ -31,18 +32,21 @@ export default async function handler(
   try {
     const validateToken = await otpToken.validate(token, userId);
     if (validateToken) {
+      // In case the user never verified their email, update it now
       await auth.invalidateAllUserSessions(validateToken.userId);
-      await auth.updateUserAttributes(validateToken.userId, {
-        email_verified: true,
-      });
+      const user = await auth.getUser(validateToken.userId);
+      if (!user.time_email_verified) {
+        await auth.updateUserAttributes(validateToken.userId, {
+          time_email_verified: dateToMySqlFormat(new Date()),
+        });
+      }
 
+      // Create a new session
       const session = await auth.createSession(validateToken.userId);
-
       const authRequest = auth.handleRequest(req, res);
-
       authRequest.setSession(session);
 
-      res.redirect(302, "/");
+      res.redirect(302, "/app");
     }
   } catch (error) {
     if (error instanceof LuciaTokenError && error.message === "EXPIRED_TOKEN") {

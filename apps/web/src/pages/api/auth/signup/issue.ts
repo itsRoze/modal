@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { auth, otpToken } from "@modal/auth";
+import { otpToken } from "@modal/auth";
+import { create } from "@modal/db/src/user";
 import { LuciaError } from "lucia-auth";
 
 type Data = {
@@ -25,17 +26,9 @@ export default async function handler(
   }
 
   try {
-    const user = await auth.createUser({
-      primaryKey: {
-        providerId: "email",
-        providerUserId: email,
-        password: null,
-      },
-      attributes: {
-        email,
-        email_verified: false,
-      },
-    });
+    console.log("before");
+    const user = await create({ email });
+    console.log("after");
 
     if (!user) throw new Error("User not created");
 
