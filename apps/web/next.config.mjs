@@ -7,6 +7,7 @@ const config = {
     "@modal/db",
     "@modal/common",
     "@modal/auth",
+    "@modal/stripe",
   ],
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },

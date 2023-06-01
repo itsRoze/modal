@@ -10,16 +10,18 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@modal/auth": "workspace:*",
+    "@modal/db": "1.0.0",
+    "@modal/stripe": "workspace:*",
     "@trpc/client": "^10.25.1",
     "@trpc/server": "^10.25.1",
+    "drizzle-orm": "^0.25.4",
     "superjson": "^1.12.3",
-    "zod": "^3.21.4",
-    "@modal/db": "1.0.0",
-    "@modal/auth": "workspace:*"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@modal/eslint-config": "1.0.0",
     "eslint": "^8.40.0",
-    "typescript": "^5.0.4",
-    "@modal/eslint-config": "1.0.0"
+    "typescript": "^5.0.4"
   }
 }

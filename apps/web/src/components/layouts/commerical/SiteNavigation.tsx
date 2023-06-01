@@ -105,7 +105,7 @@ const MobileMenu = ({ pathname }: { pathname: string }) => {
           size={"sm"}
           className="bg-logo hover:bg-logo mx-3 shadow-md hover:opacity-75"
         >
-          Get Started
+          <Link href="/signup">Get Started</Link>
         </Button>
       </ul>
     </div>

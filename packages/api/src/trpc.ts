@@ -17,6 +17,7 @@
 
 import { auth } from "@modal/auth";
 import { db } from "@modal/db";
+import { stripe } from "@modal/stripe";
 /**
  * 2. INITIALIZATION
  *
@@ -24,13 +25,16 @@ import { db } from "@modal/db";
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+type Awaited<T> = T extends Promise<infer U> ? U : T;
 type AuthRequest = ReturnType<(typeof auth)["handleRequest"]>;
-type Session = ReturnType<AuthRequest["validate"]>;
+
+type Session = Awaited<ReturnType<AuthRequest["validate"]>>;
+
 type CreateContextOptions = {
   session: Session | null;
 };
@@ -49,6 +53,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
+    stripe,
   };
 };
 
@@ -58,12 +63,16 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateNextContextOptions) => {
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   const authRequest = auth.handleRequest(req, res);
-  const session = authRequest.validate();
+  const session = await authRequest.validate();
 
-  return createInnerTRPCContext({ session });
+  return {
+    ...createInnerTRPCContext({ session }),
+    req,
+    res,
+  };
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -102,3 +111,33 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
+/**
+ * Reusable middleware that enforces users are logged in before running the
+ * procedure
+ */
+const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.userId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "User not authenticated",
+    });
+  }
+
+  return next({
+    ctx: {
+      session: { ...ctx.session, userId: ctx.session.userId },
+    },
+  });
+});
+
+/**
+ * Protected (authed) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use
+ * this. It verifies the session is valid and guarantees ctx.session.user is not
+ * null
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);

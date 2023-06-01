@@ -73,7 +73,7 @@ const Home: NextPageWithLayout = () => {
             whileTap={{ scale: 0.8 }}
             className="bg-logo w-fit rounded-lg p-2 text-white shadow-xl md:p-4 md:text-3xl"
           >
-            <Link href="/sign-up">Sign up today</Link>
+            <Link href="/signup">Sign up today</Link>
           </motion.div>
         </section>
       </article>

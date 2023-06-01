@@ -4,16 +4,14 @@ import { useRouter } from "next/router";
 import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import TokenForm from "@/components/tokenform";
-import { anybody } from "@/utils/fonts";
 import { auth } from "@modal/auth";
 import { motion } from "framer-motion";
 import { ZodError, z } from "zod";
 
 import { type NextPageWithLayout } from "./_app";
 
-const SignUp: NextPageWithLayout = () => {
-  const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState("");
+const Login: NextPageWithLayout = () => {
+  const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState("");
 
   const variants = {
@@ -21,7 +19,6 @@ const SignUp: NextPageWithLayout = () => {
     enter: { opacity: 1, x: 0, y: 0 },
     exit: { opacity: 0, x: 0, y: -100 },
   };
-
   return (
     <motion.article
       variants={variants} // Pass the variant object into Framer Motion
@@ -29,21 +26,13 @@ const SignUp: NextPageWithLayout = () => {
       animate="enter" // Animated state to variants.enter
       exit="exit" // Exit state (used later) to variants.exit
       transition={{ type: "linear" }} // Set the transition to linear
-      className={`${anybody.variable} mx-auto font-mono`}
+      className="bg-blur-login mx-auto flex  flex-col items-center justify-center bg-cover bg-fixed bg-no-repeat"
     >
-      <section className="flex flex-col items-center justify-center px-16">
-        <h1 className="text-center text-2xl font-medium md:text-7xl">
-          Start with a 7 day free trial
-        </h1>
-        <h2 className="py-2 text-center text-lg font-light md:py-8 md:text-4xl">
-          No credit card required
-        </h2>
-      </section>
       <section className="flex flex-col items-center space-y-4 rounded-lg bg-white py-2 shadow-lg md:p-10">
-        {!userId || !email ? (
-          <SignupEmailForm setUserId={setUserId} setEmail={setEmail} />
+        {!userId ? (
+          <LoginEmailForm setUserId={setUserId} />
         ) : (
-          <SignupTokenForm userId={userId} otp={token} setOtp={setToken} />
+          <LoginTokenForm otp={token} setOtp={setToken} userId={userId} />
         )}
       </section>
     </motion.article>
@@ -52,15 +41,14 @@ const SignUp: NextPageWithLayout = () => {
 
 type ResponseData = {
   userId?: string;
-  email?: string;
   error?: string;
 };
 
-interface IEmailFrom {
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  setUserId: React.Dispatch<React.SetStateAction<string>>;
-}
-const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
+const LoginEmailForm = ({
+  setUserId,
+}: {
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
   const [error, setError] = useState<string | null>(null);
 
   const formSchema = z.object({
@@ -69,20 +57,17 @@ const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
 
   type FormInput = z.infer<typeof formSchema>;
 
-  const onSubmit = async (values: FormInput) => {
+  const onSubmit = async (formData: FormInput) => {
     try {
-      const response = await fetch("/api/auth/signup/issue", {
+      const response = await fetch("/api/auth/login/issue", {
         method: "POST",
-        body: JSON.stringify({ email: values.email }),
+        body: JSON.stringify({ email: formData.email }),
       });
 
       const data = (await response.json()) as ResponseData;
-      if (data.error) throw new Error(data.error);
-      setEmail(values.email);
-      if (data.userId) setUserId(data.userId);
+      if (!data.userId) throw new Error(data.error ?? "Something went wrong");
+      setUserId(data.userId);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof Error) setError(error.message);
       else setError("Something went wrong");
     }
@@ -91,7 +76,7 @@ const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
   return <EmailForm onSubmit={onSubmit} error={error} />;
 };
 
-const SignupTokenForm = ({
+const LoginTokenForm = ({
   otp,
   setOtp,
   userId,
@@ -117,7 +102,7 @@ const SignupTokenForm = ({
 
     try {
       formSchema.parse({ otp });
-      const response = await fetch("/api/auth/signup/validate", {
+      const response = await fetch("/api/auth/login/validate", {
         method: "POST",
         body: JSON.stringify({ token: otp, userId }),
       });
@@ -131,10 +116,8 @@ const SignupTokenForm = ({
     } catch (error) {
       if (error instanceof ZodError) {
         setError(error.message);
-      } else {
-        setError("Something went wrong");
-        console.log(error);
       }
+      console.log(error);
     }
   };
 
@@ -145,14 +128,14 @@ const SignupTokenForm = ({
       animate="enter" // Animated state to variants.enter
       exit="exit" // Exit state (used later) to variants.exit
       transition={{ type: "linear" }} // Set the transition to linear
-      className="flex min-w-fit flex-col items-center space-y-8 "
+      className="flex flex-col items-center space-y-8 "
     >
       <TokenForm
-        onSubmit={onSubmit}
-        setOtp={setOtp}
-        otp={otp}
-        error={error}
         setError={setError}
+        error={error}
+        onSubmit={onSubmit}
+        otp={otp}
+        setOtp={setOtp}
       />
     </motion.div>
   );
@@ -178,6 +161,6 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
-SignUp.getLayout = (page) => <CommercialLayout>{page}</CommercialLayout>;
+Login.getLayout = (page) => <CommercialLayout>{page}</CommercialLayout>;
 
-export default SignUp;
+export default Login;

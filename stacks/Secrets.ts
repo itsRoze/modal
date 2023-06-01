@@ -8,5 +8,12 @@ export function Secrets(ctx: StackContext) {
       "DB_USERNAME",
       "DB_PASSWORD",
     ),
+    stripe: Config.Secret.create(
+      ctx.stack,
+      "STRIPE_SK",
+      "STRIPE_PK",
+      "STRIPE_WEBHOOK_SECRET",
+      "STRIPE_PRICE_ID",
+    ),
   };
 }
