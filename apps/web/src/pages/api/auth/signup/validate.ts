@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { LuciaTokenError } from "@lucia-auth/tokens";
 import { auth, otpToken } from "@modal/auth";
+import { dateToMySqlFormat } from "@modal/common";
 
 type Data = {
   error?: string;
@@ -34,7 +35,7 @@ export default async function handler(
     if (validateToken) {
       await auth.invalidateAllUserSessions(validateToken.userId);
       await auth.updateUserAttributes(validateToken.userId, {
-        email_verified: true,
+        time_email_verified: dateToMySqlFormat(new Date()),
       });
       const session = await auth.createSession(validateToken.userId);
       const authRequest = auth.handleRequest(req, res);
