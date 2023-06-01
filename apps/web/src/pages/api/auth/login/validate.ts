@@ -31,7 +31,12 @@ export default async function handler(
   try {
     const validateToken = await otpToken.validate(token, userId);
     if (validateToken) {
-      const session = await auth.createSession(userId);
+      await auth.invalidateAllUserSessions(validateToken.userId);
+      await auth.updateUserAttributes(validateToken.userId, {
+        email_verified: true,
+      });
+
+      const session = await auth.createSession(validateToken.userId);
 
       const authRequest = auth.handleRequest(req, res);
 
@@ -43,6 +48,8 @@ export default async function handler(
     if (error instanceof LuciaTokenError && error.message === "EXPIRED_TOKEN") {
       res.status(400).json({ error: "Expired token" });
       // generate new password and send new email
+      const otp = await otpToken.issue(userId);
+      console.log(otp);
     } else if (
       error instanceof LuciaTokenError &&
       error.message === "INVALID_TOKEN"

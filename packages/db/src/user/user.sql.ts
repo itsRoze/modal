@@ -1,4 +1,9 @@
-import { mysqlEnum, mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import {
+  boolean,
+  mysqlEnum,
+  mysqlTable,
+  varchar,
+} from "drizzle-orm/mysql-core";
 
 import { timestamps } from "../utils/sql";
 
@@ -8,6 +13,7 @@ export const user = mysqlTable("auth_user", {
   }).primaryKey(),
   // other user attributes
   email: varchar("email", { length: 255 }).notNull(),
+  email_verified: boolean("email_verified").notNull().default(false),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   stripeSubscriptionId: varchar("stripe_subscription_id", {
     length: 255,

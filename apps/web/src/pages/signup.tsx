@@ -66,8 +66,8 @@ const SignUp: NextPageWithLayout = () => {
               transition={{ type: "linear" }} // Set the transition to linear
               className="flex w-full items-center justify-center"
             >
-              {userId || email ? (
-                <EmailForm />
+              {!userId || !email ? (
+                <EmailForm setUserId={setUserId} setEmail={setEmail} />
               ) : (
                 <TokenForm userId={userId} otp={token} setOtp={setToken} />
               )}
@@ -79,7 +79,17 @@ const SignUp: NextPageWithLayout = () => {
   );
 };
 
-const EmailForm = () => {
+type ResponseData = {
+  userId?: string;
+  email?: string;
+  error?: string;
+};
+
+interface IEmailFrom {
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  setUserId: React.Dispatch<React.SetStateAction<string>>;
+}
+const EmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
   const [error, setError] = useState<string | null>(null);
 
   const formSchema = z.object({
@@ -97,13 +107,20 @@ const EmailForm = () => {
 
   const onSubmit = async (values: FormInput) => {
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("/api/auth/signup/issue", {
         method: "POST",
         body: JSON.stringify({ email: values.email }),
       });
+
+      const data = (await response.json()) as ResponseData;
+      if (data.error) throw new Error(data.error);
+      setEmail(values.email);
+      if (data.userId) setUserId(data.userId);
     } catch (error) {
       console.log(error);
-      setError("Something went wrong");
+
+      if (error instanceof Error) setError(error.message);
+      else setError("Something went wrong");
     }
   };
 
@@ -193,8 +210,10 @@ const TokenForm = ({
     } catch (error) {
       if (error instanceof ZodError) {
         setError(error.message);
+      } else {
+        setError("Something went wrong");
+        console.log(error);
       }
-      console.log(error);
     }
   };
 

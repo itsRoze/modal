@@ -20,10 +20,10 @@ export default async function handler(
   if (req.method !== "POST") res.status(404).json({ error: "Not found" });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { email, token, userId }: RequestBody =
+  const { token, userId }: RequestBody =
     typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-  if (!email || !token || !userId) {
+  if (!token || !userId) {
     res.status(400).json({
       error: "Invalid input",
     });
@@ -32,20 +32,11 @@ export default async function handler(
   try {
     const validateToken = await otpToken.validate(token, userId);
     if (validateToken) {
-      const user = await auth.createUser({
-        primaryKey: {
-          providerId: "email",
-          providerUserId: email,
-          password: null,
-        },
-        attributes: {
-          email,
-        },
+      await auth.invalidateAllUserSessions(validateToken.userId);
+      await auth.updateUserAttributes(validateToken.userId, {
+        email_verified: true,
       });
-
-      if (!user) throw new Error("User not created");
-
-      const session = await auth.createSession(user.userId);
+      const session = await auth.createSession(validateToken.userId);
       const authRequest = auth.handleRequest(req, res);
       authRequest.setSession(session);
       res.redirect(302, "/app/account");

@@ -23,12 +23,27 @@ export default async function handler(
     });
   }
 
+  console.log("IN API");
+
   try {
-    const key = await auth.useKey("email", email, null);
-    const otp = await otpToken.issue(key.userId);
+    const user = await auth.createUser({
+      primaryKey: {
+        providerId: "email",
+        providerUserId: email,
+        password: null,
+      },
+      attributes: {
+        email,
+        email_verified: false,
+      },
+    });
+
+    if (!user) throw new Error("User not created");
+
+    const otp = await otpToken.issue(user.userId);
     console.log(otp);
 
-    res.status(200).json({ message: "OTP sent", userId: key.userId });
+    res.status(200).json({ message: "OTP sent", userId: user.userId });
   } catch (error) {
     if (error instanceof Error) {
       res.status(400).json({ error: error.message });
