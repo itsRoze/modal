@@ -29,7 +29,7 @@ const SignUp: NextPageWithLayout = () => {
       animate="enter" // Animated state to variants.enter
       exit="exit" // Exit state (used later) to variants.exit
       transition={{ type: "linear" }} // Set the transition to linear
-      className={`${anybody.variable} mx-auto font-mono`}
+      className={`${anybody.variable} mx-auto w-full font-mono`}
     >
       <section className="flex flex-col items-center justify-center px-16">
         <h1 className="text-center text-2xl font-medium md:text-7xl">
@@ -39,12 +39,14 @@ const SignUp: NextPageWithLayout = () => {
           No credit card required
         </h2>
       </section>
-      <section className="flex flex-col items-center space-y-4 rounded-lg bg-white py-2 shadow-lg md:p-10">
-        {!userId || !email ? (
-          <SignupEmailForm setUserId={setUserId} setEmail={setEmail} />
-        ) : (
-          <SignupTokenForm userId={userId} otp={token} setOtp={setToken} />
-        )}
+      <section className="bg-blur-screenshot flex flex-col items-center space-y-4 bg-cover bg-fixed bg-no-repeat">
+        <div className="my-10 rounded-lg bg-white py-2 shadow-lg md:p-10">
+          {!userId || !email ? (
+            <SignupEmailForm setUserId={setUserId} setEmail={setEmail} />
+          ) : (
+            <SignupTokenForm userId={userId} otp={token} setOtp={setToken} />
+          )}
+        </div>
       </section>
     </motion.article>
   );
@@ -88,7 +90,13 @@ const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
     }
   };
 
-  return <EmailForm onSubmit={onSubmit} error={error} />;
+  return (
+    <EmailForm
+      onSubmit={onSubmit}
+      error={error}
+      label="Just enter your email"
+    />
+  );
 };
 
 const SignupTokenForm = ({

@@ -16,8 +16,13 @@ import { Input } from "../ui/input";
 interface IEmailForm {
   onSubmit: (formData: { email: string }) => Promise<void>;
   error: string | null;
+  label?: string;
 }
-const EmailForm: React.FC<IEmailForm> = ({ onSubmit, error }) => {
+const EmailForm: React.FC<IEmailForm> = ({
+  onSubmit,
+  error,
+  label = "Email",
+}) => {
   const formSchema = z.object({
     email: z.string().email(),
   });
@@ -42,7 +47,7 @@ const EmailForm: React.FC<IEmailForm> = ({ onSubmit, error }) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{label}</FormLabel>
               <FormControl>
                 <Input
                   type="email"
