@@ -1,0 +1,6 @@
+.main {
+  @apply my-4 flex h-[calc(100vh-45px)] bg-white;
+}
+.main > article {
+  @apply 2xs:px-2 ml-6 w-full flex-1 overflow-x-hidden px-1 md:ml-0 md:px-9;
+}

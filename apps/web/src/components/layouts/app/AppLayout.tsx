@@ -1,3 +1,4 @@
+import styles from "./AppLayout.module.css";
 import Navbar from "./Navbar";
 
 export interface IAppLayout {
@@ -8,7 +9,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main className={styles.main}>{children}</main>
     </>
   );
 };
