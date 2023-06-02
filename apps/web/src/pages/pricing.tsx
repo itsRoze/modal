@@ -44,7 +44,7 @@ const Pricing: NextPageWithLayout = () => {
         <div className="relative w-fit">
           <div className="border-logo relative flex flex-col items-center space-y-12 rounded-lg border p-12 shadow-xl">
             <div className="flex items-center justify-center">
-              <h3 className="text-2xl font-medium md:text-5xl">$3</h3>
+              <h3 className="text-2xl font-medium md:text-5xl">$4</h3>
               <h3 className="ml-2 font-light">per month</h3>
             </div>
             <motion.div

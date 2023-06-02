@@ -26,14 +26,22 @@ const Login: NextPageWithLayout = () => {
       animate="enter" // Animated state to variants.enter
       exit="exit" // Exit state (used later) to variants.exit
       transition={{ type: "linear" }} // Set the transition to linear
-      className="bg-blur-login mx-auto flex  flex-col items-center justify-center bg-cover bg-fixed bg-no-repeat"
+      className="mx-auto flex w-full  flex-col items-center justify-center "
     >
-      <section className="flex flex-col items-center space-y-4 rounded-lg bg-white py-2 shadow-lg md:p-10">
-        {!userId ? (
-          <LoginEmailForm setUserId={setUserId} />
-        ) : (
-          <LoginTokenForm otp={token} setOtp={setToken} userId={userId} />
-        )}
+      <section className="flex flex-col items-center justify-center px-16">
+        <h1 className="text-center text-2xl font-medium md:text-7xl">Login</h1>
+        <h2 className="py-2 text-center text-lg font-light md:py-8 md:text-4xl">
+          Welcome back
+        </h2>
+      </section>
+      <section className="bg-blur-screenshot flex w-full flex-col items-center space-y-4 bg-cover bg-fixed bg-no-repeat ">
+        <div className="my-10 rounded-lg bg-white py-2 shadow-lg md:p-10">
+          {!userId ? (
+            <LoginEmailForm setUserId={setUserId} />
+          ) : (
+            <LoginTokenForm otp={token} setOtp={setToken} userId={userId} />
+          )}
+        </div>
       </section>
     </motion.article>
   );
