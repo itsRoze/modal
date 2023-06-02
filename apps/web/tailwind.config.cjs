@@ -84,6 +84,11 @@ module.exports = {
         "blur-working": "url('/images/bg/working.png')",
         "blur-login": "url('/images/bg/blur-login.png')",
       },
+      gridTemplateColumns: {
+        sidebar: "300px auto", //for sidebar layout
+        "sidebar-collapsed": "64px auto", //for collapsed sidebar layout
+        "sidebar-mobile-collapsed": "w-full auto", //for mobile collapsed sidebar layout
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
