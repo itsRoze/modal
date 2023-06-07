@@ -18,6 +18,7 @@
     "@modal/db": "workspace:*",
     "@modal/stripe": "workspace:*",
     "@radix-ui/react-label": "^2.0.1",
+    "@radix-ui/react-popover": "^1.0.6",
     "@radix-ui/react-slot": "^1.0.1",
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "^10.25.1",

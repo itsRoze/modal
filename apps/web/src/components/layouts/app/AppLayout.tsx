@@ -1,15 +1,26 @@
 import { useState } from "react";
-import { Inter } from "next/font/google";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/utils/cn";
+import { inter } from "@/utils/fonts";
 import { classNames } from "@modal/common";
-import { BookOpenCheck, ChevronsLeft, ChevronsRight, Home } from "lucide-react";
+import {
+  BookOpenCheck,
+  Boxes,
+  ChevronsLeft,
+  ChevronsRight,
+  Circle,
+  Home,
+  Plus,
+} from "lucide-react";
 
 import styles from "./AppLayout.module.css";
 import Header from "./Header";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export interface IAppLayout {
   children: React.ReactNode;
@@ -35,7 +46,8 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
             ? "lg:grid-cols-sidebar-collapsed grid-cols-sidebar-mobile-collapsed"
             : "grid-cols-sidebar",
           "transition-[grid-template-columns] duration-300 ease-in-out",
-          inter.className,
+          inter.variable,
+          "font-sans",
         )}
       >
         <Sidebar
@@ -150,8 +162,39 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
               </li>
             </ul>
           </nav>
+          <div
+            className={cn({
+              "mb-2 ml-2": true,
+              "opacity-0": collapsed,
+              "transition-opacity delay-0 duration-0": true,
+              "opacity-100": !collapsed,
+            })}
+          >
+            <SidebarMenu />
+          </div>
         </div>
       </div>
     </div>
+  );
+};
+
+const SidebarMenu = () => {
+  return (
+    <Popover>
+      <PopoverTrigger className="bg-logo rounded-full p-2 shadow-md hover:opacity-75">
+        <Plus size={32} className=" text-white" />
+      </PopoverTrigger>
+      <PopoverContent className={`${inter.variable} font-sans`}>
+        <div className="flex flex-col items-start gap-2">
+          <button className="flex w-full items-center rounded-md p-1 hover:bg-slate-100">
+            <Circle size={24} className="mr-2" />
+            New Project
+          </button>
+          <button className="flex w-full items-center rounded-md p-1 hover:bg-slate-100">
+            <Boxes size={24} className="mr-2" /> New Space
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
