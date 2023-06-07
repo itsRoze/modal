@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { Inter } from "next/font/google";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/cn";
 import { classNames } from "@modal/common";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { BookOpenCheck, ChevronsLeft, ChevronsRight, Home } from "lucide-react";
 
 import styles from "./AppLayout.module.css";
 import Header from "./Header";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export interface IAppLayout {
   children: React.ReactNode;
@@ -31,6 +35,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
             ? "lg:grid-cols-sidebar-collapsed grid-cols-sidebar-mobile-collapsed"
             : "grid-cols-sidebar",
           "transition-[grid-template-columns] duration-300 ease-in-out",
+          inter.className,
         )}
       >
         <Sidebar
@@ -57,75 +62,95 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
 
   return (
     <div
+      id="sidebar"
       className={cn({
-        "z-20 bg-indigo-700 text-zinc-50": true,
-        "transition-all duration-300 ease-in-out": true,
+        "pb-4": true,
+        "h-full": true,
         "fixed lg:static lg:translate-x-0": true,
+        "transition-all duration-300 ease-in-out": true,
+        "-translate-x-full": !shown,
         "w-screen lg:w-[300px]": !collapsed,
         "lg:w-16": collapsed,
-        "-translate-x-full": !shown,
-        "h-full": true,
       })}
     >
-      <div className="flex h-full flex-col justify-between">
-        {/* Button */}
-        <div
-          className={cn({
-            "hidden items-center lg:flex ": true,
-            "justify-between p-4": !collapsed,
-            "justify-center py-4": collapsed,
-          })}
-        >
-          {!collapsed && <span className="whitespace-nowrap"></span>}
-          <button
-            onClick={() => setCollapsed((prev) => !prev)}
+      <div
+        id="sidebar-container"
+        className={cn({
+          "z-20 rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
+            true,
+          "h-full": true,
+        })}
+      >
+        <div className="flex h-full flex-col justify-between">
+          {/* Button */}
+          <div
             className={cn({
-              "grid place-content-center": true, // position
-              "hover:bg-indigo-800 ": true, // colors
-              "h-10 w-10 rounded-full": true, // shape
+              "hidden items-center lg:flex ": true,
+              "justify-between p-2": !collapsed,
+              "justify-center py-2": collapsed,
             })}
           >
-            <Icon size={24} />
-          </button>
+            {!collapsed && <span className="whitespace-nowrap"></span>}
+            <button
+              onClick={() => setCollapsed((prev) => !prev)}
+              className={cn({
+                "grid place-content-center": true, // position
+                "hover:bg-gray-200": true, // colors
+                "h-10 w-10 rounded-full": true, // shape
+              })}
+            >
+              <Icon size={24} />
+            </button>
+          </div>
+          {/* Menu */}
+          <nav
+            className={cn({
+              "flex-grow": true,
+              "opacity-0": collapsed,
+              "transition-opacity delay-0 duration-0": true,
+              "opacity-100": !collapsed,
+            })}
+          >
+            {/* Search bar */}
+            <div className="flex justify-center">
+              <Input
+                type="text"
+                className="w-64 max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
+                placeholder="🔎 Search"
+              />
+            </div>
+            <ul className="my-2 flex flex-col items-stretch gap-2">
+              <li
+                key={1}
+                className={cn({
+                  "flex hover:bg-slate-200": true,
+                  "transition-colors duration-300": true,
+                  "mx-3 gap-4 rounded-md p-2": !collapsed,
+                  "mx-3 h-10 w-10 rounded-full p-2": collapsed,
+                })}
+              >
+                <Link href="/app" className="flex w-full items-center gap-2">
+                  <Home size={24} className="text-fuchsia-600" />
+                  Dashboard
+                </Link>
+              </li>
+              <li
+                key={2}
+                className={cn({
+                  "flex hover:bg-slate-200": true,
+                  "transition-colors duration-300": true,
+                  "mx-3 gap-4 rounded-md p-2": !collapsed,
+                  "mx-3 h-10 w-10 rounded-full p-2": collapsed,
+                })}
+              >
+                <Link href="/app/history" className="flex w-full gap-2">
+                  <BookOpenCheck size={24} className="text-green-600" />
+                  History
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
-        {/* Menu */}
-        <nav
-          className={cn({
-            "flex-grow": true,
-            "opacity-0": collapsed,
-            "transition-opacity delay-0 duration-0": true,
-            "opacity-100": !collapsed,
-          })}
-        >
-          <ul className="my-2 flex flex-col items-stretch gap-2">
-            <li
-              key={1}
-              className={cn({
-                "flex text-indigo-100 hover:bg-indigo-900": true,
-                "transition-colors duration-300": true,
-                "mx-3 gap-4 rounded-md p-2": !collapsed,
-                "mx-3 h-10 w-10 rounded-full p-2": collapsed,
-              })}
-            >
-              <Link href="#" className="flex gap-2">
-                Link 1
-              </Link>
-            </li>
-            <li
-              key={2}
-              className={cn({
-                "flex text-indigo-100 hover:bg-indigo-900": true,
-                "transition-colors duration-300": true,
-                "mx-3 gap-4 rounded-md p-2": !collapsed,
-                "mx-3 h-10 w-10 rounded-full p-2": collapsed,
-              })}
-            >
-              <Link href="#" className="flex gap-2">
-                Link 2
-              </Link>
-            </li>
-          </ul>
-        </nav>
       </div>
     </div>
   );
