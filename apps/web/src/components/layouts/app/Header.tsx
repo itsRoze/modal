@@ -16,7 +16,7 @@ const Header: React.FC<IHeader> = ({ onMenuButtonClick }) => {
         className="h-auto w-auto"
       />
       <button className="lg:hidden" onClick={onMenuButtonClick}>
-        <Menu size={16} />
+        <Menu size={24} className="text-gray-200" />
       </button>
     </div>
   );
