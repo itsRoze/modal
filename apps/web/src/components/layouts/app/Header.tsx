@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import Link from "next/link";
+import { Menu, UserCircle2 } from "lucide-react";
 
 interface IHeader {
   onMenuButtonClick: () => void;
@@ -15,6 +16,12 @@ const Header: React.FC<IHeader> = ({ onMenuButtonClick }) => {
         alt="Application logo"
         className="h-auto w-auto"
       />
+      <Link
+        href="/app/account"
+        className="rounded-full p-1 text-black  transition-colors duration-300 hover:text-slate-200"
+      >
+        <UserCircle2 size={28} />
+      </Link>
       <button className="lg:hidden" onClick={onMenuButtonClick}>
         <Menu size={24} className="text-gray-200" />
       </button>
