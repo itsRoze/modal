@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/cn";
@@ -7,6 +8,8 @@ import { BookOpenCheck, ChevronsLeft, ChevronsRight, Home } from "lucide-react";
 
 import styles from "./AppLayout.module.css";
 import Header from "./Header";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export interface IAppLayout {
   children: React.ReactNode;
@@ -32,6 +35,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
             ? "lg:grid-cols-sidebar-collapsed grid-cols-sidebar-mobile-collapsed"
             : "grid-cols-sidebar",
           "transition-[grid-template-columns] duration-300 ease-in-out",
+          inter.className,
         )}
       >
         <Sidebar
@@ -82,8 +86,8 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
           <div
             className={cn({
               "hidden items-center lg:flex ": true,
-              "justify-between p-4": !collapsed,
-              "justify-center py-4": collapsed,
+              "justify-between p-2": !collapsed,
+              "justify-center py-2": collapsed,
             })}
           >
             {!collapsed && <span className="whitespace-nowrap"></span>}
@@ -111,7 +115,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
             <div className="flex justify-center">
               <Input
                 type="text"
-                className="w-64 max-w-full border-gray-300 bg-white shadow-sm"
+                className="w-64 max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
                 placeholder="🔎 Search"
               />
             </div>
