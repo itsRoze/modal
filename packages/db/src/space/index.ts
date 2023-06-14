@@ -18,21 +18,18 @@ export const Info = createSelectSchema(space, {
 
 export type Info = z.infer<typeof Info>;
 
-export const create = zod(
-  Info.pick({ id: true, name: true }),
-  async (input) => {
-    const id = input.id ?? createId();
+export const create = zod(Info.pick({ name: true }), async (input) => {
+  const id = createId();
 
-    return useTransaction(async (tx) => {
-      await tx.insert(space).values({
-        id,
-        name: input.name,
-      });
-
-      return id;
+  return useTransaction(async (tx) => {
+    await tx.insert(space).values({
+      id,
+      name: input.name,
     });
-  },
-);
+
+    return id;
+  });
+});
 
 export const fromID = zod(Info.shape.id, async (id) =>
   db.transaction(async (tx) => {

@@ -10,8 +10,11 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@modal/eslint-config": "1.0.0",
     "eslint": "^8.40.0",
-    "typescript": "^5.0.4",
-    "@modal/eslint-config": "1.0.0"
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "zod": "^3.21.4"
   }
 }
