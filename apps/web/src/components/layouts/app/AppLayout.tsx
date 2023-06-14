@@ -1,14 +1,32 @@
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToast } from "@/components/ui/use-toast";
+import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { classNames } from "@modal/common";
+import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import {
   BookOpenCheck,
   Boxes,
@@ -16,8 +34,11 @@ import {
   ChevronsRight,
   Circle,
   Home,
+  Loader2,
   Plus,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
 
 import styles from "./AppLayout.module.css";
 import Header from "./Header";
@@ -179,22 +200,125 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
 };
 
 const SidebarMenu = () => {
+  const [showSpace, setShowSpace] = useState(false);
+
   return (
-    <Popover>
-      <PopoverTrigger className="bg-logo rounded-full p-2 shadow-md hover:opacity-75">
-        <Plus size={32} className=" text-white" />
-      </PopoverTrigger>
-      <PopoverContent className={`${inter.variable} font-sans`}>
-        <div className="flex flex-col items-start gap-2">
-          <button className="flex w-full items-center rounded-md p-1 hover:bg-slate-100">
-            <Circle size={24} className="mr-2" />
-            New Project
-          </button>
-          <button className="flex w-full items-center rounded-md p-1 hover:bg-slate-100">
-            <Boxes size={24} className="mr-2" /> New Space
-          </button>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <>
+      <Popover>
+        <PopoverTrigger className="bg-logo rounded-full p-2 shadow-md hover:opacity-75">
+          <Plus size={32} className=" text-white" />
+        </PopoverTrigger>
+        <PopoverContent className={`${inter.variable} ml-2 font-sans`}>
+          <div className="flex flex-col items-start gap-2">
+            <button className="flex w-full items-center rounded-md p-1 hover:bg-slate-100">
+              <Circle size={24} className="mr-2" />
+              New Project
+            </button>
+            <button
+              className="flex w-full items-center rounded-md p-1 hover:bg-slate-100"
+              onClick={() => setShowSpace(true)}
+            >
+              <Boxes size={24} className="mr-2" /> New Space
+            </button>
+          </div>
+        </PopoverContent>
+      </Popover>
+      <SpaceMenu open={showSpace} setOpen={setShowSpace} />
+    </>
+  );
+};
+
+interface ISpaceMenu {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const SpaceMenu: React.FC<ISpaceMenu> = ({ open, setOpen }) => {
+  const ctx = api.useContext();
+  const { mutate, isLoading } = api.space.create.useMutation({
+    onSuccess() {
+      form.reset();
+      void ctx.space.invalidate();
+      setOpen(false);
+      toast({
+        variant: "success",
+        title: "Space added!",
+      });
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+  const { toast } = useToast();
+
+  type Inputs = z.infer<typeof createSpaceSchema>;
+
+  const form = useForm<Inputs>({
+    resolver: zodResolver(createSpaceSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
+
+  const onSubmit = (data: Inputs) => {
+    const { name } = data;
+    const modifiedName = name.trim();
+    mutate({ name: modifiedName });
+  };
+
+  const onOpenChange = () => {
+    setOpen((val) => !val);
+    form.reset();
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className={`${inter.variable} font-sans`}>
+        <DialogHeader>
+          <DialogTitle>Create a new space</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="My new category"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {form.formState.errors.name ? (
+              <p className="text-destructive text-sm font-medium">
+                {form.formState.errors.name?.message}
+              </p>
+            ) : null}
+
+            <div className="float-right mt-4">
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating
+                </Button>
+              ) : (
+                <Button type="submit" disabled={!form.formState.isValid}>
+                  Submit
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
