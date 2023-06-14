@@ -35,8 +35,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Delete lockfile
+        run: rm pnpm-lock.yaml
+
       - name: Install deps (with cache)
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
       - name: Build, lint and type-check
         run: pnpm turbo build lint type-check
