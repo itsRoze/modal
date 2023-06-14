@@ -17,6 +17,7 @@
     "@modal/common": "workspace:*",
     "@modal/db": "workspace:*",
     "@modal/stripe": "workspace:*",
+    "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-label": "^2.0.1",
     "@radix-ui/react-popover": "^1.0.6",

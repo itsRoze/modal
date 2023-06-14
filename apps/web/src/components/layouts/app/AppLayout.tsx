@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -25,11 +26,14 @@ import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import {
   BookOpenCheck,
   Boxes,
+  ChevronDown,
+  ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Circle,
@@ -91,8 +95,6 @@ interface ISidebar {
 }
 
 const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
-  const { data: spaces, isLoading: spacesIsLoading } =
-    api.space.getAllForUser.useQuery();
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
 
   return (
@@ -160,8 +162,8 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 className={cn({
                   "flex hover:bg-slate-200": true,
                   "transition-colors duration-300": true,
-                  "mx-3 gap-4 rounded-md p-2": !collapsed,
-                  "mx-3 h-10 w-10 rounded-full p-2": collapsed,
+                  "gap-4 rounded-md py-2 pl-5": !collapsed,
+                  "h-10 w-10 rounded-full py-2 pl-5": collapsed,
                 })}
               >
                 <Link href="/app" className="flex w-full items-center gap-2">
@@ -174,8 +176,8 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 className={cn({
                   "flex hover:bg-slate-200": true,
                   "transition-colors duration-300": true,
-                  "mx-3 gap-4 rounded-md p-2": !collapsed,
-                  "mx-3 h-10 w-10 rounded-full p-2": collapsed,
+                  "gap-4 rounded-md py-2 pl-5": !collapsed,
+                  "h-10 w-10 rounded-full py-2 pl-5": collapsed,
                 })}
               >
                 <Link href="/app/history" className="flex w-full gap-2">
@@ -184,23 +186,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 </Link>
               </li>
             </ul>
-            {!spacesIsLoading && spaces && (
-              <ul className="my-2 flex flex-col items-stretch gap-2">
-                {spaces.map((userSpace) => (
-                  <li
-                    key={userSpace.id}
-                    className={cn({
-                      "flex font-medium text-gray-500 hover:bg-slate-200": true,
-                      "transition-colors duration-300": true,
-                      "mx-3 gap-4 rounded-md p-2": !collapsed,
-                      "mx-3 h-10 w-10 rounded-full p-2": collapsed,
-                    })}
-                  >
-                    <Link href="#">{userSpace.name}</Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <SpacesDisplay collapsed={collapsed} />
           </nav>
           <div
             className={cn({
@@ -215,6 +201,59 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+interface ISpacesDisplay {
+  collapsed: boolean;
+}
+
+const SpacesDisplay: React.FC<ISpacesDisplay> = ({ collapsed }) => {
+  const { data: spaces, isLoading: spacesIsLoading } =
+    api.space.getAllForUser.useQuery();
+
+  if (!spaces || spacesIsLoading) return null;
+
+  return (
+    <ul className="my-2 flex flex-col items-stretch gap-2">
+      {spaces.map((userSpace) => (
+        <li
+          key={userSpace.id}
+          className={cn({
+            "flex w-full py-2 pl-5 font-medium text-gray-500 hover:bg-slate-200":
+              true,
+            "transition-colors duration-300": true,
+            "gap-4 rounded-md": !collapsed,
+            "h-10 w-10 rounded-full ": collapsed,
+          })}
+        >
+          <SpaceSection userSpace={userSpace} />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+type SpaceType = RouterOutputs["space"]["getAllForUser"][number];
+
+interface ISpaceSection {
+  userSpace: SpaceType;
+}
+const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
+  const [open, setOpen] = useState(true);
+  const Icon = open ? ChevronDown : ChevronRight;
+
+  return (
+    <Collapsible
+      className="w-full"
+      open={open}
+      onOpenChange={() => setOpen((val) => !val)}
+    >
+      <CollapsibleTrigger className="flex w-full justify-between pr-2">
+        <p>{userSpace.name}</p>
+        <Icon size={18} className="text-gray-500" />
+      </CollapsibleTrigger>
+    </Collapsible>
   );
 };
 
