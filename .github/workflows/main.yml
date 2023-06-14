@@ -36,9 +36,6 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install deps (with cache)
-        run: pnpm install
-
-      - name: Fix broken lockfile
         run: pnpm install --no-frozen-lockfile
 
       - name: Build, lint and type-check
