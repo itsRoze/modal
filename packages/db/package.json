@@ -9,15 +9,15 @@
   },
   "devDependencies": {
     "@modal/eslint-config": "1.0.0",
-    "drizzle-kit": "0.17.6-76e73f3",
+    "drizzle-kit": "0.18.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@modal/auth": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.1",
     "@planetscale/database": "^1.7.0",
-    "drizzle-orm": "^0.25.4",
-    "drizzle-zod": "^0.4.1",
+    "drizzle-orm": "^0.26.5",
+    "drizzle-zod": "^0.4.3",
     "mysql2": "^3.3.0",
     "zod": "^3.21.4"
   }

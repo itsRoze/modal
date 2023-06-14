@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   datetime,
   mysqlEnum,
@@ -5,6 +6,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
+import { space } from "../space/space.sql";
 import { timestamps } from "../utils/sql";
 
 export const user = mysqlTable("auth_user", {
@@ -33,3 +35,7 @@ export const user = mysqlTable("auth_user", {
 
   ...timestamps,
 });
+
+export const userRelations = relations(user, ({ many }) => ({
+  spaces: many(space),
+}));

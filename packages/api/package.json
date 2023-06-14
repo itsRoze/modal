@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@modal/auth": "workspace:*",
+    "@modal/common": "workspace:*",
     "@modal/db": "1.0.0",
     "@modal/stripe": "workspace:*",
-    "@modal/common": "workspace:*",
     "@trpc/client": "^10.25.1",
     "@trpc/server": "^10.25.1",
-    "drizzle-orm": "^0.25.4",
+    "drizzle-orm": "^0.26.5",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
   },
