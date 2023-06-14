@@ -9,13 +9,19 @@ import { db } from "../../index";
 
 export type Transaction = MySqlTransaction<
   PlanetscaleQueryResultHKT,
-  PlanetScalePreparedQueryHKT
+  PlanetScalePreparedQueryHKT,
+  Record<string, never>
 >;
 
 const TransactionContext = Context.create<{
   tx: Transaction;
   effects: (() => void | Promise<void>)[];
 }>();
+
+export type ContextProvideArg = {
+  tx: Transaction;
+  effects: (() => void | Promise<void>)[];
+};
 
 export function useTransaction<T>(callback: (trx: Transaction) => Promise<T>) {
   try {
@@ -25,8 +31,11 @@ export function useTransaction<T>(callback: (trx: Transaction) => Promise<T>) {
     return db.transaction(
       async (tx) => {
         const effects: (() => void | Promise<void>)[] = [];
-        TransactionContext.provide({ tx, effects: effects });
-        const result = await callback(tx);
+        TransactionContext.provide({
+          tx,
+          effects: effects,
+        } as ContextProvideArg);
+        const result = await callback(tx as Transaction);
         await Promise.all(effects.map((x) => x()));
         return result;
       },
