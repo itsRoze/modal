@@ -2,7 +2,8 @@ import { connect } from "@planetscale/database";
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { Config } from "sst/node/config";
 
-// import { counters } from "./schema";
+import * as spaceSchema from "./src/space/space.sql";
+import * as userSchena from "./src/user/user.sql";
 
 export const connection = connect({
   host: Config.DB_HOST,
@@ -10,7 +11,9 @@ export const connection = connect({
   password: Config.DB_PASSWORD,
 });
 
-export const db = drizzle(connection);
+export const db = drizzle(connection, {
+  schema: { ...spaceSchema, ...userSchena },
+});
 export type db = typeof db;
 
 export { User } from "./src/user";

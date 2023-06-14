@@ -46,3 +46,13 @@ export const fromID = zod(Info.shape.id, async (id) =>
       .then((rows) => rows[0]);
   }),
 );
+
+export const getAllForUserQuery = zod(Info.shape.userId, async (userId) =>
+  db.transaction(async (tx) => {
+    return tx.query.space
+      .findMany({
+        where: (space) => eq(space.userId, userId),
+      })
+      .execute();
+  }),
+);

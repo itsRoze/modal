@@ -91,6 +91,8 @@ interface ISidebar {
 }
 
 const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
+  const { data: spaces, isLoading: spacesIsLoading } =
+    api.space.getAllForUser.useQuery();
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
 
   return (
@@ -182,6 +184,23 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 </Link>
               </li>
             </ul>
+            {!spacesIsLoading && spaces && (
+              <ul className="my-2 flex flex-col items-stretch gap-2">
+                {spaces.map((userSpace) => (
+                  <li
+                    key={userSpace.id}
+                    className={cn({
+                      "flex font-medium text-gray-500 hover:bg-slate-200": true,
+                      "transition-colors duration-300": true,
+                      "mx-3 gap-4 rounded-md p-2": !collapsed,
+                      "mx-3 h-10 w-10 rounded-full p-2": collapsed,
+                    })}
+                  >
+                    <Link href="#">{userSpace.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </nav>
           <div
             className={cn({
