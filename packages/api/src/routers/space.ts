@@ -6,7 +6,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createSpaceSchema)
-    .mutation(async ({ input }) => {
-      return await create(input);
+    .mutation(async ({ ctx, input }) => {
+      return await create({ name: input.name, userId: ctx.session.userId });
     }),
 });

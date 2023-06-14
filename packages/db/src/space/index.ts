@@ -14,22 +14,27 @@ export { space } from "./space.sql";
 export const Info = createSelectSchema(space, {
   id: (schema) => schema.id.cuid2(),
   name: (schema) => schema.name.nonempty(),
+  userId: (schema) => schema.userId.nonempty(),
 });
 
 export type Info = z.infer<typeof Info>;
 
-export const create = zod(Info.pick({ name: true }), async (input) => {
-  const id = createId();
+export const create = zod(
+  Info.pick({ name: true, userId: true }),
+  async (input) => {
+    const id = createId();
 
-  return useTransaction(async (tx) => {
-    await tx.insert(space).values({
-      id,
-      name: input.name,
+    return useTransaction(async (tx) => {
+      await tx.insert(space).values({
+        id,
+        name: input.name,
+        userId: input.userId,
+      });
+
+      return id;
     });
-
-    return id;
-  });
-});
+  },
+);
 
 export const fromID = zod(Info.shape.id, async (id) =>
   db.transaction(async (tx) => {
