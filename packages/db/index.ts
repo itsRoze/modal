@@ -2,6 +2,7 @@ import { connect } from "@planetscale/database";
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { Config } from "sst/node/config";
 
+import * as projectSchema from "./src/project/project.sql";
 import * as spaceSchema from "./src/space/space.sql";
 import * as userSchena from "./src/user/user.sql";
 
@@ -12,7 +13,7 @@ export const connection = connect({
 });
 
 export const db = drizzle(connection, {
-  schema: { ...spaceSchema, ...userSchena },
+  schema: { ...projectSchema, ...spaceSchema, ...userSchena },
 });
 export type db = typeof db;
 

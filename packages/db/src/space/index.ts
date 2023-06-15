@@ -49,10 +49,20 @@ export const fromID = zod(Info.shape.id, async (id) =>
 
 export const getAllForUserQuery = zod(Info.shape.userId, async (userId) =>
   db.transaction(async (tx) => {
-    return tx.query.space
-      .findMany({
-        where: (space) => eq(space.userId, userId),
-      })
-      .execute();
+    return tx.query.space.findMany({
+      where: (space) => eq(space.userId, userId),
+      columns: {
+        id: true,
+        name: true,
+      },
+      with: {
+        projects: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
   }),
 );

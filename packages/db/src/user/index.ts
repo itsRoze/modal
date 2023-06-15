@@ -57,18 +57,3 @@ export const fromEmail = zod(Info.shape.email, async (email) =>
       .then((rows) => rows[0]);
   }),
 );
-
-export const getAllListsForUserQuery = zod(Info.shape.id, async (id) =>
-  db.transaction(async (tx) => {
-    return tx.query.user.findFirst({
-      where: (user) => eq(user.id, id),
-      with: {
-        spaces: {
-          with: {
-            projects: true,
-          },
-        },
-      },
-    });
-  }),
-);

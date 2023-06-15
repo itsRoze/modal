@@ -10,7 +10,7 @@ export const project = mysqlTable("project", {
   ...timestamps,
 
   name: varchar("name", { length: 255 }).notNull(),
-  spaceId: cuid("space_id").notNull(),
+  spaceId: cuid("space_id"),
   userId: varchar("user_id", {
     length: 15,
   }).notNull(),
