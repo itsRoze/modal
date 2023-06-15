@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
 
+import { project } from "../project/project.sql";
 import { user } from "../user/user.sql";
 import { id, timestamps } from "../utils/sql";
 
@@ -13,9 +14,10 @@ export const space = mysqlTable("space", {
   }).notNull(),
 });
 
-export const spaceRelations = relations(space, ({ one }) => ({
+export const spaceRelations = relations(space, ({ one, many }) => ({
   user: one(user, {
     fields: [space.userId],
     references: [user.id],
   }),
+  projects: many(project),
 }));
