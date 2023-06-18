@@ -1,8 +1,12 @@
 .main {
-  @apply mt-4 grid h-[calc(100vh-61px)] bg-white;
+  @apply mt-4 grid h-[calc(100vh-69px)] bg-white;
 }
 .main > article {
   @apply w-full flex-1 overflow-x-hidden;
+}
+
+.sidebar {
+  @apply h-[calc(100vh-69px)];
 }
 
 .sidebar-content {

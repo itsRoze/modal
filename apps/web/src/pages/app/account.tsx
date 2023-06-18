@@ -1,4 +1,8 @@
-import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+import {
+  type GetServerSideProps,
+  type GetServerSidePropsContext,
+  type InferGetServerSidePropsType,
+} from "next";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { api } from "@/utils/api";
@@ -6,7 +10,9 @@ import { auth } from "@modal/auth";
 
 import { type NextPageWithLayout } from "../_app";
 
-const AccountPage: NextPageWithLayout = () => {
+type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+
+const AccountPage: NextPageWithLayout<PageProps> = ({ session }) => {
   const { mutateAsync: createCheckoutSession } =
     api.stripe.createCheckoutSession.useMutation();
 
@@ -46,6 +52,7 @@ const AccountPage: NextPageWithLayout = () => {
         <Button onClick={handleManageSubscription}>Manage Subscription</Button>
         <Button onClick={handleLogout}>Logout</Button>
       </div>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
     </article>
   );
 };
@@ -66,7 +73,15 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
   return {
-    props: {},
+    props: {
+      session: {
+        sessionId: session.sessionId,
+        userId: session.userId,
+        state: session.state,
+        idlePeriodExpiresAt: JSON.stringify(session.idlePeriodExpiresAt),
+        activePeriodExpiresAt: JSON.stringify(session.activePeriodExpiresAt),
+      },
+    },
   };
 };
 
