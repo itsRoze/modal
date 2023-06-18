@@ -20,3 +20,4 @@ export type db = typeof db;
 export { User } from "./src/user";
 export { StripeEvent } from "./src/stripe_event";
 export { Space } from "./src/space";
+export { Project } from "./src/project";

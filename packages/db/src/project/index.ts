@@ -21,7 +21,9 @@ export const Info = createSelectSchema(project, {
 export type Info = z.infer<typeof Info>;
 
 export const create = zod(
-  Info.pick({ name: true, spaceId: true, userId: true }),
+  Info.pick({ name: true, spaceId: true, userId: true }).partial({
+    spaceId: true,
+  }),
   async (input) => {
     const id = createId();
 

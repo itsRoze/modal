@@ -1,8 +1,15 @@
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
-import { create, getAllForUserQuery } from "@modal/db/src/space";
+import { create, getAll, getAllWithProjectsQuery } from "@modal/db/src/space";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+
+type Space = Awaited<ReturnType<typeof getAll>>[number];
+
+export const filterSpaceForClient = (space: Space) => {
+  const { id, name } = space;
+  return { id, name };
+};
 
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
@@ -13,7 +20,16 @@ export const spaceRouter = createTRPCRouter({
   getAllForUser: protectedProcedure
     .input(z.optional(z.string()))
     .query(async ({ ctx, input }) => {
-      const result = await getAllForUserQuery(input ?? ctx.session.userId);
+      const result = await getAllWithProjectsQuery(input ?? ctx.session.userId);
+      return result ?? [];
+    }),
+  getSpacesForUser: protectedProcedure
+    .input(z.optional(z.string()))
+    .query(async ({ ctx, input }) => {
+      const result = (await getAll(input ?? ctx.session.userId)).map(
+        filterSpaceForClient,
+      );
+
       return result ?? [];
     }),
 });

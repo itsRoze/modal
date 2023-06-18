@@ -47,7 +47,7 @@ export const fromID = zod(Info.shape.id, async (id) =>
   }),
 );
 
-export const getAllForUserQuery = zod(Info.shape.userId, async (userId) =>
+export const getAllWithProjectsQuery = zod(Info.shape.userId, async (userId) =>
   db.transaction(async (tx) => {
     return tx.query.space.findMany({
       where: (space) => eq(space.userId, userId),
@@ -64,5 +64,16 @@ export const getAllForUserQuery = zod(Info.shape.userId, async (userId) =>
         },
       },
     });
+  }),
+);
+
+export const getAll = zod(Info.shape.userId, async (userId) =>
+  db.transaction(async (tx) => {
+    return tx
+      .select()
+      .from(space)
+      .where(eq(space.userId, userId))
+      .orderBy(space.name)
+      .execute();
   }),
 );

@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +25,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
@@ -220,11 +230,9 @@ const SpacesDisplay: React.FC<ISpacesDisplay> = ({ collapsed }) => {
         <li
           key={userSpace.id}
           className={cn({
-            "flex w-full py-2 pl-5 font-medium text-gray-500 hover:bg-slate-200":
-              true,
-            "transition-colors duration-300": true,
-            "gap-4 rounded-md": !collapsed,
-            "h-10 w-10 rounded-full ": collapsed,
+            "flex w-full py-2 pl-5 font-medium text-gray-500 ": true,
+            "gap-4": !collapsed,
+            "h-10 w-10": collapsed,
           })}
         >
           <SpaceSection userSpace={userSpace} />
@@ -249,10 +257,27 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
       open={open}
       onOpenChange={() => setOpen((val) => !val)}
     >
-      <CollapsibleTrigger className="flex w-full justify-between pr-2">
+      <CollapsibleTrigger
+        className={cn({
+          "flex w-full justify-between rounded-md pr-2 hover:bg-slate-200":
+            true,
+          "transition-colors duration-300": true,
+        })}
+      >
         <p>{userSpace.name}</p>
         <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
+      <CollapsibleContent className="py-2">
+        {userSpace.projects.map((userProject) => (
+          <Link
+            key={userProject.id}
+            href="#"
+            className="px-1 py-2 font-normal text-black"
+          >
+            {userProject.name}
+          </Link>
+        ))}
+      </CollapsibleContent>
     </Collapsible>
   );
 };
@@ -297,6 +322,31 @@ interface IProjectMenu {
 }
 
 const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
+  const { data: spaces, isLoading: spacesIsLoading } =
+    api.space.getSpacesForUser.useQuery();
+
+  const { mutate, isLoading } = api.project.create.useMutation({
+    onSuccess() {
+      setOpen(false);
+      form.reset();
+      void ctx.invalidate();
+      toast({
+        variant: "success",
+        title: "Project added!",
+      });
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
   type Inputs = z.infer<typeof createProjectSchema>;
 
   const form = useForm<Inputs>({
@@ -310,12 +360,12 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
   const onSubmit = (data: Inputs) => {
     const { spaceId, name } = data;
     const modifiedName = name.trim();
-    console.log({ spaceId, name: modifiedName });
+    mutate({ name: modifiedName, spaceId });
   };
 
   const onOpenChange = () => {
     setOpen((val) => !val);
-    // form.reset();
+    form.reset();
   };
 
   return (
@@ -333,13 +383,25 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Space</FormLabel>
-                  <FormControl>
-                    <Select {...field}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="None" />
                       </SelectTrigger>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    {spaces && !spacesIsLoading ? (
+                      <SelectContent className={`${inter.variable} font-sans`}>
+                        {spaces.map((userSpace) => (
+                          <SelectItem key={userSpace.id} value={userSpace.id}>
+                            {userSpace.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    ) : null}
+                  </Select>
                 </FormItem>
               )}
             />
@@ -361,9 +423,16 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
               )}
             />
             <div className="float-right mt-4">
-              <Button type="submit" disabled={!form.formState.isValid}>
-                Submit
-              </Button>
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating
+                </Button>
+              ) : (
+                <Button type="submit" disabled={!form.formState.isValid}>
+                  Submit
+                </Button>
+              )}
             </div>
           </form>
         </Form>
