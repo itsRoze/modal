@@ -1,5 +1,11 @@
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
-import { create, getAll, getAllWithProjectsQuery } from "@modal/db/src/space";
+import {
+  create,
+  fromID,
+  getAll,
+  getAllWithProjectsQuery,
+} from "@modal/db/src/space";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -31,5 +37,13 @@ export const spaceRouter = createTRPCRouter({
       );
 
       return result ?? [];
+    }),
+  getSpaceInfo: protectedProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      const result = await fromID(input);
+      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return result;
     }),
 });

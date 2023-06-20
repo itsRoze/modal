@@ -264,14 +264,19 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
           "transition-colors duration-300": true,
         })}
       >
-        <p>{userSpace.name}</p>
+        <Link
+          href={`/app/area/${encodeURIComponent(userSpace.id)}`}
+          className="flex-grow text-left"
+        >
+          {userSpace.name}
+        </Link>
         <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
       <CollapsibleContent className="py-2">
         {userSpace.projects.map((userProject) => (
           <Link
             key={userProject.id}
-            href="#"
+            href={`/app/project/${encodeURIComponent(userProject.id)}`}
             className="px-1 py-2 font-normal text-black"
           >
             {userProject.name}
