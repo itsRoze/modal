@@ -10,7 +10,7 @@ import { generateSSHelper } from "@modal/api";
 
 type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
-const AreaPage: NextPageWithLayout<PageProps> = ({ id }) => {
+const SpacePage: NextPageWithLayout<PageProps> = ({ id }) => {
   const { data, isLoading } = api.space.getSpaceInfo.useQuery(id);
   if (isLoading) return <LoadingPage />;
   if (!data && !isLoading) return <div>404</div>;
@@ -45,6 +45,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   };
 };
 
-AreaPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+SpacePage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
-export default AreaPage;
+export default SpacePage;
