@@ -265,7 +265,7 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
         })}
       >
         <Link
-          href={`/app/area/${encodeURIComponent(userSpace.id)}`}
+          href={`/app/space/${encodeURIComponent(userSpace.id)}`}
           className="flex-grow text-left"
         >
           {userSpace.name}

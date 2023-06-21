@@ -1,11 +1,13 @@
 import AppLayout from "@/components/layouts/app/AppLayout";
+import Title from "@/components/ui/title";
+import { Home } from "lucide-react";
 
 import { type NextPageWithLayout } from "../_app";
 
 const Dashboard: NextPageWithLayout = () => {
   return (
     <article>
-      <h1>Dashboard</h1>
+      <Title title="Dashboard" Icon={Home} iconColor="text-fuchsia-500" />
     </article>
   );
 };
