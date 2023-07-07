@@ -5,8 +5,12 @@ const connection = {
   password: process.env["SST_Secret_value_DB_PASSWORD"],
   host: process.env["SST_Secret_value_DB_HOST"],
 };
+
 export default {
-  out: "./migrations/",
   schema: "./src/**/*.sql.ts",
-  connectionString: `mysql://${connection.user}:${connection.password}@${connection.host}/modal-db?ssl={"rejectUnauthorized":true}`,
+  out: "./migrations/",
+  driver: "mysql2",
+  dbCredentials: {
+    connectionString: `mysql://${connection.user}:${connection.password}@${connection.host}/modal-db?ssl={"rejectUnauthorized":true}`,
+  },
 } satisfies Config;

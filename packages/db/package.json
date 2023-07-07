@@ -5,19 +5,20 @@
   "types": "./index.ts",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "db:push": "sst bind drizzle-kit push:mysql"
+    "db:push": "sst bind drizzle-kit push:mysql",
+    "db:studio": "sst bind drizzle-kit studio"
   },
   "devDependencies": {
     "@modal/eslint-config": "1.0.0",
-    "drizzle-kit": "0.18.1",
+    "drizzle-kit": "0.19.3",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@modal/auth": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.1",
     "@planetscale/database": "^1.7.0",
-    "drizzle-orm": "^0.26.5",
-    "drizzle-zod": "^0.4.3",
+    "drizzle-orm": "^0.27.0",
+    "drizzle-zod": "^0.4.4",
     "mysql2": "^3.3.0",
     "zod": "^3.21.4"
   }

@@ -16,7 +16,7 @@
     "@modal/stripe": "workspace:*",
     "@trpc/client": "^10.25.1",
     "@trpc/server": "^10.25.1",
-    "drizzle-orm": "^0.26.5",
+    "drizzle-orm": "^0.27.0",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
   },
