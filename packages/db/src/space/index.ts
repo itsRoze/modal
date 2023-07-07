@@ -36,6 +36,18 @@ export const create = zod(
   },
 );
 
+export const update = zod(
+  Info.pick({ id: true, name: true }),
+  async (input) => {
+    return useTransaction(async (tx) => {
+      await tx
+        .update(space)
+        .set({ name: input.name })
+        .where(eq(space.id, input.id));
+    });
+  },
+);
+
 export const fromID = zod(Info.shape.id, async (id) =>
   db.transaction(async (tx) => {
     return tx

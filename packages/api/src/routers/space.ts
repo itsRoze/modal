@@ -1,9 +1,11 @@
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
+import { editSpaceSchema } from "@modal/common/schemas/space/editSchema";
 import {
   create,
   fromID,
   getAll,
   getAllWithProjectsQuery,
+  update,
 } from "@modal/db/src/space";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -22,6 +24,11 @@ export const spaceRouter = createTRPCRouter({
     .input(createSpaceSchema)
     .mutation(async ({ ctx, input }) => {
       return await create({ name: input.name, userId: ctx.session.userId });
+    }),
+  update: protectedProcedure
+    .input(editSpaceSchema)
+    .mutation(async ({ input }) => {
+      return await update({ id: input.id, name: input.name });
     }),
   getAllForUser: protectedProcedure
     .input(z.optional(z.string()))
