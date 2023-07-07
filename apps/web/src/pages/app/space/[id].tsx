@@ -98,9 +98,9 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
   const { toast } = useToast();
 
   const { mutate, isLoading } = api.space.update.useMutation({
-    onSuccess() {
-      form.reset();
-      void ctx.space.invalidate();
+    onSuccess(newData) {
+      form.reset({ name: newData.name });
+      void ctx.invalidate();
       setOpen(false);
       toast({
         variant: "success",
@@ -120,7 +120,7 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
 
   const form = useForm<Inputs>({
     resolver: zodResolver(editSpaceSchema),
-    defaultValues: {
+    values: {
       id: data.id,
       name: data.name,
     },
@@ -131,13 +131,12 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
   const onSubmit = (formValues: Inputs) => {
     const { name } = formValues;
     const modifiedName = name.trim();
-    mutate({ id: formValues.id, name: modifiedName });
+    mutate({ id: data.id, name: modifiedName });
   };
 
   const onOpenChange = () => {
-    console.log(form.getValues());
     setOpen((val) => !val);
-    form.reset();
+    form.reset({ name: data.name });
   };
 
   return (
@@ -170,7 +169,6 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
                 {form.formState.errors.name?.message}
               </p>
             ) : null}
-            {/* <FormField control={form.control} name="id" /> */}
             <div className="float-right mt-4">
               {isLoading ? (
                 <Button disabled>

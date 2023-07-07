@@ -28,7 +28,11 @@ export const spaceRouter = createTRPCRouter({
   update: protectedProcedure
     .input(editSpaceSchema)
     .mutation(async ({ input }) => {
-      return await update({ id: input.id, name: input.name });
+      await update({ id: input.id, name: input.name });
+      const result = await fromID(input.id);
+      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return result;
     }),
   getAllForUser: protectedProcedure
     .input(z.optional(z.string()))
