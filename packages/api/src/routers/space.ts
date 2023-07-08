@@ -5,6 +5,7 @@ import {
   fromID,
   getAll,
   getAllWithProjectsQuery,
+  remove,
   update,
 } from "@modal/db/src/space";
 import { TRPCError } from "@trpc/server";
@@ -33,6 +34,11 @@ export const spaceRouter = createTRPCRouter({
       if (!result) throw new TRPCError({ code: "NOT_FOUND" });
 
       return result;
+    }),
+  remove: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      return await remove({ id: input.id });
     }),
   getAllForUser: protectedProcedure
     .input(z.optional(z.string()))

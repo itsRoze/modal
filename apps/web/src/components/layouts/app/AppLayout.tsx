@@ -272,7 +272,7 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
         </Link>
         <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="py-2">
+      <CollapsibleContent className="flex flex-col py-2">
         {userSpace.projects.map((userProject) => (
           <Link
             key={userProject.id}

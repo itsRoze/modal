@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -191,7 +192,33 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
   );
 };
 
-const DeleteForm: React.FC<IForm> = ({ open, setOpen }) => {
+const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
+  const { push } = useRouter();
+  const { toast } = useToast();
+  const ctx = api.useContext();
+  const { mutate, isLoading } = api.space.remove.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+      toast({
+        variant: "success",
+        title: "Space deleted!",
+      });
+      void push("/app");
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const onSubmit = () => {
+    setOpen(false);
+    mutate({ id: data.id });
+  };
+
   const onOpenChange = () => {
     setOpen((val) => !val);
   };
@@ -201,7 +228,32 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete</DialogTitle>
+          <DialogDescription>
+            This will delete all projects within this space too. Are you sure
+            you want to delete <span className="italic">{data.name}</span>?
+          </DialogDescription>
         </DialogHeader>
+        <div>
+          <div className="float-right space-x-4">
+            <Button
+              disabled={isLoading}
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            {isLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting
+              </Button>
+            ) : (
+              <Button variant="destructive" onClick={onSubmit}>
+                Delete
+              </Button>
+            )}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
