@@ -38,7 +38,7 @@ export const create = zod(
 );
 
 export const remove = zod(Info.pick({ id: true }), async (input) => {
-  await db.delete(project).where(eq(project.spaceId, input.id));
+  await db.delete(project).where(eq(project.id, input.id));
 });
 
 export const fromID = zod(Info.shape.id, async (id) =>
