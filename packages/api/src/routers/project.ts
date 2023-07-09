@@ -1,5 +1,5 @@
 import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
-import { create, fromID, remove } from "@modal/db/src/project";
+import { create, fromID, getAll, remove } from "@modal/db/src/project";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -27,5 +27,11 @@ export const projectRouter = createTRPCRouter({
       if (!result) throw new TRPCError({ code: "NOT_FOUND" });
 
       return result;
+    }),
+  getAllForUser: protectedProcedure
+    .input(z.optional(z.string()))
+    .query(async ({ ctx, input }) => {
+      const result = await getAll(input ?? ctx.session.userId);
+      return result ?? [];
     }),
 });

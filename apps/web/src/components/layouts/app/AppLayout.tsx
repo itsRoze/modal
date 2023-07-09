@@ -198,6 +198,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
             </li>
           </ul>
           <SpacesDisplay collapsed={collapsed} />
+          <ProjectsDisplay />
         </nav>
         <div
           className={cn({
@@ -211,6 +212,32 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ProjectsDisplay = () => {
+  const { data: projects, isLoading: projectsIsLoading } =
+    api.project.getAllForUser.useQuery();
+
+  if (!projects || projectsIsLoading) return null;
+
+  return (
+    <ul className="w-full pl-5">
+      {projects.map((userProject) => (
+        <li
+          key={userProject.id}
+          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+        >
+          <Link
+            key={userProject.id}
+            href={`/app/project/${encodeURIComponent(userProject.id)}`}
+            className="w-full font-normal text-black "
+          >
+            {userProject.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 };
 
@@ -277,7 +304,7 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
           <Link
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="px-1 py-2 font-normal text-black"
+            className="rounded-md px-1 py-2 font-normal text-black hover:bg-slate-200"
           >
             {userProject.name}
           </Link>
@@ -352,6 +379,7 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
     },
   });
 
+  const NO_SPACE = "None";
   type Inputs = z.infer<typeof createProjectSchema>;
 
   const form = useForm<Inputs>({
@@ -365,7 +393,11 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
   const onSubmit = (data: Inputs) => {
     const { spaceId, name } = data;
     const modifiedName = name.trim();
-    mutate({ name: modifiedName, spaceId });
+
+    mutate({
+      name: modifiedName,
+      spaceId: spaceId === NO_SPACE ? undefined : spaceId,
+    });
   };
 
   const onOpenChange = () => {
@@ -399,6 +431,7 @@ const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
                     </FormControl>
                     {spaces && !spacesIsLoading ? (
                       <SelectContent className={`${inter.variable} font-sans`}>
+                        <SelectItem value={NO_SPACE}>None</SelectItem>
                         {spaces.map((userSpace) => (
                           <SelectItem key={userSpace.id} value={userSpace.id}>
                             {userSpace.name}
