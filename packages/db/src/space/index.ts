@@ -5,7 +5,6 @@ import { type z } from "zod";
 
 import { db } from "../..";
 import { project } from "../project/project.sql";
-import { useTransaction } from "../utils/transaction";
 import { zod } from "../utils/zod";
 import { space } from "./space.sql";
 
@@ -24,33 +23,28 @@ export const create = zod(
   Info.pick({ name: true, userId: true }),
   async (input) => {
     const id = createId();
-
-    return useTransaction(async (tx) => {
-      await tx.insert(space).values({
-        id,
-        name: input.name,
-        userId: input.userId,
-      });
-
-      return id;
+    await db.insert(space).values({
+      id,
+      name: input.name,
+      userId: input.userId,
     });
+
+    return id;
   },
 );
 
 export const update = zod(
   Info.pick({ id: true, name: true }),
   async (input) => {
-    return useTransaction(async (tx) => {
-      await tx
-        .update(space)
-        .set({ name: input.name })
-        .where(eq(space.id, input.id));
-    });
+    await db
+      .update(space)
+      .set({ name: input.name })
+      .where(eq(space.id, input.id));
   },
 );
 
 export const remove = zod(Info.pick({ id: true }), async (input) => {
-  return useTransaction(async (tx) => {
+  await db.transaction(async (tx) => {
     await tx.delete(space).where(eq(space.id, input.id));
     await tx.delete(project).where(eq(project.spaceId, input.id));
   });

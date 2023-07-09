@@ -3,7 +3,6 @@ import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
 import { db } from "../..";
-import { useTransaction } from "../utils/transaction";
 import { zod } from "../utils/zod";
 import { stripeEvent } from "./stripe.sql";
 
@@ -36,10 +35,8 @@ export const create = zod(
     pending_webhooks: true,
   }),
   async (input) => {
-    return useTransaction(async (tx) => {
-      await tx.insert(stripeEvent).values(input);
-      return input.id;
-    });
+    await db.insert(stripeEvent).values(input);
+    return input.id;
   },
 );
 

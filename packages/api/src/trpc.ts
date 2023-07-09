@@ -70,6 +70,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return {
     ...createInnerTRPCContext({ session }),
+    req,
+    res,
   };
 };
 
@@ -116,6 +118,7 @@ export const publicProcedure = t.procedure;
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.userId) {
+    console.log("i am inside", ctx.session);
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "User not authenticated",

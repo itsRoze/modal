@@ -1,5 +1,5 @@
 import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
-import { create, fromID } from "@modal/db/src/project";
+import { create, fromID, remove } from "@modal/db/src/project";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -14,6 +14,11 @@ export const projectRouter = createTRPCRouter({
         userId: ctx.session.userId,
         spaceId: input.spaceId,
       });
+    }),
+  remove: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      return await remove({ id: input.id });
     }),
   getProjectInfo: protectedProcedure
     .input(z.string())
