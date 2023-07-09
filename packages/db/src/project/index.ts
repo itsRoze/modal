@@ -37,6 +37,16 @@ export const create = zod(
   },
 );
 
+export const update = zod(
+  Info.pick({ id: true, name: true, spaceId: true }),
+  async (input) => {
+    await db
+      .update(project)
+      .set({ name: input.name, spaceId: input.spaceId })
+      .where(eq(project.id, input.id));
+  },
+);
+
 export const remove = zod(Info.pick({ id: true }), async (input) => {
   await db.delete(project).where(eq(project.id, input.id));
 });

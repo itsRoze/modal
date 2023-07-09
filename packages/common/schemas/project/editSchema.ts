@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-export const editSpaceSchema = z.object({
+export const editProjectSchema = z.object({
+  id: z.string(),
   name: z
     .string()
-    .optional()
+    .nonempty()
     .refine(
       (value) => {
         if (value) {
@@ -15,5 +16,5 @@ export const editSpaceSchema = z.object({
         message: "Name must not be empty or whitespace only",
       },
     ),
-  spaceId: z.string().optional(),
+  spaceId: z.string().nullish(),
 });

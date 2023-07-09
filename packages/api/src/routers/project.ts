@@ -1,5 +1,6 @@
 import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
-import { create, fromID, getAll, remove } from "@modal/db/src/project";
+import { editProjectSchema } from "@modal/common/schemas/project/editSchema";
+import { create, fromID, getAll, remove, update } from "@modal/db/src/project";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -14,6 +15,19 @@ export const projectRouter = createTRPCRouter({
         userId: ctx.session.userId,
         spaceId: input.spaceId,
       });
+    }),
+  update: protectedProcedure
+    .input(editProjectSchema)
+    .mutation(async ({ input }) => {
+      await update({
+        id: input.id,
+        name: input.name,
+        spaceId: input.spaceId ?? null,
+      });
+      const result = await fromID(input.id);
+      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return result;
     }),
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))

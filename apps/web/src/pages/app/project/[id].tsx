@@ -11,16 +11,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Title from "@/components/ui/title";
 import { useToast } from "@/components/ui/use-toast";
 import { type NextPageWithLayout } from "@/pages/_app";
 import { api } from "@/utils/api";
+import { inter } from "@/utils/fonts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
+import { editProjectSchema } from "@modal/common/schemas/project/editSchema";
 import { Circle, Loader2, MoreHorizontal } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
 
 const ProjectPage: NextPageWithLayout = () => {
   const { query } = useRouter();
@@ -82,9 +102,60 @@ interface IForm extends IData {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditForm: React.FC<IForm> = ({ open, setOpen }) => {
+const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
+  const { data: spaces, isLoading: spacesIsLoading } =
+    api.space.getSpacesForUser.useQuery();
+
+  const { mutate, isLoading } = api.project.update.useMutation({
+    onSuccess() {
+      setOpen(false);
+      form.reset();
+      void ctx.invalidate();
+      toast({
+        variant: "success",
+        title: "Project saved!",
+      });
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const NO_SPACE = "None";
+
+  type Inputs = z.infer<typeof editProjectSchema>;
+
+  const form = useForm<Inputs>({
+    resolver: zodResolver(editProjectSchema),
+    values: {
+      id: data.id,
+      name: data.name,
+      spaceId: data.spaceId,
+    },
+  });
+
+  const nameValue = form.watch("name");
+
+  const onSubmit = (formValues: Inputs) => {
+    const { name, spaceId } = formValues;
+    const modifiedName = name.trim();
+    mutate({
+      id: data.id,
+      name: modifiedName,
+      spaceId: spaceId === NO_SPACE ? undefined : spaceId,
+    });
+  };
+
   const onOpenChange = () => {
     setOpen((val) => !val);
+    form.reset({ name: data.name });
   };
 
   return (
@@ -93,6 +164,78 @@ const EditForm: React.FC<IForm> = ({ open, setOpen }) => {
         <DialogHeader>
           <DialogTitle>Edit</DialogTitle>
         </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            {/* Project Space */}
+            <FormField
+              control={form.control}
+              name="spaceId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Space</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value ?? NO_SPACE}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="None" />
+                      </SelectTrigger>
+                    </FormControl>
+                    {spaces && !spacesIsLoading ? (
+                      <SelectContent className={`${inter.variable} font-sans`}>
+                        <SelectItem value={NO_SPACE}>None</SelectItem>
+                        {spaces.map((userSpace) => (
+                          <SelectItem key={userSpace.id} value={userSpace.id}>
+                            {userSpace.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    ) : null}
+                  </Select>
+                </FormItem>
+              )}
+            />
+
+            {/* Project Name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="My new category"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {form.formState.errors.name ? (
+              <p className="text-destructive text-sm font-medium">
+                {form.formState.errors.name?.message}
+              </p>
+            ) : null}
+            <div className="float-right mt-4">
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={!form.formState.isValid || !nameValue}
+                >
+                  Submit
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
