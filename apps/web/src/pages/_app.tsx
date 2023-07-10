@@ -5,6 +5,7 @@ import { api } from "@/utils/api";
 
 import "../styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { AppProvider } from "@/context/AppProvider";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -24,10 +25,10 @@ const MyApp = ({
   const layout = getLayout(<Component {...pageProps} />);
 
   return (
-    <>
+    <AppProvider>
       {layout}
       <Toaster />
-    </>
+    </AppProvider>
   );
 };
 

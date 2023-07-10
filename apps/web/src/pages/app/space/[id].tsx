@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
+import TodoList from "@/components/todolist";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -43,11 +45,13 @@ const SpacePage: NextPageWithLayout = () => {
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article>
+    <article className="relative">
       <div className="flex items-center">
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
       </div>
+      <TodoList />
+      <ActionBar />
     </article>
   );
 };
