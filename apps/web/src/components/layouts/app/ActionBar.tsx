@@ -1,22 +1,11 @@
 import useAppContext from "@/hooks/useAppContext";
-import { api } from "@/utils/api";
 import { Edit, Plus, Trash } from "lucide-react";
 
 const ActionBar = () => {
   const { setAddingNewTodo } = useAppContext();
-  const { mutate } = api.task.create.useMutation();
 
   const handleCreateClick = () => {
-    console.log("create");
-    setAddingNewTodo((val) => !val);
-    mutate({
-      name: "New Task",
-      deadline: null,
-      priority: null,
-      completedTime: null,
-      listType: "space",
-      listId: "uq2i032icsi5t39l9r8x2syl",
-    });
+    setAddingNewTodo(true);
   };
 
   const handleEditClick = () => {

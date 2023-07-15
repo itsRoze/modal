@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import useAppContext from "@/hooks/useAppContext";
+import { api } from "@/utils/api";
 import { classNames } from "@modal/common";
 import { CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Input } from "./ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useToast } from "./ui/use-toast";
 
 const TodoList = () => {
   return (
@@ -63,7 +67,7 @@ const Todo: React.FC<ITodo> = ({
   };
 
   return (
-    <button
+    <div
       onClick={handleOnSelect}
       className={classNames(
         "mb-2 flex w-full items-center rounded-lg",
@@ -139,7 +143,7 @@ const Todo: React.FC<ITodo> = ({
           </p>
         </div>
       </div>
-    </button>
+    </div>
   );
 };
 
@@ -148,24 +152,68 @@ type FormValues = {
 };
 
 const NewTodo = () => {
-  const { addingNewTodo } = useAppContext();
+  const ctx = api.useContext();
+  const { toast } = useToast();
 
-  const { register, handleSubmit, setFocus } = useForm<FormValues>();
-  const onSubmit = (data: FormValues) => console.log(data);
+  const { mutate } = api.task.create.useMutation({
+    onSuccess() {
+      form.reset();
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const { setAddingNewTodo, addingNewTodo, listInfo } = useAppContext();
+  const form = useForm<FormValues>();
+  const onSubmit = (data: FormValues) => {
+    if (!listInfo) return;
+    console.log("data", data);
+
+    mutate({
+      name: data.name,
+      listType: listInfo.type,
+      listId: listInfo.id,
+    });
+
+    form.reset();
+    setAddingNewTodo(false);
+  };
 
   useEffect(() => {
     if (addingNewTodo) {
-      setFocus("name");
+      form.setFocus("name");
     }
-  }, [addingNewTodo, setFocus]);
+  }, [addingNewTodo, form]);
+
+  if (!listInfo) return null;
 
   if (!addingNewTodo) return null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name")} placeholder="Name" />
-      <input type="submit" />
-    </form>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        onBlur={form.handleSubmit(onSubmit)}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="New Task" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   );
 };
 

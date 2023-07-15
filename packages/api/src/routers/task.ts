@@ -9,9 +9,11 @@ export const taskRouter = createTRPCRouter({
         name: true,
         deadline: true,
         priority: true,
-        completedTime: true,
         listType: true,
         listId: true,
+      }).partial({
+        deadline: true,
+        priority: true,
       }),
     )
     .mutation(async ({ ctx, input }) => {

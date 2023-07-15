@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/popover";
 import Title from "@/components/ui/title";
 import { useToast } from "@/components/ui/use-toast";
+import useAppContext from "@/hooks/useAppContext";
 import { type NextPageWithLayout } from "@/pages/_app";
 import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,8 +38,17 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
 const SpacePage: NextPageWithLayout = () => {
+  const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
+
+  useEffect(() => {
+    setListInfo({ type: "space", id });
+
+    return () => {
+      setListInfo(undefined);
+    };
+  }, [id, setListInfo]);
 
   const { data, isLoading } = api.space.getSpaceInfo.useQuery(id);
   if (isLoading) return <LoadingPage />;

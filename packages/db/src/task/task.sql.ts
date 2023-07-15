@@ -2,10 +2,10 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   date,
+  index,
   mysqlEnum,
   mysqlTable,
   primaryKey,
-  uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
 
@@ -31,8 +31,8 @@ export const task = mysqlTable(
   },
   (task) => ({
     primary: primaryKey(task.id),
-    list: uniqueIndex("list").on(task.listType, task.listId),
-    user: uniqueIndex("user").on(task.userId),
+    list: index("list").on(task.listType, task.listId),
+    user: index("user").on(task.userId),
   }),
 );
 
