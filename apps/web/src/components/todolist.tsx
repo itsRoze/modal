@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
+import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
 import { CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
+import { LoadingPage } from "./loading";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Input } from "./ui/input";
 import {
@@ -15,37 +17,78 @@ import {
 } from "./ui/tooltip";
 import { useToast } from "./ui/use-toast";
 
-const TodoList = () => {
+interface ITodoList {
+  listType: "space" | "project";
+  listId: string;
+}
+
+const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
+  const { data: tasks, isLoading } = api.task.getAllForUser.useQuery();
+  if (isLoading) return <LoadingPage />;
+  if (!tasks && !isLoading) return <div>404</div>;
+
   return (
     <div className="px-4">
-      <Todo id="1" priority={true} name="Walk dog" />
-      <Todo id="2" priority={false} name="Buy groceries" />
-      <Todo id="3" priority={false} name="Complete math set" />
-      <NewTodo />
+      {tasks.map((task) => (
+        <Todo key={task.id} task={task} />
+      ))}
+      <NewTodo listId={listId} listType={listType} />
     </div>
   );
 };
 
 interface ITodo {
-  id: string;
-  priority: boolean;
-  name: string;
+  task: RouterOutputs["task"]["getAllForUser"][number];
   displayPriority?: boolean;
   selectable?: boolean;
 }
 
 const Todo: React.FC<ITodo> = ({
-  id,
-  priority,
-  name,
+  task,
   displayPriority = true,
   selectable = true,
 }) => {
+  const { id, name, priority } = task;
+
+  const { selectedTodo, setSelectedTodo } = useAppContext();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isSelected, setIsSelected] = useState(false);
   const [checked, setChecked] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [checkHovering, setCheckHovering] = useState(false);
+
+  // Effect for setting the selected task in the app context
+  useEffect(() => {
+    // if currently selected, update context
+    if (isSelected) setSelectedTodo(task);
+    // if unselecting and not selecting another task, update context
+    else if (selectedTodo?.id === task.id) {
+      setSelectedTodo(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelected]);
+
+  // Effect for updating current state isSelected
+  useEffect(() => {
+    if (selectedTodo) {
+      // if selecting another task, unselect this task
+      if (selectedTodo.id !== task.id && isSelected) {
+        setIsSelected(false);
+      }
+    } else setIsSelected(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTodo]);
+
+  // Clear the interval when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      setSelectedTodo(undefined);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOnSelect = () => {
     if (selectable) setIsSelected((current) => !current);
@@ -151,7 +194,12 @@ type FormValues = {
   name: string;
 };
 
-const NewTodo = () => {
+interface INewTodo {
+  listType: "space" | "project";
+  listId: string;
+}
+
+const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   const ctx = api.useContext();
   const { toast } = useToast();
 
@@ -177,8 +225,8 @@ const NewTodo = () => {
 
     mutate({
       name: data.name,
-      listType: listInfo.type,
-      listId: listInfo.id,
+      listType,
+      listId,
     });
 
     form.reset();

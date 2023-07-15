@@ -1,4 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
+import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
@@ -44,4 +45,15 @@ export const create = zod(
 
     return id;
   },
+);
+
+export const getAll = zod(Info.shape.userId, async (userId) =>
+  db.transaction(async (tx) => {
+    return tx
+      .select()
+      .from(task)
+      .where(eq(task.userId, userId))
+      .orderBy(task.timeUpdated)
+      .execute();
+  }),
 );
