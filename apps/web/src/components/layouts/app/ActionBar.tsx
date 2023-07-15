@@ -1,16 +1,35 @@
+import { useToast } from "@/components/ui/use-toast";
 import useAppContext from "@/hooks/useAppContext";
+import { api } from "@/utils/api";
 import { classNames } from "@modal/common";
 import { Plus, Trash } from "lucide-react";
 
 const ActionBar = () => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
   const { setAddingNewTodo, selectedTodo } = useAppContext();
+  const { mutate, isLoading } = api.task.remove.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
 
   const handleCreateClick = () => {
     setAddingNewTodo(true);
   };
 
   const handleDeleteClick = () => {
-    console.log("delete");
+    if (selectedTodo) {
+      mutate(selectedTodo.id);
+    }
   };
 
   return (

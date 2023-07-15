@@ -1,4 +1,10 @@
-import { Info, create, getAll } from "@modal/db/src/task";
+import {
+  Info,
+  create,
+  getAll,
+  getAllForList,
+  remove,
+} from "@modal/db/src/task";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -19,6 +25,17 @@ export const taskRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       return await create({ ...input, userId: ctx.session.userId });
+    }),
+  remove: protectedProcedure
+    .input(Info.shape.id)
+    .mutation(async ({ input }) => {
+      return await remove(input);
+    }),
+  getAllForList: protectedProcedure
+    .input(Info.pick({ listId: true, listType: true }))
+    .query(async ({ input }) => {
+      const result = await getAllForList(input);
+      return result ?? [];
     }),
   getAllForUser: protectedProcedure
     .input(z.optional(Info.shape.userId))

@@ -1,10 +1,11 @@
 import { createId } from "@paralleldrive/cuid2";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
 import { db } from "../..";
 import { project } from "../project/project.sql";
+import { task } from "../task/task.sql";
 import { zod } from "../utils/zod";
 import { space } from "./space.sql";
 
@@ -47,6 +48,9 @@ export const remove = zod(Info.pick({ id: true }), async (input) => {
   await db.transaction(async (tx) => {
     await tx.delete(space).where(eq(space.id, input.id));
     await tx.delete(project).where(eq(project.spaceId, input.id));
+    await tx
+      .delete(task)
+      .where(and(eq(task.listType, "space"), eq(task.listId, input.id)));
   });
 });
 

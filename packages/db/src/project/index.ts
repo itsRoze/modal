@@ -4,6 +4,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
 import { db } from "../..";
+import { task } from "../task/task.sql";
 import { zod } from "../utils/zod";
 import { project } from "./project.sql";
 
@@ -48,7 +49,12 @@ export const update = zod(
 );
 
 export const remove = zod(Info.pick({ id: true }), async (input) => {
-  await db.delete(project).where(eq(project.id, input.id));
+  await db.transaction(async (tx) => {
+    await tx.delete(project).where(eq(project.id, input.id));
+    await tx
+      .delete(task)
+      .where(and(eq(task.listType, "project"), eq(task.listId, input.id)));
+  });
 });
 
 export const fromID = zod(Info.shape.id, async (id) =>

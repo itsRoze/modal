@@ -60,7 +60,7 @@ const SpacePage: NextPageWithLayout = () => {
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
       </div>
-      <TodoList />
+      <TodoList listType="space" listId={id} />
       <ActionBar />
     </article>
   );

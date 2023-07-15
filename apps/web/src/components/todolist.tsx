@@ -23,7 +23,18 @@ interface ITodoList {
 }
 
 const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
-  const { data: tasks, isLoading } = api.task.getAllForUser.useQuery();
+  const { setSelectedTodo } = useAppContext();
+
+  const { data: tasks, isLoading } = api.task.getAllForList.useQuery({
+    listId,
+    listType,
+  });
+
+  useEffect(() => {
+    // Reset selected if the list changes
+    setSelectedTodo(undefined);
+  }, [listType, listId, setSelectedTodo]);
+
   if (isLoading) return <LoadingPage />;
   if (!tasks && !isLoading) return <div>404</div>;
 
@@ -60,7 +71,9 @@ const Todo: React.FC<ITodo> = ({
   // Effect for setting the selected task in the app context
   useEffect(() => {
     // if currently selected, update context
-    if (isSelected) setSelectedTodo(task);
+    if (isSelected) {
+      setSelectedTodo(task);
+    }
     // if unselecting and not selecting another task, update context
     else if (selectedTodo?.id === task.id) {
       setSelectedTodo(undefined);
@@ -72,19 +85,19 @@ const Todo: React.FC<ITodo> = ({
   useEffect(() => {
     if (selectedTodo) {
       // if selecting another task, unselect this task
-      if (selectedTodo.id !== task.id && isSelected) {
+      if (selectedTodo.id !== id) {
         setIsSelected(false);
       }
-    } else setIsSelected(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTodo]);
+    } else {
+      setIsSelected(false);
+    }
+  }, [selectedTodo, id]);
 
   // Clear the interval when the component unmounts
   useEffect(() => {
     const handleEscapeKeyPress = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        if (selectable && isSelected && event.key === "Escape")
-          setIsSelected(false);
+        setIsSelected(false);
       }
     };
 
@@ -97,9 +110,8 @@ const Todo: React.FC<ITodo> = ({
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      setSelectedTodo(undefined);
     };
-  }, [setSelectedTodo, selectable, isSelected]);
+  }, [selectable, isSelected]);
 
   const handleOnSelect = () => {
     if (selectable) setIsSelected((current) => !current);
@@ -231,7 +243,6 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   const form = useForm<FormValues>();
   const onSubmit = (data: FormValues) => {
     if (!listInfo) return;
-    console.log("data", data);
 
     mutate({
       name: data.name,
