@@ -1,15 +1,12 @@
 import useAppContext from "@/hooks/useAppContext";
-import { Edit, Plus, Trash } from "lucide-react";
+import { classNames } from "@modal/common";
+import { Plus, Trash } from "lucide-react";
 
 const ActionBar = () => {
-  const { setAddingNewTodo } = useAppContext();
+  const { setAddingNewTodo, selectedTodo } = useAppContext();
 
   const handleCreateClick = () => {
     setAddingNewTodo(true);
-  };
-
-  const handleEditClick = () => {
-    console.log("edit");
   };
 
   const handleDeleteClick = () => {
@@ -27,17 +24,16 @@ const ActionBar = () => {
           >
             <Plus size={24} />
           </button>
-          {/* Edit */}
-          <button
-            onClick={handleEditClick}
-            className="rounded-lg p-1 hover:bg-slate-100"
-          >
-            <Edit size={24} />
-          </button>
           {/* Trash */}
           <button
+            disabled={!selectedTodo}
             onClick={handleDeleteClick}
-            className="rounded-lg p-1 hover:bg-slate-100"
+            className={classNames(
+              "rounded-lg p-1",
+              selectedTodo
+                ? "hover:bg-slate-100"
+                : "cursor-not-allowed opacity-50",
+            )}
           >
             <Trash size={24} />
           </button>

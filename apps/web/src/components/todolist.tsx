@@ -81,19 +81,29 @@ const Todo: React.FC<ITodo> = ({
 
   // Clear the interval when the component unmounts
   useEffect(() => {
+    const handleEscapeKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        if (selectable && isSelected && event.key === "Escape")
+          setIsSelected(false);
+      }
+    };
+
+    // Add event listener when the component mounts
+    document.addEventListener("keydown", handleEscapeKeyPress);
+
+    // Remove event listener when the component unmounts
     return () => {
+      document.removeEventListener("keydown", handleEscapeKeyPress);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
       setSelectedTodo(undefined);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setSelectedTodo, selectable, isSelected]);
 
   const handleOnSelect = () => {
     if (selectable) setIsSelected((current) => !current);
   };
-
   const handleOnCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsSelected(false);
     setChecked((value) => !value);
