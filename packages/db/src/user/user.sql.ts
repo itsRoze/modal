@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 import { space } from "../space/space.sql";
+import { task } from "../task/task.sql";
 import { timestamps } from "../utils/sql";
 
 export const user = mysqlTable("auth_user", {
@@ -38,4 +39,5 @@ export const user = mysqlTable("auth_user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   spaces: many(space),
+  tasks: many(task),
 }));

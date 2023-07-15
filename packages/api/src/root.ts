@@ -2,6 +2,7 @@ import { exampleRouter } from "./routers/example";
 import { projectRouter } from "./routers/project";
 import { spaceRouter } from "./routers/space";
 import { stripeRouter } from "./routers/stripe";
+import { taskRouter } from "./routers/task";
 import { userRouter } from "./routers/user";
 import { createTRPCRouter } from "./trpc";
 
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   stripe: stripeRouter,
   space: spaceRouter,
   project: projectRouter,
+  task: taskRouter,
 });
 
 // export type definition of API
