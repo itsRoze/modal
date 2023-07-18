@@ -2,6 +2,7 @@ import {
   Info,
   create,
   getAll,
+  getAllCompleted,
   getAllForList,
   remove,
   update,
@@ -65,5 +66,11 @@ export const taskRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const results = await getAll(input ?? ctx.session.userId);
       return results ?? [];
+    }),
+  getAllCompletedForUser: protectedProcedure
+    .input(z.optional(Info.shape.userId))
+    .query(async ({ ctx, input }) => {
+      const result = await getAllCompleted(input ?? ctx.session.userId);
+      return result ?? [];
     }),
 });

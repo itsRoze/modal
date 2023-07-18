@@ -239,6 +239,12 @@ importers:
 
   packages/common:
     dependencies:
+      '@modal/db':
+        specifier: workspace:*
+        version: link:../db
+      dayjs:
+        specifier: ^1.11.9
+        version: 1.11.9
       zod:
         specifier: ^3.21.4
         version: 3.21.4

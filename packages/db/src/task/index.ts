@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
@@ -51,7 +51,7 @@ export const remove = zod(
   Info.shape.id,
   async (taskId) =>
     await db.transaction(async (tx) => {
-      await tx.delete(task).where(eq(task.id, taskId));
+      await tx.delete(task).where(eq(task.id, taskId)).execute();
     }),
 );
 
@@ -75,7 +75,7 @@ export const update = zod(
   async (input) =>
     await db.transaction(async (tx) => {
       const { id, ...rest } = input;
-      await tx.update(task).set(rest).where(eq(task.id, id));
+      return await tx.update(task).set(rest).where(eq(task.id, id)).execute();
     }),
 );
 
@@ -107,4 +107,16 @@ export const getAllForList = zod(
         .orderBy(task.timeUpdated)
         .execute();
     }),
+);
+
+export const getAllCompleted = zod(Info.shape.userId, async (userId) =>
+  db.transaction(async (tx) => {
+    return tx
+      .select()
+      .from(task)
+      .where(and(eq(task.userId, userId), isNotNull(task.completedTime)))
+      .orderBy(task.timeUpdated)
+      .limit(50)
+      .execute();
+  }),
 );
