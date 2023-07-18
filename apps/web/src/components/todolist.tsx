@@ -39,7 +39,7 @@ const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
   if (!tasks && !isLoading) return <div>404</div>;
 
   return (
-    <div className="px-4">
+    <div>
       {tasks.map((task) => (
         <Todo key={task.id} task={task} />
       ))}

@@ -35,7 +35,7 @@
     "framer-motion": "^10.12.10",
     "install": "^0.13.0",
     "lucia-auth": "^1.5.0",
-    "lucide-react": "^0.216.0",
+    "lucide-react": "^0.261.0",
     "micro": "^10.0.1",
     "next": "^13.4.1",
     "react": "^18.2.0",

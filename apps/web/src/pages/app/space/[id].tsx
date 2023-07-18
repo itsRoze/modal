@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import Divider from "@/components/divider";
 import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
@@ -33,7 +35,7 @@ import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { editSpaceSchema } from "@modal/common/schemas/space/editSchema";
-import { Boxes, Loader2, MoreHorizontal } from "lucide-react";
+import { Boxes, GanttChartSquare, Loader2, MoreHorizontal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -60,7 +62,18 @@ const SpacePage: NextPageWithLayout = () => {
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
       </div>
-      <TodoList listType="space" listId={id} />
+      <div className="ml-5">
+        <div className="py-2">
+          <h2 className="text-gray-500">Projects</h2>
+          <Divider widthMargin="mx-1" heightPadding="my-2" />
+          <ProjectsView projects={data.projects} />
+        </div>
+        <div className="py-2">
+          <h2 className="text-gray-500">Tasks</h2>
+          <Divider widthMargin="mx-1" heightPadding="my-2" />
+          <TodoList listType="space" listId={id} />
+        </div>
+      </div>
       <ActionBar />
     </article>
   );
@@ -270,6 +283,34 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+interface IProjects {
+  projects: RouterOutputs["space"]["getSpaceInfo"]["projects"];
+}
+
+const ProjectsView: React.FC<IProjects> = ({ projects }) => {
+  if (projects.length === 0) return <p className="ml-5">No projects</p>;
+  return (
+    <>
+      <ul>
+        {projects.map((project) => (
+          <li
+            key={project.id}
+            className="flex w-full rounded-md px-2 py-2 text-lg hover:bg-slate-50"
+          >
+            <Link
+              href={`/app/project/${encodeURIComponent(project.id)}`}
+              className="flex items-center gap-2 w-full"
+            >
+              <GanttChartSquare size={28} />
+              {project.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 

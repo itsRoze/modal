@@ -3,6 +3,7 @@ import { editSpaceSchema } from "@modal/common/schemas/space/editSchema";
 import {
   create,
   fromID,
+  fromIdWithProjects,
   getAll,
   getAllWithProjectsQuery,
   remove,
@@ -58,7 +59,7 @@ export const spaceRouter = createTRPCRouter({
   getSpaceInfo: protectedProcedure
     .input(z.string())
     .query(async ({ input }) => {
-      const result = await fromID(input);
+      const result = await fromIdWithProjects(input);
       if (!result) throw new TRPCError({ code: "NOT_FOUND" });
 
       return result;

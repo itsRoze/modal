@@ -65,6 +65,26 @@ export const fromID = zod(Info.shape.id, async (id) =>
   }),
 );
 
+export const fromIdWithProjects = zod(Info.shape.id, async (id) =>
+  db.transaction(async (tx) => {
+    return tx.query.space.findFirst({
+      where: (space) => eq(space.id, id),
+      columns: {
+        id: true,
+        name: true,
+      },
+      with: {
+        projects: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }),
+);
+
 export const getAllWithProjectsQuery = zod(Info.shape.userId, async (userId) =>
   db.transaction(async (tx) => {
     return tx.query.space.findMany({

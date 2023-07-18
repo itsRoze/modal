@@ -117,8 +117,8 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
       lucide-react:
-        specifier: ^0.216.0
-        version: 0.216.0(react@18.2.0)
+        specifier: ^0.261.0
+        version: 0.261.0(react@18.2.0)
       micro:
         specifier: ^10.0.1
         version: 10.0.1
@@ -255,6 +255,9 @@ importers:
       '@modal/auth':
         specifier: workspace:*
         version: link:../auth
+      '@modal/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@paralleldrive/cuid2':
         specifier: ^2.2.1
         version: 2.2.1
@@ -274,9 +277,6 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@modal/eslint-config':
-        specifier: 1.0.0
-        version: link:../eslint-config
       drizzle-kit:
         specifier: 0.19.3
         version: 0.19.3
@@ -7453,8 +7453,8 @@ packages:
     resolution: {integrity: sha512-lLgLvyJcCjK+dYwJrgzPWGjT+YGgl7JF13TahXKozf/C3KkX/fFzOAUkY0h5xnm585lJE5BBrQIXAXa+rDzW6g==}
     dev: false
 
-  /lucide-react@0.216.0(react@18.2.0):
-    resolution: {integrity: sha512-PGWXs6JXI/08rhfkmj/joji0MAKDCcms44j0LYILO4J36AWqKhgjjaZ6WECRSyZ9TQe5gOrAR0g38O8cKrQngw==}
+  /lucide-react@0.261.0(react@18.2.0):
+    resolution: {integrity: sha512-gzxEvIxf8+hGbm2ZQU/VP5TxTcnTu3ODDmYoS3a53wC4gkW9ukxmexKjTcZUzz3q8ema+DMwmPypx9Z0Bvvxog==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:

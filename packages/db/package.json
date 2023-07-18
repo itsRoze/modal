@@ -5,6 +5,9 @@
   "types": "./index.ts",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "type-check": "tsc --noEmit",
     "db:push": "sst bind drizzle-kit push:mysql",
     "db:studio": "sst bind drizzle-kit studio"
   },
@@ -14,6 +17,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@modal/eslint-config": "workspace:*",
     "@modal/auth": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.1",
     "@planetscale/database": "^1.7.0",

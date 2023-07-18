@@ -4,6 +4,7 @@ import { Config } from "sst/node/config";
 
 import * as projectSchema from "./src/project/project.sql";
 import * as spaceSchema from "./src/space/space.sql";
+import * as taskSchema from "./src/task/task.sql";
 import * as userSchena from "./src/user/user.sql";
 
 export const connection = connect({
@@ -13,7 +14,7 @@ export const connection = connect({
 });
 
 export const db = drizzle(connection, {
-  schema: { ...projectSchema, ...spaceSchema, ...userSchena },
+  schema: { ...projectSchema, ...spaceSchema, ...userSchena, ...taskSchema },
 });
 export type db = typeof db;
 
