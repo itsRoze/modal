@@ -4,6 +4,7 @@ import {
   getAll,
   getAllForList,
   remove,
+  update,
 } from "@modal/db/src/task";
 import { z } from "zod";
 
@@ -30,6 +31,28 @@ export const taskRouter = createTRPCRouter({
     .input(Info.shape.id)
     .mutation(async ({ input }) => {
       return await remove(input);
+    }),
+  update: protectedProcedure
+    .input(
+      Info.pick({
+        id: true,
+        name: true,
+        listId: true,
+        listType: true,
+        deadline: true,
+        completedTime: true,
+        priority: true,
+      }).partial({
+        name: true,
+        listId: true,
+        listType: true,
+        deadline: true,
+        completedTime: true,
+        priority: true,
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return await update(input);
     }),
   getAllForList: protectedProcedure
     .input(Info.pick({ listId: true, listType: true }))

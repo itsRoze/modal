@@ -3,6 +3,7 @@ import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
+import dayjs from "dayjs";
 import { CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -68,6 +69,24 @@ const Todo: React.FC<ITodo> = ({
   const [hovering, setHovering] = useState(false);
   const [checkHovering, setCheckHovering] = useState(false);
 
+  const ctx = api.useContext();
+  const { toast } = useToast();
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      toast({
+        title: "Task completed!",
+        variant: "success",
+      });
+      void ctx.invalidate();
+    },
+    onError() {
+      toast({
+        title: "Uh oh, something went wrong!",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Effect for setting the selected task in the app context
   useEffect(() => {
     // if currently selected, update context
@@ -124,7 +143,7 @@ const Todo: React.FC<ITodo> = ({
       if (timerRef.current) clearTimeout(timerRef.current);
 
       timerRef.current = setTimeout(() => {
-        console.log("mutate");
+        mutate({ id, completedTime: dayjs().toDate() });
       }, 1000);
     } else {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -240,7 +259,11 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   });
 
   const { setAddingNewTodo, addingNewTodo, listInfo } = useAppContext();
-  const form = useForm<FormValues>();
+  const form = useForm<FormValues>({
+    defaultValues: {
+      name: "New Task"
+    }
+  });
   const onSubmit = (data: FormValues) => {
     if (!listInfo) return;
 

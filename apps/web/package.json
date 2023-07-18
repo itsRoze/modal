@@ -32,6 +32,7 @@
     "@trpc/server": "^10.25.1",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
+    "dayjs": "^1.11.9",
     "framer-motion": "^10.12.10",
     "install": "^0.13.0",
     "lucia-auth": "^1.5.0",
