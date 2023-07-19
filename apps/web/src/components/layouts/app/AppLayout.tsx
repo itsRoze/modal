@@ -127,7 +127,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
       <div
         id="sidebar-container"
         className={cn({
-          "relative z-20 h-full rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
+          "relative z-20 h-full overflow-y-scroll rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
             true,
         })}
       >
@@ -202,7 +202,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
         </nav>
         <div
           className={cn({
-            "absolute bottom-0 mb-2 ml-2": true,
+            "fixed bottom-3 mb-2 ml-2": true,
             "opacity-0": collapsed,
             "transition-opacity delay-0 duration-0": true,
             "opacity-100": !collapsed,
