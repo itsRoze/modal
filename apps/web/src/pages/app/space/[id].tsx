@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Divider from "@/components/divider";
+import ProjectIcon from "@/components/icons/project";
 import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
@@ -35,7 +36,7 @@ import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { editSpaceSchema } from "@modal/common/schemas/space/editSchema";
-import { Boxes, GanttChartSquare, Loader2, MoreHorizontal } from "lucide-react";
+import { Boxes, Loader2, MoreHorizontal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -302,9 +303,9 @@ const ProjectsView: React.FC<IProjects> = ({ projects }) => {
           >
             <Link
               href={`/app/project/${encodeURIComponent(project.id)}`}
-              className="flex items-center gap-2 w-full"
+              className="flex items-center gap-2"
             >
-              <GanttChartSquare size={28} />
+              <ProjectIcon size={28} />
               {project.name}
             </Link>
           </li>

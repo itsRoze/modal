@@ -489,7 +489,7 @@ const SpaceMenu: React.FC<ISpaceMenu> = ({ open, setOpen }) => {
   const { mutate, isLoading } = api.space.create.useMutation({
     onSuccess() {
       form.reset();
-      void ctx.space.invalidate();
+      void ctx.invalidate();
       setOpen(false);
       toast({
         variant: "success",

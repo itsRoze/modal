@@ -22,4 +22,30 @@ export const userRouter = createTRPCRouter({
 
     return user.subscriptionStatus;
   }),
+  getLists: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+
+    return await db.transaction(async (tx) => {
+      const spaces = await tx.query.space.findMany({
+        where: (space) => eq(space.userId, session.userId),
+      });
+      const spacesWithType = spaces.map((userSpace) => ({
+        ...userSpace,
+        type: "space",
+      }));
+
+      const projects = await tx.query.project.findMany({
+        where: (project) => eq(project.userId, session.userId),
+      });
+
+      const projectsWithType = projects.map((userProject) => ({
+        ...userProject,
+        type: "project",
+      }));
+
+      return [...spacesWithType, ...projectsWithType].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+    });
+  }),
 });

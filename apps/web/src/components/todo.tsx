@@ -13,10 +13,23 @@ import {
 import dayjs from "dayjs";
 import { CheckIcon, StarIcon } from "lucide-react";
 
+import ProjectIcon from "./icons/project";
+import { SpaceIcon } from "./icons/space";
+import { buttonVariants } from "./ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { useToast } from "./ui/use-toast";
+import { inter } from "@/utils/fonts";
+
+type TaskType = RouterOutputs["task"]["getAllForUser"][number];
 
 interface ITodo {
-  task: RouterOutputs["task"]["getAllForUser"][number];
+  task: TaskType;
   displayPriority?: boolean;
   selectable?: boolean;
   initialChecked?: boolean;
@@ -131,83 +144,182 @@ const Todo: React.FC<ITodo> = ({
 
   return (
     <div
-      onClick={handleOnSelect}
       className={classNames(
-        "mb-2 flex w-full items-center rounded-lg",
+        "mb-2 rounded-lg",
         isSelected && !checkHovering
           ? "bg-slate-100 shadow-sm shadow-slate-300"
           : "",
         !isSelected && hovering && selectable ? "bg-slate-50" : "",
       )}
     >
-      {/* Checkbox */}
-      <fieldset className="z-0">
-        <label
-          htmlFor={`check-box-${id}`}
-          className="pointer-events-none relative flex items-center rounded-full p-2 hover:bg-slate-100"
-        >
-          <input
-            id={`check-box-${id}`}
-            type={"checkbox"}
-            checked={checked}
-            onChange={handleOnCheck}
-            onMouseOut={() => setCheckHovering(false)}
-            onMouseOver={() => setCheckHovering(true)}
-            className="bg-transparent-100 peer pointer-events-auto z-10 cursor-pointer appearance-none rounded-lg border-2 border-transparent p-3"
-          />
-          <span className="absolute rounded-lg border-2 border-slate-200 p-3 peer-checked:bg-slate-500 "></span>
-          <CheckIcon
-            size={18}
-            strokeWidth={3}
-            absoluteStrokeWidth
-            className="stroke-logo absolute left-[0.85rem] opacity-0 peer-checked:opacity-100 peer-hover:opacity-60 "
-          />
-        </label>
-      </fieldset>
-      <div
-        onMouseOut={() => setHovering(false)}
-        onMouseOver={() => setHovering(true)}
-        className={classNames(
-          "my-1 flex flex-1 items-center truncate rounded-md",
-          selectable ? "cursor-pointer" : "cursor-default",
-          checked ? "line-through" : "",
-        )}
-      >
+      <div onClick={handleOnSelect} className="flex w-full items-center">
+        {/* Checkbox */}
+        <Checkbox
+          id={id}
+          checked={checked}
+          handleOnCheck={handleOnCheck}
+          setCheckHovering={setCheckHovering}
+        />
         {/* Priority */}
-        {displayPriority && priority ? (
-          <>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <StarIcon
-                    size={18}
-                    data-tip
-                    data-for="priority"
-                    className={` ${checked ? "text-orange-200" : "text-logo"} `}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Important</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </>
-        ) : null}
-        <div className="w-full truncate pl-1 text-left">
+        <div
+          onMouseOut={() => setHovering(false)}
+          onMouseOver={() => setHovering(true)}
+          className={classNames(
+            "my-1 flex flex-1 items-center truncate rounded-md",
+            selectable ? "cursor-pointer" : "cursor-default",
+            checked ? "line-through" : "",
+          )}
+        >
+          {displayPriority && priority ? <Priority checked={checked} /> : null}
           {/* Name */}
-          <p
-            className={classNames(
-              "truncate text-lg",
-              checked ? "text-gray-400" : "",
-              selectable ? "cursor-pointer" : "cursor-default",
-            )}
-          >
-            {name}
-          </p>
+          <Name checked={checked} selectable={selectable} name={name} />
         </div>
+      </div>
+      <div className="my-0 ml-12">
+        <ListDisplay task={task} />
       </div>
     </div>
   );
+};
+
+interface ICheckbox {
+  id: string;
+  checked: boolean;
+  handleOnCheck: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setCheckHovering: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const Checkbox: React.FC<ICheckbox> = ({
+  id,
+  checked,
+  handleOnCheck,
+  setCheckHovering,
+}) => {
+  return (
+    <fieldset className="z-0">
+      <label
+        htmlFor={`check-box-${id}`}
+        className="pointer-events-none relative flex items-center rounded-full p-2 hover:bg-slate-100"
+      >
+        <input
+          id={`check-box-${id}`}
+          type={"checkbox"}
+          checked={checked}
+          onChange={handleOnCheck}
+          onMouseOut={() => setCheckHovering(false)}
+          onMouseOver={() => setCheckHovering(true)}
+          className="bg-transparent-100 peer pointer-events-auto z-10 cursor-pointer appearance-none rounded-lg border-2 border-transparent p-3"
+        />
+        <span className="absolute rounded-lg border-2 border-slate-200 p-3 peer-checked:bg-slate-500 "></span>
+        <CheckIcon
+          size={18}
+          strokeWidth={3}
+          absoluteStrokeWidth
+          className="stroke-logo absolute left-[0.85rem] opacity-0 peer-checked:opacity-100 peer-hover:opacity-60 "
+        />
+      </label>
+    </fieldset>
+  );
+};
+
+interface IPriority {
+  checked: boolean;
+}
+
+const Priority: React.FC<IPriority> = ({ checked }) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <StarIcon
+            size={18}
+            data-tip
+            data-for="priority"
+            className={` ${checked ? "text-orange-200" : "text-logo"} `}
+          />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Important</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+interface IName {
+  checked: boolean;
+  selectable: boolean;
+  name: string;
+}
+
+const Name: React.FC<IName> = ({ checked, selectable, name }) => {
+  return (
+    <div className="w-full truncate pl-1 text-left">
+      <p
+        className={classNames(
+          "truncate text-lg",
+          checked ? "text-gray-400" : "",
+          selectable ? "cursor-pointer" : "cursor-default",
+        )}
+      >
+        {name}
+      </p>
+    </div>
+  );
+};
+
+interface IListDisplay {
+  task: TaskType;
+}
+
+const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
+  const { data: lists } = api.user.getLists.useQuery();
+  if (!lists) return null;
+
+  const { listType, listId } = task;
+
+  if (listType === "space") return <SpaceDisplay task={task} lists={lists} />;
+  return <ProjectDisplay task={task} />;
+};
+
+interface ISpaceDisplay extends IListDisplay {
+  lists: RouterOutputs["user"]["getLists"];
+}
+
+const SpaceDisplay: React.FC<ISpaceDisplay> = ({ task, lists }) => {
+  const { data } = api.space.getSpaceInfo.useQuery(task.listId);
+  if (!data) return null;
+
+  return (
+    <Select defaultValue={`space-${data.id}`}>
+      <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
+        <SelectValue placeholder={data.name} className="text-sm" />
+      </SelectTrigger>
+      <SelectContent className={`${inter.variable} font-sans`}>
+        {lists.map((list) => (
+          <SelectItem
+            key={`${list.type}-${list.id}`}
+            value={`${list.type}-${list.id}`}
+          >
+            <div className="flex items-center gap-1">
+              {list.type === "project" ? (
+                <ProjectIcon size={18} />
+              ) : (
+                <SpaceIcon size={18} />
+              )}
+              {list.name}
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+const ProjectDisplay: React.FC<IListDisplay> = ({ task }) => {
+  const { data } = api.project.getProjectInfo.useQuery(task.listId);
+  if (!data) return null;
+
+  return <button>{data.name}</button>;
 };
 
 export default Todo;
