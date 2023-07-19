@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
+import { inter } from "@/utils/fonts";
 import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
 import {
@@ -15,7 +16,6 @@ import { CheckIcon, StarIcon } from "lucide-react";
 
 import ProjectIcon from "./icons/project";
 import { SpaceIcon } from "./icons/space";
-import { buttonVariants } from "./ui/button";
 import {
   Select,
   SelectContent,
@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useToast } from "./ui/use-toast";
-import { inter } from "@/utils/fonts";
 
 type TaskType = RouterOutputs["task"]["getAllForUser"][number];
 
@@ -272,27 +271,47 @@ interface IListDisplay {
 }
 
 const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
+  const { setSelectedTodo } = useAppContext()
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
+  const { data: listInfo } = api.task.getListInfo.useQuery({
+    listId: task.listId,
+    listType: task.listType,
+  });
+
   const { data: lists } = api.user.getLists.useQuery();
+
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      setSelectedTodo(undefined)
+      void ctx.invalidate();
+    },
+    onError() {
+      toast({
+        title: "Uh oh!",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (!lists) return null;
+  if (!listInfo) return null;
 
-  const { listType, listId } = task;
+  const { listId, listType } = task;
 
-  if (listType === "space") return <SpaceDisplay task={task} lists={lists} />;
-  return <ProjectDisplay task={task} />;
-};
-
-interface ISpaceDisplay extends IListDisplay {
-  lists: RouterOutputs["user"]["getLists"];
-}
-
-const SpaceDisplay: React.FC<ISpaceDisplay> = ({ task, lists }) => {
-  const { data } = api.space.getSpaceInfo.useQuery(task.listId);
-  if (!data) return null;
+  const onSubmit = (value: string) => {
+    const [type, id] = value.split("-");
+    if (id && (type === "space" || type === "project")) {
+      mutate({ id: task.id, listId: id, listType: type });
+    }
+  };
 
   return (
-    <Select defaultValue={`space-${data.id}`}>
+    <Select onValueChange={onSubmit} defaultValue={`${listType}-${listId}`}>
       <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
-        <SelectValue placeholder={data.name} className="text-sm" />
+        <SelectValue placeholder={listInfo.name} className="text-sm" />
       </SelectTrigger>
       <SelectContent className={`${inter.variable} font-sans`}>
         {lists.map((list) => (
@@ -313,13 +332,6 @@ const SpaceDisplay: React.FC<ISpaceDisplay> = ({ task, lists }) => {
       </SelectContent>
     </Select>
   );
-};
-
-const ProjectDisplay: React.FC<IListDisplay> = ({ task }) => {
-  const { data } = api.project.getProjectInfo.useQuery(task.listId);
-  if (!data) return null;
-
-  return <button>{data.name}</button>;
 };
 
 export default Todo;

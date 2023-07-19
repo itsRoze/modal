@@ -1,3 +1,5 @@
+import { fromID as fromProjectId } from "@modal/db/src/project";
+import { fromID as fromSpaceId } from "@modal/db/src/space";
 import {
   Info,
   create,
@@ -72,5 +74,13 @@ export const taskRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const result = await getAllCompleted(input ?? ctx.session.userId);
       return result ?? [];
+    }),
+  getListInfo: protectedProcedure
+    .input(Info.pick({ listId: true, listType: true }))
+    .query(async ({ input }) => {
+      if (input.listType === "space") {
+        return await fromSpaceId(input.listId);
+      }
+      return await fromProjectId(input.listId);
     }),
 });

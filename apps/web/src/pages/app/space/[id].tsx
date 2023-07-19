@@ -292,7 +292,8 @@ interface IProjects {
 }
 
 const ProjectsView: React.FC<IProjects> = ({ projects }) => {
-  if (projects.length === 0) return <p className="ml-5">No projects</p>;
+  if (projects.length === 0)
+    return <p className="ml-5 italic text-gray-400">No projects</p>;
   return (
     <>
       <ul>
