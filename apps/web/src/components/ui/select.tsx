@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/utils/cn";
+import { inter } from "@/utils/fonts";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -41,6 +42,7 @@ const SelectContent = React.forwardRef<
       className={cn(
         "bg-popover text-popover-foreground animate-in fade-in-80 relative z-50 min-w-[8rem] overflow-hidden rounded-md border shadow-md",
         position === "popper" && "translate-y-1",
+        `${inter.variable} font-sans`,
         className,
       )}
       position={position}

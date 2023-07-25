@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
+import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
 import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
@@ -11,11 +12,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import { addDays, format } from "date-fns";
 import dayjs from "dayjs";
-import { CheckIcon, StarIcon } from "lucide-react";
+import { CalendarIcon, CheckIcon, StarIcon } from "lucide-react";
 
 import ProjectIcon from "./icons/project";
 import { SpaceIcon } from "./icons/space";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Select,
   SelectContent,
@@ -174,9 +179,13 @@ const Todo: React.FC<ITodo> = ({
           <Name checked={checked} selectable={selectable} name={name} />
         </div>
       </div>
-      <div className="my-0 ml-12">
-        <ListDisplay task={task} />
-      </div>
+      {isSelected ? (
+        <div className="my-0 ml-12 flex items-center gap-2">
+          <DatePicker task={task} />
+          <PriorityDropdown task={task} />
+          <ListDisplay task={task} />
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -234,6 +243,7 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
             data-tip
             data-for="priority"
             className={` ${checked ? "text-orange-200" : "text-logo"} `}
+            fill={` ${checked ? "rgb(254 215 170)" : "rgb(246 191 95)"} `}
           />
         </TooltipTrigger>
         <TooltipContent>
@@ -266,12 +276,90 @@ const Name: React.FC<IName> = ({ checked, selectable, name }) => {
   );
 };
 
+interface IDateDisplay {
+  task: TaskType;
+}
+
+const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
+  const [date, setDate] = React.useState<Date>();
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-fit justify-start border-none text-left text-sm font-normal",
+            !date && "text-muted-foreground",
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="flex w-auto flex-col space-y-2 p-2 text-sm">
+        <Select
+          onValueChange={(value) =>
+            setDate(addDays(new Date(), parseInt(value)))
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="0">Today</SelectItem>
+            <SelectItem value="1">Tomorrow</SelectItem>
+            <SelectItem value="3">In 3 days</SelectItem>
+            <SelectItem value="7">In a week</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="rounded-md border">
+          <Calendar mode="single" selected={date} onSelect={setDate} />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+interface IPriorityDisplay {
+  task: TaskType;
+}
+
+const PriorityDropdown: React.FC<IPriorityDisplay> = ({ task }) => {
+  return (
+    <Select defaultValue="Important">
+      <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
+        <SelectValue placeholder="Priority" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value={"Important"}>
+          <div className="flex items-center gap-1 text-sm">
+            <StarIcon
+              size={14}
+              data-tip
+              data-for="priority"
+              className="text-logo"
+              fill="rgb(246 191 95)"
+            />
+            <p>Important</p>
+          </div>
+        </SelectItem>
+        <SelectItem value={"Not important"}>
+          <div className="flex items-center gap-1 text-sm">
+            <p>Not important</p>
+          </div>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
 interface IListDisplay {
   task: TaskType;
 }
 
 const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
-  const { setSelectedTodo } = useAppContext()
+  const { setSelectedTodo } = useAppContext();
   const { toast } = useToast();
   const ctx = api.useContext();
 
@@ -284,7 +372,7 @@ const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
 
   const { mutate } = api.task.update.useMutation({
     onSuccess() {
-      setSelectedTodo(undefined)
+      setSelectedTodo(undefined);
       void ctx.invalidate();
     },
     onError() {
@@ -313,7 +401,7 @@ const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
       <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
         <SelectValue placeholder={listInfo.name} className="text-sm" />
       </SelectTrigger>
-      <SelectContent className={`${inter.variable} font-sans`}>
+      <SelectContent>
         {lists.map((list) => (
           <SelectItem
             key={`${list.type}-${list.id}`}
@@ -321,9 +409,9 @@ const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
           >
             <div className="flex items-center gap-1">
               {list.type === "project" ? (
-                <ProjectIcon size={18} />
+                <ProjectIcon size={14} />
               ) : (
-                <SpaceIcon size={18} />
+                <SpaceIcon size={14} />
               )}
               {list.name}
             </div>

@@ -73,7 +73,7 @@ export const stripeRouter = createTRPCRouter({
     const stripeBillingPortalSession =
       await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: `${baseUrl}/account`,
+        return_url: `${baseUrl}/app/account`,
       });
 
     if (!stripeBillingPortalSession) {

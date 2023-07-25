@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Divider from "@/components/divider";
@@ -44,6 +44,8 @@ const SpacePage: NextPageWithLayout = () => {
   const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
+  const thisEl = useRef<HTMLDivElement>(null);
+  const actionBarEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setListInfo({ type: "space", id });
@@ -58,7 +60,7 @@ const SpacePage: NextPageWithLayout = () => {
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article className="relative">
+    <article id="space-page" className="relative" ref={thisEl}>
       <div className="flex items-center">
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
@@ -75,7 +77,7 @@ const SpacePage: NextPageWithLayout = () => {
           <TodoList listType="space" listId={id} />
         </div>
       </div>
-      <ActionBar />
+      <ActionBar parentRef={thisEl} childRef={actionBarEl} />
     </article>
   );
 };
