@@ -45,7 +45,6 @@ const SpacePage: NextPageWithLayout = () => {
   const { query } = useRouter();
   const id = query.id as string;
   const thisEl = useRef<HTMLDivElement>(null);
-  const actionBarEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setListInfo({ type: "space", id });
@@ -60,24 +59,24 @@ const SpacePage: NextPageWithLayout = () => {
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article id="space-page" className="relative" ref={thisEl}>
+    <article id="space-page" className="relative flex flex-col" ref={thisEl}>
       <div className="flex items-center">
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
       </div>
-      <div className="ml-5">
+      <div className="custom-scroll ml-5 flex h-full flex-col overflow-y-scroll">
         <div className="py-2">
           <h2 className="text-gray-500">Projects</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <ProjectsView projects={data.projects} />
         </div>
-        <div className="py-2">
+        <div className="flex-grow py-2">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <TodoList listType="space" listId={id} />
         </div>
       </div>
-      <ActionBar parentRef={thisEl} childRef={actionBarEl} />
+      <ActionBar />
     </article>
   );
 };

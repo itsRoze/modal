@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { inter } from "@/utils/fonts";
 import { type RouterOutputs } from "@modal/api";
 import { classNames } from "@modal/common";
 import {
