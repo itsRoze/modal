@@ -20,7 +20,9 @@ export const task = mysqlTable(
     ...id,
     ...timestamps,
     name: varchar("name", { length: 50 }).notNull(),
-    deadline: date("deadline"),
+    deadline: date("deadline", {
+      mode: "string",
+    }),
     priority: boolean("priority").default(false),
     completedTime: date("completed_time"),
     listType: mysqlEnum("listType", ["space", "project"]).notNull(),

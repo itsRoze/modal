@@ -1,3 +1,4 @@
+import { sortTasks } from "@modal/common";
 import { fromID as fromProjectId } from "@modal/db/src/project";
 import { fromID as fromSpaceId } from "@modal/db/src/space";
 import {
@@ -61,7 +62,7 @@ export const taskRouter = createTRPCRouter({
     .input(Info.pick({ listId: true, listType: true }))
     .query(async ({ input }) => {
       const result = await getAllForList(input);
-      return result ?? [];
+      return sortTasks(result) ?? [];
     }),
   getAllForUser: protectedProcedure
     .input(z.optional(Info.shape.userId))

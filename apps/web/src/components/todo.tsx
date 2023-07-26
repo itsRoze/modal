@@ -4,7 +4,13 @@ import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { type RouterOutputs } from "@modal/api";
-import { classNames } from "@modal/common";
+import {
+  classNames,
+  dateToMySqlFormat,
+  getDeadlineDateName,
+  isOverdue,
+  mySqlFormatToDate,
+} from "@modal/common";
 import {
   Tooltip,
   TooltipContent,
@@ -163,7 +169,6 @@ const Todo: React.FC<ITodo> = ({
           handleOnCheck={handleOnCheck}
           setCheckHovering={setCheckHovering}
         />
-        {/* Priority */}
         <div
           onMouseOut={() => setHovering(false)}
           onMouseOver={() => setHovering(true)}
@@ -173,7 +178,10 @@ const Todo: React.FC<ITodo> = ({
             checked ? "line-through" : "",
           )}
         >
+          {/* Priority */}
           {displayPriority && priority ? <Priority checked={checked} /> : null}
+          {/* Deadline */}
+          <DeadlineDisplay task={task} />
           {/* Name */}
           <Name checked={checked} selectable={selectable} name={name} />
         </div>
@@ -253,6 +261,36 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
   );
 };
 
+interface IDeadlineDisplay {
+  task: TaskType;
+}
+
+const DeadlineDisplay: React.FC<IDeadlineDisplay> = ({ task }) => {
+  const { deadline } = task;
+  const userFriendlyDeadline = getDeadlineDateName(deadline);
+  const isDeadlineOverdue = isOverdue(deadline);
+
+  if (!deadline) return null;
+
+  return (
+    <div
+      className={cn({
+        "mx-1 flex items-center self-center rounded px-1": true,
+        "bg-red-500": isDeadlineOverdue,
+        "bg-gray-600": !isDeadlineOverdue,
+      })}
+    >
+      <span
+        className={cn({
+          "max-w-[3rem] truncate text-sm font-semibold text-white": true,
+        })}
+      >
+        {userFriendlyDeadline}
+      </span>
+    </div>
+  );
+};
+
 interface IName {
   checked: boolean;
   selectable: boolean;
@@ -280,7 +318,34 @@ interface IDateDisplay {
 }
 
 const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date | null>(
+    task.deadline ? mySqlFormatToDate(task.deadline) : null,
+  );
+
+  const ctx = api.useContext();
+  const { toast } = useToast();
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        title: "Uh oh!",
+        variant: "destructive",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const onSelectChange = (value: string) => {
+    const selectedDate = addDays(new Date(), parseInt(value));
+    mutate({ id: task.id, deadline: dateToMySqlFormat(selectedDate) });
+  };
+
+  const onCalendarChange = (day: Date | undefined) => {
+    setDate(day ?? null);
+    mutate({ id: task.id, deadline: day ? dateToMySqlFormat(day) : null });
+  };
 
   return (
     <Popover>
@@ -293,15 +358,11 @@ const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? format(date, "PPP") : <span>Deadline</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="flex w-auto flex-col space-y-2 p-2 text-sm">
-        <Select
-          onValueChange={(value) =>
-            setDate(addDays(new Date(), parseInt(value)))
-          }
-        >
+        <Select onValueChange={onSelectChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select" />
           </SelectTrigger>
@@ -313,7 +374,11 @@ const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
           </SelectContent>
         </Select>
         <div className="rounded-md border">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar
+            mode="single"
+            selected={date ?? undefined}
+            onSelect={onCalendarChange}
+          />
         </div>
       </PopoverContent>
     </Popover>
