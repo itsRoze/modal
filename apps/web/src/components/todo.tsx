@@ -324,14 +324,46 @@ interface IPriorityDisplay {
   task: TaskType;
 }
 
+enum PriorityValues {
+  Important = "Important",
+  Unimportant = "Not important",
+}
+
 const PriorityDropdown: React.FC<IPriorityDisplay> = ({ task }) => {
+  const ctx = api.useContext();
+  const { toast } = useToast();
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        title: "Uh oh!",
+        variant: "destructive",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const onSubmit = (value: string) => {
+    mutate({
+      id: task.id,
+      priority: value === PriorityValues.Important ? true : false,
+    });
+  };
+
   return (
-    <Select defaultValue="Important">
+    <Select
+      onValueChange={onSubmit}
+      defaultValue={
+        task.priority ? PriorityValues.Important : PriorityValues.Unimportant
+      }
+    >
       <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
         <SelectValue placeholder="Priority" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={"Important"}>
+        <SelectItem value={PriorityValues.Important}>
           <div className="flex items-center gap-1 text-sm">
             <StarIcon
               size={14}
@@ -343,7 +375,7 @@ const PriorityDropdown: React.FC<IPriorityDisplay> = ({ task }) => {
             <p>Important</p>
           </div>
         </SelectItem>
-        <SelectItem value={"Not important"}>
+        <SelectItem value={PriorityValues.Unimportant}>
           <div className="flex items-center gap-1 text-sm">
             <p>Not important</p>
           </div>
