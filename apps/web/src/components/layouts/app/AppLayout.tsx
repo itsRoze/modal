@@ -129,7 +129,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
         className={cn({
           "relative z-20 h-full overflow-y-auto rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
             true,
-          "custom-scroll": true,
+          "custom-scroll overflow-x-hidden": true,
         })}
       >
         {/* Button */}

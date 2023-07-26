@@ -56,7 +56,10 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      return await update(input);
+      const result = await update(input);
+      if (result) {
+        return input;
+      }
     }),
   getAllForList: protectedProcedure
     .input(Info.pick({ listId: true, listType: true }))

@@ -20,11 +20,14 @@ import {
 import { addDays, format } from "date-fns";
 import dayjs from "dayjs";
 import { CalendarIcon, CheckIcon, StarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 import ProjectIcon from "./icons/project";
 import { SpaceIcon } from "./icons/space";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Select,
@@ -51,7 +54,7 @@ const Todo: React.FC<ITodo> = ({
   initialChecked = false,
 }) => {
   const { pathname } = useRouter();
-  const { id, name, priority, completedTime } = task;
+  const { id, completedTime } = task;
 
   const { selectedTodo, setSelectedTodo } = useAppContext();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -103,13 +106,14 @@ const Todo: React.FC<ITodo> = ({
     } else {
       setIsSelected(false);
     }
+    setHovering(false);
   }, [selectedTodo, id]);
 
   // Clear the interval when the component unmounts
   useEffect(() => {
     const handleEscapeKeyPress = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsSelected(false);
+        closeTodo();
       }
     };
 
@@ -125,9 +129,14 @@ const Todo: React.FC<ITodo> = ({
     };
   }, [selectable, isSelected]);
 
+  const closeTodo = () => {
+    setIsSelected(false);
+  };
+
   const handleOnSelect = () => {
     if (selectable) setIsSelected((current) => !current);
   };
+
   const handleOnCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsSelected(false);
     setChecked((value) => !value);
@@ -161,38 +170,86 @@ const Todo: React.FC<ITodo> = ({
         !isSelected && hovering && selectable ? "bg-slate-50" : "",
       )}
     >
-      <div onClick={handleOnSelect} className="flex w-full items-center">
-        {/* Checkbox */}
-        <Checkbox
-          id={id}
+      {isSelected ? (
+        <ModifiableTodo
+          task={task}
+          handleOnSelect={handleOnSelect}
+          selectable={selectable}
+          closeTodo={closeTodo}
+        />
+      ) : (
+        <CheckableTodo
+          task={task}
+          handleOnSelect={handleOnSelect}
           checked={checked}
           handleOnCheck={handleOnCheck}
           setCheckHovering={setCheckHovering}
+          setHovering={setHovering}
+          selectable={selectable}
+          displayPriority={displayPriority}
         />
-        <div
-          onMouseOut={() => setHovering(false)}
-          onMouseOver={() => setHovering(true)}
-          className={classNames(
-            "my-1 flex flex-1 items-center truncate rounded-md",
-            selectable ? "cursor-pointer" : "cursor-default",
-            checked ? "line-through" : "",
-          )}
-        >
-          {/* Priority */}
-          {displayPriority && priority ? <Priority checked={checked} /> : null}
-          {/* Deadline */}
-          <DeadlineDisplay task={task} />
-          {/* Name */}
-          <Name checked={checked} selectable={selectable} name={name} />
-        </div>
+      )}
+    </div>
+  );
+};
+
+interface ITask {
+  task: TaskType;
+}
+
+interface ICheckableTodo extends ITask {
+  handleOnSelect: () => void;
+  checked: boolean;
+  handleOnCheck: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setCheckHovering: React.Dispatch<React.SetStateAction<boolean>>;
+  setHovering: React.Dispatch<React.SetStateAction<boolean>>;
+  selectable: boolean;
+  displayPriority: boolean;
+}
+
+const CheckableTodo: React.FC<ICheckableTodo> = ({
+  task,
+  handleOnSelect,
+  checked,
+  handleOnCheck,
+  setCheckHovering,
+  setHovering,
+  selectable,
+  displayPriority,
+}) => {
+  const { id, name, priority } = task;
+
+  return (
+    <div
+      onClick={handleOnSelect}
+      className={cn({
+        "flex w-full items-center": true,
+      })}
+      onMouseOut={() => setHovering(false)}
+      onMouseOver={() => setHovering(true)}
+    >
+      {/* Checkbox */}
+      <Checkbox
+        id={id}
+        checked={checked}
+        handleOnCheck={handleOnCheck}
+        setCheckHovering={setCheckHovering}
+      />
+      <div
+        className={cn({
+          "my-1 flex flex-1 select-none items-center truncate rounded-md": true,
+          "cursor-pointer": selectable,
+          "cursor-default": !selectable,
+          "line-through": checked,
+        })}
+      >
+        {/* Priority */}
+        {displayPriority && priority ? <Priority checked={checked} /> : null}
+        {/* Deadline */}
+        <DeadlineDisplay task={task} />
+        {/* Name */}
+        <Name checked={checked} selectable={selectable} name={name} />
       </div>
-      {isSelected ? (
-        <div className="my-0 ml-12 flex items-center gap-2">
-          <DatePicker task={task} />
-          <PriorityDropdown task={task} />
-          <ListDisplay task={task} />
-        </div>
-      ) : null}
     </div>
   );
 };
@@ -210,7 +267,11 @@ const Checkbox: React.FC<ICheckbox> = ({
   setCheckHovering,
 }) => {
   return (
-    <fieldset className="z-0">
+    <fieldset
+      className="z-0"
+      onMouseOut={(e) => e.stopPropagation()}
+      onMouseOver={(e) => e.stopPropagation()}
+    >
       <label
         htmlFor={`check-box-${id}`}
         className="pointer-events-none relative flex items-center rounded-full p-2 hover:bg-slate-100"
@@ -261,11 +322,7 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
   );
 };
 
-interface IDeadlineDisplay {
-  task: TaskType;
-}
-
-const DeadlineDisplay: React.FC<IDeadlineDisplay> = ({ task }) => {
+const DeadlineDisplay: React.FC<ITask> = ({ task }) => {
   const { deadline } = task;
   const userFriendlyDeadline = getDeadlineDateName(deadline);
   const isDeadlineOverdue = isOverdue(deadline);
@@ -313,11 +370,117 @@ const Name: React.FC<IName> = ({ checked, selectable, name }) => {
   );
 };
 
-interface IDateDisplay {
-  task: TaskType;
+interface IModifiableTodo extends ITask {
+  handleOnSelect: () => void;
+  selectable: boolean;
+  closeTodo: () => void;
 }
 
-const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
+const ModifiableTodo: React.FC<IModifiableTodo> = ({
+  task,
+  handleOnSelect,
+  selectable,
+  closeTodo,
+}) => {
+  return (
+    <div
+      onClick={handleOnSelect}
+      className={cn({
+        "cursor-pointer": selectable,
+        "cursor-default": !selectable,
+      })}
+    >
+      <NameForm task={task} closeTodo={closeTodo} />
+      <div className="my-0 ml-12 flex items-center gap-2">
+        <DatePicker task={task} />
+        <PriorityDropdown task={task} />
+        <ListDisplay task={task} />
+      </div>
+    </div>
+  );
+};
+
+interface INameForm extends ITask {
+  closeTodo: () => void;
+}
+const NameForm: React.FC<INameForm> = ({ task, closeTodo }) => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+        variant: "destructive",
+      });
+    },
+  });
+
+  type FormValues = {
+    name: string;
+  };
+
+  const form = useForm<FormValues>({
+    values: {
+      name: task.name,
+    },
+  });
+
+  const nameValue = form.watch("name");
+
+  useEffect(() => {
+    form.setFocus("name");
+  }, [form]);
+
+  const onSubmit = (values: FormValues) => {
+    const { name } = values;
+    if (!name || !name.trim() || name.trim() === task.name) {
+      form.reset();
+      return;
+    }
+
+    mutate({ id: task.id, name: name.trim() });
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      onSubmit({ name: nameValue });
+      closeTodo();
+    }
+  };
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        onBlur={form.handleSubmit(onSubmit)}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={onKeyDown}
+        className="w-full"
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  placeholder="New Task"
+                  {...field}
+                  className="w-full border-none focus:font-semibold  focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
+  );
+};
+
+const DatePicker: React.FC<ITask> = ({ task }) => {
   const [date, setDate] = useState<Date | null>(
     task.deadline ? mySqlFormatToDate(task.deadline) : null,
   );
@@ -351,6 +514,7 @@ const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          onClick={(e) => e.stopPropagation()}
           variant={"outline"}
           className={cn(
             "w-fit justify-start border-none text-left text-sm font-normal",
@@ -361,7 +525,10 @@ const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
           {date ? format(date, "PPP") : <span>Deadline</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex w-auto flex-col space-y-2 p-2 text-sm">
+      <PopoverContent
+        side="right"
+        className="flex w-auto flex-col space-y-2 p-2 text-sm"
+      >
         <Select onValueChange={onSelectChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select" />
@@ -385,16 +552,12 @@ const DatePicker: React.FC<IDateDisplay> = ({ task }) => {
   );
 };
 
-interface IPriorityDisplay {
-  task: TaskType;
-}
-
 enum PriorityValues {
   Important = "Important",
   Unimportant = "Not important",
 }
 
-const PriorityDropdown: React.FC<IPriorityDisplay> = ({ task }) => {
+const PriorityDropdown: React.FC<ITask> = ({ task }) => {
   const ctx = api.useContext();
   const { toast } = useToast();
   const { mutate } = api.task.update.useMutation({
@@ -450,11 +613,7 @@ const PriorityDropdown: React.FC<IPriorityDisplay> = ({ task }) => {
   );
 };
 
-interface IListDisplay {
-  task: TaskType;
-}
-
-const ListDisplay: React.FC<IListDisplay> = ({ task }) => {
+const ListDisplay: React.FC<ITask> = ({ task }) => {
   const { setSelectedTodo } = useAppContext();
   const { toast } = useToast();
   const ctx = api.useContext();
