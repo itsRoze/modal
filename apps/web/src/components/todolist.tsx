@@ -70,14 +70,22 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   const { setAddingNewTodo, addingNewTodo, listInfo } = useAppContext();
   const form = useForm<FormValues>({
     defaultValues: {
-      name: "New Task",
+      name: "",
     },
   });
   const onSubmit = (data: FormValues) => {
     if (!listInfo) return;
+    const { name } = data;
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      form.reset();
+      setAddingNewTodo(false);
+      return;
+    }
 
     mutate({
-      name: data.name,
+      name: trimmedName,
       listType,
       listId,
     });
@@ -101,6 +109,7 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         onBlur={form.handleSubmit(onSubmit)}
+        className="mx-1"
       >
         <FormField
           control={form.control}
