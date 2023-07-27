@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Divider from "@/components/divider";
+import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
+import TodoList from "@/components/todolist";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import Title from "@/components/ui/title";
 import { useToast } from "@/components/ui/use-toast";
+import useAppContext from "@/hooks/useAppContext";
 import { type NextPageWithLayout } from "@/pages/_app";
 import { api } from "@/utils/api";
 import { inter } from "@/utils/fonts";
@@ -43,19 +47,36 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
 const ProjectPage: NextPageWithLayout = () => {
+  const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
-  const { data, isLoading } = api.project.getProjectInfo.useQuery(id);
 
+  useEffect(() => {
+    setListInfo({ type: "project", id });
+
+    return () => {
+      setListInfo(undefined);
+    };
+  }, [id, setListInfo]);
+
+  const { data, isLoading } = api.project.getProjectInfo.useQuery(id);
   if (isLoading) return <LoadingPage />;
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article>
+    <article id="project-page" className="relative flex flex-col">
       <div className="flex items-center">
         <Title title={data.name} Icon={Circle} />
         <Menu data={data} />
       </div>
+      <div className="custom-scroll ml-5 flex h-full flex-col overflow-y-scroll">
+        <div className="flex-grow py-2">
+          <h2 className="text-gray-500">Tasks</h2>
+          <Divider widthMargin="mx-1" heightPadding="my-2" />
+          <TodoList listType="project" listId={id} />
+        </div>
+      </div>
+      <ActionBar />
     </article>
   );
 };

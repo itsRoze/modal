@@ -391,7 +391,7 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
       })}
     >
       <NameForm task={task} closeTodo={closeTodo} />
-      <div className="my-0 ml-12 flex items-center gap-2">
+      <div className="my-0 flex items-center gap-2">
         <DatePicker task={task} />
         <PriorityDropdown task={task} />
         <ListDisplay task={task} />

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Divider from "@/components/divider";
@@ -44,7 +44,6 @@ const SpacePage: NextPageWithLayout = () => {
   const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
-  const thisEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setListInfo({ type: "space", id });
@@ -59,7 +58,7 @@ const SpacePage: NextPageWithLayout = () => {
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article id="space-page" className="relative flex flex-col" ref={thisEl}>
+    <article id="space-page" className="relative flex flex-col">
       <div className="flex items-center">
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
@@ -258,7 +257,7 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
         <DialogHeader>
           <DialogTitle>Delete</DialogTitle>
           <DialogDescription>
-            This will delete all projects within this space too. Are you sure
+            This will delete all projects and tasks within this space too. Are you sure
             you want to delete <span className="italic">{data.name}</span>?
           </DialogDescription>
         </DialogHeader>
