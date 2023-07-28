@@ -114,7 +114,7 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
       id="sidebar"
       className={cn(
         {
-          "pb-4": true,
+          "z-50 pb-4": true,
           "fixed lg:static lg:translate-x-0": true,
           "transition-all duration-300 ease-in-out": true,
           "-translate-x-full": !shown,

@@ -2,7 +2,7 @@
   @apply mt-4 grid h-[calc(100vh-69px)] bg-white;
 }
 .main > article {
-  @apply w-full flex-1 overflow-x-hidden;
+  @apply z-0 w-full flex-1 overflow-x-hidden;
 }
 
 .sidebar {
