@@ -10,6 +10,8 @@ import {
   remove,
   update,
 } from "@modal/db/src/task";
+import { task } from "@modal/db/src/task/task.sql";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -87,4 +89,18 @@ export const taskRouter = createTRPCRouter({
       }
       return await fromProjectId(input.listId);
     }),
+  getDashboardTasks: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNotNull(task.deadline),
+        ),
+      );
+    return tasks ?? [];
+  }),
 });

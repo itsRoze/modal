@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { type RouterOutputs } from "@modal/api";
+import { type TaskType } from "@/utils/types";
 import {
   classNames,
   dateToMySqlFormat,
@@ -19,7 +19,7 @@ import {
 } from "@radix-ui/react-tooltip";
 import { addDays, format } from "date-fns";
 import dayjs from "dayjs";
-import { CalendarIcon, CheckIcon, StarIcon, X } from "lucide-react";
+import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import ProjectIcon from "./icons/project";
@@ -38,13 +38,12 @@ import {
 } from "./ui/select";
 import { useToast } from "./ui/use-toast";
 
-type TaskType = RouterOutputs["task"]["getAllForUser"][number];
-
 interface ITodo {
   task: TaskType;
   displayPriority?: boolean;
   selectable?: boolean;
   initialChecked?: boolean;
+  displayList?: boolean;
 }
 
 const Todo: React.FC<ITodo> = ({
@@ -52,6 +51,7 @@ const Todo: React.FC<ITodo> = ({
   displayPriority = true,
   selectable = true,
   initialChecked = false,
+  displayList = false,
 }) => {
   const { pathname } = useRouter();
   const { id, completedTime } = task;
@@ -187,6 +187,7 @@ const Todo: React.FC<ITodo> = ({
           setHovering={setHovering}
           selectable={selectable}
           displayPriority={displayPriority}
+          displayList={displayList}
         />
       )}
     </div>
@@ -205,6 +206,7 @@ interface ICheckableTodo extends ITask {
   setHovering: React.Dispatch<React.SetStateAction<boolean>>;
   selectable: boolean;
   displayPriority: boolean;
+  displayList: boolean;
 }
 
 const CheckableTodo: React.FC<ICheckableTodo> = ({
@@ -217,38 +219,64 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   selectable,
   displayPriority,
 }) => {
-  const { id, name, priority } = task;
+  const { id, name, priority, listId, listType } = task;
+  const { data: listInfo } = api.task.getListInfo.useQuery({
+    listId,
+    listType,
+  });
 
   return (
     <div
       onClick={handleOnSelect}
-      className={cn({
-        "flex w-full items-center": true,
-      })}
       onMouseOut={() => setHovering(false)}
       onMouseOver={() => setHovering(true)}
     >
-      {/* Checkbox */}
-      <Checkbox
-        id={id}
-        checked={checked}
-        handleOnCheck={handleOnCheck}
-        setCheckHovering={setCheckHovering}
-      />
       <div
         className={cn({
-          "my-1 flex flex-1 select-none items-center truncate rounded-md": true,
-          "cursor-pointer": selectable,
-          "cursor-default": !selectable,
-          "line-through": checked,
+          "flex w-full items-center": true,
         })}
       >
-        {/* Priority */}
-        {displayPriority && priority ? <Priority checked={checked} /> : null}
-        {/* Deadline */}
-        <DeadlineDisplay task={task} />
-        {/* Name */}
-        <Name checked={checked} selectable={selectable} name={name} />
+        {/* Checkbox */}
+        <Checkbox
+          id={id}
+          checked={checked}
+          handleOnCheck={handleOnCheck}
+          setCheckHovering={setCheckHovering}
+        />
+        <div
+          className={cn({
+            "my-1 flex flex-1 select-none items-center truncate rounded-md":
+              true,
+            "cursor-pointer": selectable,
+            "cursor-default": !selectable,
+            "line-through": checked,
+          })}
+        >
+          {/* Priority */}
+          {displayPriority && priority ? <Priority checked={checked} /> : null}
+          {/* Deadline */}
+          <DeadlineDisplay task={task} />
+          {/* Name */}
+          <Name checked={checked} selectable={selectable} name={name} />
+        </div>
+      </div>
+      <div
+        className={cn({
+          "cursor-pointer": selectable,
+          "cursor-default": !selectable,
+          "pl-12 text-sm": true,
+        })}
+      >
+        {listInfo ? (
+          <div className="flex items-center gap-1">
+            {listType === "project" ? (
+              <ProjectIcon size={14} />
+            ) : (
+              <SpaceIcon size={14} />
+            )}
+            <span>{listInfo.name}</span>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -398,8 +426,11 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
           <ListDisplay task={task} />
         </div>
       </div>
-      <button onClick={closeTodo} className="p-1 rounded-md opacity-50 hover:opacity-100">
-        <X />
+      <button
+        onClick={closeTodo}
+        className="rounded-md p-1 opacity-50 hover:opacity-100"
+      >
+        <Check />
       </button>
     </div>
   );
