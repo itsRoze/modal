@@ -141,9 +141,10 @@ const Sidebar: React.FC<ISidebar> = ({
       <div
         id="sidebar-container"
         className={cn({
-          "relative z-20 h-full overflow-y-auto rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
+          "relative z-20 h-full overflow-x-hidden rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
             true,
-          "custom-scroll overflow-x-hidden": true,
+          "overflow-y-hidden": collapsed,
+          "custom-scroll overflow-y-auto": !collapsed,
         })}
       >
         {/* Button */}

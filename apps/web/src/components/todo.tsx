@@ -127,9 +127,10 @@ const Todo: React.FC<ITodo> = ({
         clearTimeout(timerRef.current);
       }
     };
-  }, [selectable, isSelected]);
+  }, [selectable]);
 
   const closeTodo = () => {
+    console.log("hit!");
     setIsSelected(false);
   };
 
@@ -409,29 +410,33 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
   selectable,
   closeTodo,
 }) => {
+  const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    closeTodo();
+  };
+
   return (
-    <div className="flex items-start">
-      <div
-        onClick={handleOnSelect}
-        className={cn({
-          "flex-grow": true,
-          "cursor-pointer": selectable,
-          "cursor-default": !selectable,
-        })}
-      >
+    <div
+      onClick={handleOnSelect}
+      className={cn({
+        "cursor-pointer": selectable,
+        "cursor-default": !selectable,
+      })}
+    >
+      <div className="flex items-start">
         <NameForm task={task} closeTodo={closeTodo} />
-        <div className="my-0 flex select-none items-center gap-2">
-          <DatePicker task={task} />
-          <PriorityDropdown task={task} />
-          <ListDisplay task={task} />
-        </div>
+        <button
+          onClick={handleClose}
+          className="rounded-md p-1 opacity-50 hover:opacity-100"
+        >
+          <Check />
+        </button>
       </div>
-      <button
-        onClick={closeTodo}
-        className="rounded-md p-1 opacity-50 hover:opacity-100"
-      >
-        <Check />
-      </button>
+      <div className="my-0 flex select-none items-center gap-2">
+        <DatePicker task={task} />
+        <PriorityDropdown task={task} />
+        <ListDisplay task={task} />
+      </div>
     </div>
   );
 };
