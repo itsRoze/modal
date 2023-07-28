@@ -9,3 +9,4 @@ export { isOverdue } from "./helpers/isOverdue";
 export { mySqlFormatToDate } from "./helpers/mysqlFormatToDate";
 export { sortTasks } from "./helpers/sortTasks";
 export { organizeTasks } from "./helpers/organizeTasks";
+export { getCompletedDate } from "./helpers/getCompletedDate";

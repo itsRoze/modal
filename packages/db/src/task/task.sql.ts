@@ -24,7 +24,9 @@ export const task = mysqlTable(
       mode: "string",
     }),
     priority: boolean("priority").default(false),
-    completedTime: date("completed_time"),
+    completedTime: date("completed_time", {
+      mode: "string",
+    }),
     listType: mysqlEnum("listType", ["space", "project"]).notNull(),
     listId: cuid("listId").notNull(),
     userId: varchar("user_id", {

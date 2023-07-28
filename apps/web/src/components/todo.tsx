@@ -7,6 +7,7 @@ import { type TaskType } from "@/utils/types";
 import {
   classNames,
   dateToMySqlFormat,
+  getCompletedDate,
   getDeadlineDateName,
   isOverdue,
   mySqlFormatToDate,
@@ -18,7 +19,6 @@ import {
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
 import { addDays, format } from "date-fns";
-import dayjs from "dayjs";
 import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -147,7 +147,7 @@ const Todo: React.FC<ITodo> = ({
 
       if (!completedTime) {
         timerRef.current = setTimeout(() => {
-          mutate({ id, completedTime: dayjs().toDate() });
+          mutate({ id, completedTime: dateToMySqlFormat(new Date()) });
         }, 1000);
       }
     } else {
@@ -177,6 +177,18 @@ const Todo: React.FC<ITodo> = ({
           handleOnSelect={handleOnSelect}
           selectable={selectable}
           closeTodo={closeTodo}
+        />
+      ) : completedTime ? (
+        <CompletedTodo
+          task={task}
+          handleOnSelect={handleOnSelect}
+          checked={checked}
+          handleOnCheck={handleOnCheck}
+          setCheckHovering={setCheckHovering}
+          setHovering={setHovering}
+          selectable={selectable}
+          displayPriority={displayPriority}
+          displayList={displayList}
         />
       ) : (
         <CheckableTodo
@@ -210,7 +222,7 @@ interface ICheckableTodo extends ITask {
   displayList: boolean;
 }
 
-const CheckableTodo: React.FC<ICheckableTodo> = ({
+const CompletedTodo: React.FC<ICheckableTodo> = ({
   task,
   handleOnSelect,
   checked,
@@ -221,6 +233,80 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   displayPriority,
 }) => {
   const { id, name, priority, listId, listType } = task;
+  const { data: listInfo } = api.task.getListInfo.useQuery({
+    listId,
+    listType,
+  });
+
+  return (
+    <div
+      onClick={handleOnSelect}
+      onMouseOut={() => setHovering(false)}
+      onMouseOver={() => setHovering(true)}
+    >
+      <div
+        className={cn({
+          "flex w-full items-center gap-2": true,
+        })}
+      >
+        {/* Checkbox */}
+        <Checkbox
+          id={id}
+          checked={checked}
+          handleOnCheck={handleOnCheck}
+          setCheckHovering={setCheckHovering}
+        />
+        <CompletedTimeDisplay task={task} />
+        <div
+          className={cn({
+            "select-none truncate rounded-md pl-4": true,
+            "cursor-pointer": selectable,
+            "cursor-default": !selectable,
+          })}
+        >
+          <div className="flex">
+            {/* Priority */}
+            {displayPriority && priority ? (
+              <Priority checked={checked} />
+            ) : null}
+            {/* Name */}
+            <Name checked={checked} selectable={selectable} name={name} />
+          </div>
+          <div
+            className={cn({
+              "cursor-pointer": selectable,
+              "cursor-default": !selectable,
+              "text-sm": true,
+            })}
+          >
+            {listInfo ? (
+              <div className="flex items-center gap-1">
+                {listType === "project" ? (
+                  <ProjectIcon size={14} />
+                ) : (
+                  <SpaceIcon size={14} />
+                )}
+                <span>{listInfo.name}</span>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CheckableTodo: React.FC<ICheckableTodo> = ({
+  task,
+  handleOnSelect,
+  checked,
+  handleOnCheck,
+  setCheckHovering,
+  setHovering,
+  selectable,
+  displayPriority,
+}) => {
+  const { id, name, priority, listId, listType, completedTime } = task;
   const { data: listInfo } = api.task.getListInfo.useQuery({
     listId,
     listType,
@@ -246,17 +332,18 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
         />
         <div
           className={cn({
-            "my-1 flex flex-1 select-none items-center truncate rounded-md":
+            "my-1 flex flex-1 select-none items-center gap-1 truncate rounded-md":
               true,
             "cursor-pointer": selectable,
             "cursor-default": !selectable,
-            "line-through": checked,
           })}
         >
+          {/* Completed Date */}
+          {completedTime ? <CompletedTimeDisplay task={task} /> : null}
           {/* Priority */}
           {displayPriority && priority ? <Priority checked={checked} /> : null}
           {/* Deadline */}
-          <DeadlineDisplay task={task} />
+          {!completedTime ? <DeadlineDisplay task={task} /> : null}
           {/* Name */}
           <Name checked={checked} selectable={selectable} name={name} />
         </div>
@@ -351,6 +438,14 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
   );
 };
 
+const CompletedTimeDisplay: React.FC<ITask> = ({ task }) => {
+  const { completedTime } = task;
+  const completedDateFormat = getCompletedDate(completedTime);
+  return (
+    <p className="text-sm font-semibold no-underline">{completedDateFormat}</p>
+  );
+};
+
 const DeadlineDisplay: React.FC<ITask> = ({ task }) => {
   const { deadline } = task;
   const userFriendlyDeadline = getDeadlineDateName(deadline);
@@ -388,7 +483,7 @@ const Name: React.FC<IName> = ({ checked, selectable, name }) => {
       <p
         className={classNames(
           "truncate text-lg",
-          checked ? "text-gray-400" : "",
+          checked ? "text-gray-400 line-through" : "",
           selectable ? "cursor-pointer" : "cursor-default",
         )}
       >
