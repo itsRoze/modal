@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { LoadingPage } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -75,9 +76,9 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   };
 
   const handleMobileClick = () => {
-    if (window.innerWidth >= 1024) return;
-
-    onMenuButtonClick();
+    if (window.innerWidth < 1024) {
+      onMenuButtonClick();
+    }
   };
 
   return (
@@ -122,6 +123,22 @@ const Sidebar: React.FC<ISidebar> = ({
   handleMobileClick,
 }) => {
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("search term", searchTerm);
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const handleNavClick = () => {
+    handleMobileClick();
+    setSearchTerm("");
+  };
 
   return (
     <div
@@ -179,66 +196,118 @@ const Sidebar: React.FC<ISidebar> = ({
           <div className="flex justify-center px-4 py-2">
             <Input
               type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
               placeholder="🔎 Search"
             />
           </div>
-          <ul className="my-2 flex flex-col items-stretch gap-2">
-            <li
-              key={1}
-              className={cn({
-                "flex hover:bg-slate-200": true,
-                "transition-colors duration-300": true,
-                "gap-4 rounded-md py-2 pl-5": !collapsed,
-                "h-10 w-10 rounded-full py-2 pl-5": collapsed,
-              })}
-            >
-              <Link
-                onClick={handleMobileClick}
-                href={"/app"}
-                className="flex w-full items-center gap-2"
-              >
-                <Home size={24} className="text-fuchsia-600" />
-                Dashboard
-              </Link>
-            </li>
-            <li
-              key={2}
-              className={cn({
-                "flex hover:bg-slate-200": true,
-                "transition-colors duration-300": true,
-                "gap-4 rounded-md py-2 pl-5": !collapsed,
-                "h-10 w-10 rounded-full py-2 pl-5": collapsed,
-              })}
-            >
-              <Link
-                onClick={handleMobileClick}
-                href="/app/history"
-                className="flex w-full gap-2"
-              >
-                <BookOpenCheck size={24} className="text-green-600" />
-                History
-              </Link>
-            </li>
-          </ul>
-          <SpacesDisplay
-            collapsed={collapsed}
-            handleMobileClick={handleMobileClick}
-          />
-          <ProjectsDisplay handleMobileClick={handleMobileClick} />
+          {!debouncedSearchTerm ? (
+            <>
+              <ul className="my-2 flex flex-col items-stretch gap-2">
+                <li
+                  key={1}
+                  className={cn({
+                    "flex hover:bg-slate-200": true,
+                    "transition-colors duration-300": true,
+                    "gap-4 rounded-md py-2 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                  })}
+                >
+                  <Link
+                    onClick={handleMobileClick}
+                    href={"/app"}
+                    className="flex w-full items-center gap-2"
+                  >
+                    <Home size={24} className="text-fuchsia-600" />
+                    Dashboard
+                  </Link>
+                </li>
+                <li
+                  key={2}
+                  className={cn({
+                    "flex hover:bg-slate-200": true,
+                    "transition-colors duration-300": true,
+                    "gap-4 rounded-md py-2 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                  })}
+                >
+                  <Link
+                    onClick={handleMobileClick}
+                    href="/app/history"
+                    className="flex w-full gap-2"
+                  >
+                    <BookOpenCheck size={24} className="text-green-600" />
+                    History
+                  </Link>
+                </li>
+              </ul>
+              <SpacesDisplay
+                collapsed={collapsed}
+                handleMobileClick={handleMobileClick}
+              />
+              <ProjectsDisplay handleMobileClick={handleMobileClick} />
+            </>
+          ) : (
+            <SearchResults
+              searchTerm={debouncedSearchTerm}
+              handleMobileClick={handleNavClick}
+            />
+          )}
         </nav>
-        <div
-          className={cn({
-            "fixed bottom-3 mb-2 ml-2": true,
-            "opacity-0": collapsed,
-            "transition-opacity delay-0 duration-0": true,
-            "opacity-100": !collapsed,
-          })}
-        >
-          <SidebarMenu />
-        </div>
+        {!searchTerm ? (
+          <div
+            className={cn({
+              "fixed bottom-3 mb-2 ml-2": true,
+              "opacity-0": collapsed,
+              "transition-opacity delay-0 duration-0": true,
+              "opacity-100": !collapsed,
+            })}
+          >
+            <SidebarMenu />
+          </div>
+        ) : null}
       </div>
     </div>
+  );
+};
+
+interface ISearchResults {
+  searchTerm: string;
+  handleMobileClick: () => void;
+}
+const SearchResults: React.FC<ISearchResults> = ({
+  searchTerm,
+  handleMobileClick,
+}) => {
+  const {
+    data: lists,
+    isLoading,
+    isFetching,
+  } = api.user.findList.useQuery(searchTerm);
+
+  if (isLoading) return <LoadingPage />;
+  if (!lists && !isLoading) return null;
+  if (lists.length === 0 && !isLoading && !isFetching)
+    return <p className="pl-5 text-sm">No results found</p>;
+
+  return (
+    <ul className="pl-5">
+      {lists.map((list) => (
+        <li
+          key={list.id}
+          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+        >
+          <Link
+            onClick={handleMobileClick}
+            href={`/app/${list.type}/${encodeURIComponent(list.id)}`}
+            className="w-full font-normal text-black "
+          >
+            {list.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 };
 
