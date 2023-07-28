@@ -19,7 +19,7 @@ import {
 } from "@radix-ui/react-tooltip";
 import { addDays, format } from "date-fns";
 import dayjs from "dayjs";
-import { CalendarIcon, CheckIcon, StarIcon } from "lucide-react";
+import { CalendarIcon, CheckIcon, StarIcon, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import ProjectIcon from "./icons/project";
@@ -327,19 +327,18 @@ const DeadlineDisplay: React.FC<ITask> = ({ task }) => {
   const userFriendlyDeadline = getDeadlineDateName(deadline);
   const isDeadlineOverdue = isOverdue(deadline);
 
-  if (!deadline) return null;
-
   return (
     <div
       className={cn({
         "mx-1 flex items-center self-center rounded px-1": true,
-        "bg-red-500": isDeadlineOverdue,
-        "bg-gray-600": !isDeadlineOverdue,
+        "bg-red-500 text-white": isDeadlineOverdue,
+        "bg-gray-600 text-white": !isDeadlineOverdue && deadline,
+        "border-2 border-dashed border-gray-600 bg-none": !deadline,
       })}
     >
       <span
         className={cn({
-          "max-w-[3rem] truncate text-sm font-semibold text-white": true,
+          "max-w-[4rem] truncate text-sm font-semibold": true,
         })}
       >
         {userFriendlyDeadline}
@@ -383,19 +382,25 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
   closeTodo,
 }) => {
   return (
-    <div
-      onClick={handleOnSelect}
-      className={cn({
-        "cursor-pointer": selectable,
-        "cursor-default": !selectable,
-      })}
-    >
-      <NameForm task={task} closeTodo={closeTodo} />
-      <div className="my-0 flex items-center gap-2">
-        <DatePicker task={task} />
-        <PriorityDropdown task={task} />
-        <ListDisplay task={task} />
+    <div className="flex items-start">
+      <div
+        onClick={handleOnSelect}
+        className={cn({
+          "flex-grow": true,
+          "cursor-pointer": selectable,
+          "cursor-default": !selectable,
+        })}
+      >
+        <NameForm task={task} closeTodo={closeTodo} />
+        <div className="my-0 flex items-center gap-2">
+          <DatePicker task={task} />
+          <PriorityDropdown task={task} />
+          <ListDisplay task={task} />
+        </div>
       </div>
+      <button onClick={closeTodo} className="p-1 rounded-md opacity-50 hover:opacity-100">
+        <X />
+      </button>
     </div>
   );
 };

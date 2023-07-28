@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 export const getDeadlineDateName = (deadline: string | null) => {
-  if (!deadline) return null;
+  if (!deadline) return "someday";
 
   const deadlineDate = dayjs(deadline);
   const todayDate = dayjs();
