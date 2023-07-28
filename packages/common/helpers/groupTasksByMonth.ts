@@ -30,7 +30,7 @@ export const groupTasksByMonth = (tasks: Info[]) => {
   return groupedTasks;
 };
 
-const formatMonthYear = (date: Date): string => {
+const formatMonthYear = (date: string): string => {
   const month = dayjs(date).format("MMMM");
   const year = dayjs(date).format("YYYY");
   return `${month} ${year}`;
