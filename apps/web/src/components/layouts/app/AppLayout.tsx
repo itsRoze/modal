@@ -66,16 +66,23 @@ export interface IAppLayout {
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
+
+  const onMenuButtonClick = () => {
+    setMobileMenu((prev) => {
+      setSidebarCollapsed(prev);
+      return !prev;
+    });
+  };
+
+  const handleMobileClick = () => {
+    if (window.innerWidth >= 1024) return;
+
+    onMenuButtonClick();
+  };
+
   return (
     <>
-      <Header
-        onMenuButtonClick={() => {
-          setMobileMenu((prev) => {
-            setSidebarCollapsed(prev);
-            return !prev;
-          });
-        }}
-      />
+      <Header onMenuButtonClick={onMenuButtonClick} />
       <main
         className={classNames(
           styles.main ?? "",
@@ -91,6 +98,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
           collapsed={collapsed}
           setCollapsed={setSidebarCollapsed}
           shown={showMobileMenu}
+          handleMobileClick={handleMobileClick}
         />
         {children}
       </main>
@@ -104,9 +112,15 @@ interface ISidebar {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   shown: boolean;
+  handleMobileClick: () => void;
 }
 
-const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
+const Sidebar: React.FC<ISidebar> = ({
+  collapsed,
+  setCollapsed,
+  shown,
+  handleMobileClick,
+}) => {
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
 
   return (
@@ -161,10 +175,10 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
           })}
         >
           {/* Search bar */}
-          <div className="flex justify-center">
+          <div className="flex justify-center px-4 py-2">
             <Input
               type="text"
-              className="w-64 max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
+              className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
               placeholder="🔎 Search"
             />
           </div>
@@ -178,7 +192,11 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 "h-10 w-10 rounded-full py-2 pl-5": collapsed,
               })}
             >
-              <Link href="/app" className="flex w-full items-center gap-2">
+              <Link
+                onClick={handleMobileClick}
+                href={"/app"}
+                className="flex w-full items-center gap-2"
+              >
                 <Home size={24} className="text-fuchsia-600" />
                 Dashboard
               </Link>
@@ -192,14 +210,21 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
                 "h-10 w-10 rounded-full py-2 pl-5": collapsed,
               })}
             >
-              <Link href="/app/history" className="flex w-full gap-2">
+              <Link
+                onClick={handleMobileClick}
+                href="/app/history"
+                className="flex w-full gap-2"
+              >
                 <BookOpenCheck size={24} className="text-green-600" />
                 History
               </Link>
             </li>
           </ul>
-          <SpacesDisplay collapsed={collapsed} />
-          <ProjectsDisplay />
+          <SpacesDisplay
+            collapsed={collapsed}
+            handleMobileClick={handleMobileClick}
+          />
+          <ProjectsDisplay handleMobileClick={handleMobileClick} />
         </nav>
         <div
           className={cn({
@@ -216,7 +241,11 @@ const Sidebar: React.FC<ISidebar> = ({ collapsed, setCollapsed, shown }) => {
   );
 };
 
-const ProjectsDisplay = () => {
+interface IProjectsDisplay {
+  handleMobileClick: () => void;
+}
+
+const ProjectsDisplay: React.FC<IProjectsDisplay> = ({ handleMobileClick }) => {
   const { data: projects, isLoading: projectsIsLoading } =
     api.project.getAllForUser.useQuery();
 
@@ -230,6 +259,7 @@ const ProjectsDisplay = () => {
           className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
         >
           <Link
+            onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
             className="w-full font-normal text-black "
@@ -244,9 +274,13 @@ const ProjectsDisplay = () => {
 
 interface ISpacesDisplay {
   collapsed: boolean;
+  handleMobileClick: () => void;
 }
 
-const SpacesDisplay: React.FC<ISpacesDisplay> = ({ collapsed }) => {
+const SpacesDisplay: React.FC<ISpacesDisplay> = ({
+  collapsed,
+  handleMobileClick,
+}) => {
   const { data: spaces, isLoading: spacesIsLoading } =
     api.space.getAllForUser.useQuery();
 
@@ -263,7 +297,10 @@ const SpacesDisplay: React.FC<ISpacesDisplay> = ({ collapsed }) => {
             "h-10 w-10": collapsed,
           })}
         >
-          <SpaceSection userSpace={userSpace} />
+          <SpaceSection
+            userSpace={userSpace}
+            handleMobileClick={handleMobileClick}
+          />
         </li>
       ))}
     </ul>
@@ -274,8 +311,13 @@ type SpaceType = RouterOutputs["space"]["getAllForUser"][number];
 
 interface ISpaceSection {
   userSpace: SpaceType;
+  handleMobileClick: () => void;
 }
-const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
+
+const SpaceSection: React.FC<ISpaceSection> = ({
+  userSpace,
+  handleMobileClick,
+}) => {
   const [open, setOpen] = useState(true);
   const Icon = open ? ChevronDown : ChevronRight;
 
@@ -293,6 +335,7 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
         })}
       >
         <Link
+          onClick={handleMobileClick}
           href={`/app/space/${encodeURIComponent(userSpace.id)}`}
           className="flex-grow text-left"
         >
@@ -303,6 +346,7 @@ const SpaceSection: React.FC<ISpaceSection> = ({ userSpace }) => {
       <CollapsibleContent className="flex flex-col py-2">
         {userSpace.projects.map((userProject) => (
           <Link
+            onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
             className="rounded-md px-1 py-2 font-normal text-black hover:bg-slate-200"

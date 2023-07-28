@@ -59,8 +59,7 @@ const MatrixQuadrant: React.FC<IMatrixQuadrant> = ({ type, tasks }) => {
         "border-b-2 border-l-2": type === "2",
         "border-r-2 border-t-2": type === "3",
         "border-l-2 border-t-2": type === "4",
-        "custom-scroll relative h-full w-full overflow-x-hidden border-black p-0":
-          true,
+        "relative h-full w-full overflow-x-hidden border-black p-0": true,
       })}
     >
       {/* Labels */}
@@ -72,7 +71,7 @@ const MatrixQuadrant: React.FC<IMatrixQuadrant> = ({ type, tasks }) => {
       </div>
       {/* Tasks */}
       <div className="h-full w-full pl-8 pt-8">
-        <ul className="h-full w-full pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
           {tasks.map((task) => (
             <Todo key={task.id} task={task} />
           ))}
