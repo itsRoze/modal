@@ -420,7 +420,7 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
         })}
       >
         <NameForm task={task} closeTodo={closeTodo} />
-        <div className="my-0 flex items-center gap-2">
+        <div className="my-0 flex select-none items-center gap-2">
           <DatePicker task={task} />
           <PriorityDropdown task={task} />
           <ListDisplay task={task} />
@@ -562,6 +562,7 @@ const DatePicker: React.FC<ITask> = ({ task }) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
+        onClick={(e) => e.stopPropagation()}
         side="right"
         className="flex w-auto flex-col space-y-2 p-2 text-sm"
       >
