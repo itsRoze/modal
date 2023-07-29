@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@radix-ui/react-tooltip";
+} from "@/components/ui/tooltip";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -424,8 +424,6 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
         <TooltipTrigger>
           <StarIcon
             size={18}
-            data-tip
-            data-for="priority"
             className={` ${checked ? "text-orange-200" : "text-logo"} `}
             fill={` ${checked ? "rgb(254 215 170)" : "rgb(246 191 95)"} `}
           />
