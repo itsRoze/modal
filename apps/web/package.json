@@ -7,7 +7,8 @@
     "build": "sst bind next build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",

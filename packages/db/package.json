@@ -9,7 +9,8 @@
     "lint:fix": "pnpm lint --fix",
     "type-check": "tsc --noEmit",
     "db:push": "sst bind drizzle-kit push:mysql",
-    "db:studio": "sst bind drizzle-kit studio"
+    "db:studio": "sst bind drizzle-kit studio",
+    "db:clean": " sst bind ts-node ./src/utils/clean.ts"
   },
   "devDependencies": {
     "@modal/eslint-config": "1.0.0",
@@ -17,8 +18,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@modal/eslint-config": "workspace:*",
     "@modal/auth": "workspace:*",
+    "@modal/eslint-config": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.1",
     "@planetscale/database": "^1.7.0",
     "drizzle-orm": "^0.27.0",

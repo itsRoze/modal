@@ -13,8 +13,14 @@ export const connection = connect({
   password: Config.DB_PASSWORD,
 });
 
+export const dbSchema = {
+  ...projectSchema,
+  ...spaceSchema,
+  ...userSchena,
+  ...taskSchema,
+};
 export const db = drizzle(connection, {
-  schema: { ...projectSchema, ...spaceSchema, ...userSchena, ...taskSchema },
+  schema: dbSchema,
 });
 export type db = typeof db;
 
