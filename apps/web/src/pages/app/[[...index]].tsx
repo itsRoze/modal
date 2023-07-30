@@ -16,7 +16,7 @@ const Dashboard: NextPageWithLayout = () => {
     <article className="flex flex-col">
       <div className="flex items-center">
         <Title title="Dashboard" Icon={Home} iconColor="text-fuchsia-500" />
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
           <Tooltip>
             <TooltipTrigger>
               <Info size={18} />

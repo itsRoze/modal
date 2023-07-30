@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
@@ -12,12 +18,6 @@ import {
   isOverdue,
   mySqlFormatToDate,
 } from "@modal/common";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -419,7 +419,7 @@ interface IPriority {
 
 const Priority: React.FC<IPriority> = ({ checked }) => {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger>
           <StarIcon

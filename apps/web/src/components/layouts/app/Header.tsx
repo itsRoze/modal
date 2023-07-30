@@ -6,6 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
@@ -51,17 +57,8 @@ const Header: React.FC<IHeader> = ({
         />
       </div>
       {remainingTrialDays ? (
-        <div
-          className={cn(
-            "rounded-md bg-red-100 px-1 font-medium shadow-md",
-            `${inter.variable} font-sans`,
-          )}
-        >
-          Trial: {remainingTrialDays}{" "}
-          {remainingTrialDays === 1 ? "day" : "days"} left
-        </div>
+        <TrialBanner remainingDays={remainingTrialDays} />
       ) : null}
-
       <DropdownMenu>
         <DropdownMenuTrigger>
           <UserCircle2 size={28} />
@@ -81,6 +78,48 @@ const Header: React.FC<IHeader> = ({
         <Menu size={24} className="text-gray-200" />
       </button>
     </div>
+  );
+};
+
+const TrialBanner = ({ remainingDays }: { remainingDays: number }) => {
+  const { mutateAsync: createCheckoutSession } =
+    api.stripe.createCheckoutSession.useMutation();
+
+  const { push } = useRouter();
+  const { toast } = useToast();
+
+  const handleUpgrade = async () => {
+    try {
+      const { checkoutUrl } = await createCheckoutSession();
+      if (checkoutUrl) void push(checkoutUrl);
+    } catch (error) {
+      toast({
+        title: "Uh oh!",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <HoverCard openDelay={0} closeDelay={100}>
+      <HoverCardTrigger asChild>
+        <button
+          onClick={handleUpgrade}
+          className={cn(
+            "rounded-md bg-red-100 px-1 font-medium shadow-md",
+            `${inter.variable} font-sans`,
+          )}
+        >
+          Trial: {remainingDays} {remainingDays === 1 ? "day" : "days"} left
+        </button>
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <p className="text-sm">
+          You&apos;re currently on a free trial. Upgrade your account
+        </p>
+      </HoverCardContent>
+    </HoverCard>
   );
 };
 
