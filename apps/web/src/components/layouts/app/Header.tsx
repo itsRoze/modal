@@ -15,17 +15,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
+import { type RouterOutputs } from "@modal/api";
+import { getRemainingTrial } from "@modal/common";
 import { Menu, UserCircle2 } from "lucide-react";
 
 interface IHeader {
+  userData: RouterOutputs["user"]["get"];
   onMenuButtonClick: () => void;
-  remainingTrialDays?: number;
 }
 
-const Header: React.FC<IHeader> = ({
-  onMenuButtonClick,
-  remainingTrialDays,
-}) => {
+const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
   const { mutateAsync: createBillingPortalSession } =
     api.stripe.createBillingPortalSession.useMutation();
 
@@ -56,8 +55,11 @@ const Header: React.FC<IHeader> = ({
           className="h-auto w-auto"
         />
       </div>
-      {remainingTrialDays ? (
-        <TrialBanner remainingDays={remainingTrialDays} />
+      {userData.time_email_verified &&
+      userData.stripeSubscriptionStatus != "active" ? (
+        <TrialBanner
+          remainingDays={getRemainingTrial(userData.time_email_verified)}
+        />
       ) : null}
       <DropdownMenu>
         <DropdownMenuTrigger>

@@ -40,7 +40,7 @@ import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
-import { classNames } from "@modal/common";
+import { classNames, getRemainingTrial } from "@modal/common";
 import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import {
@@ -68,8 +68,7 @@ export interface IAppLayout {
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
-  const { data: remainingTrialDays, isLoading } =
-    api.user.getTrialPeriod.useQuery();
+  const { data: userData, isLoading } = api.user.get.useQuery();
 
   const onMenuButtonClick = () => {
     setMobileMenu((prev) => {
@@ -84,9 +83,18 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
     }
   };
 
+  // Loading state
   if (isLoading) return <LoadingPage />;
-  if (remainingTrialDays === undefined && !isLoading) return <div>404</div>;
-  if (remainingTrialDays <= 0)
+
+  // Potential Errors
+  if (!userData && !isLoading) return <div>404</div>;
+  if (!userData.time_email_verified) return <div>404</div>;
+
+  // Free trial over
+  if (
+    userData.stripeSubscriptionStatus !== "active" &&
+    getRemainingTrial(userData.time_email_verified) <= 0
+  )
     return (
       <main className={classNames("h-screen w-screen")}>
         <Upgrade />
@@ -95,10 +103,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
 
   return (
     <>
-      <Header
-        onMenuButtonClick={onMenuButtonClick}
-        remainingTrialDays={remainingTrialDays}
-      />
+      <Header userData={userData} onMenuButtonClick={onMenuButtonClick} />
       <main
         className={classNames(
           styles.main ?? "",

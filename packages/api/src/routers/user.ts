@@ -1,4 +1,3 @@
-import { getRemainingTrial } from "@modal/common";
 import { User, fromId } from "@modal/db/src/user";
 import { TRPCError } from "@trpc/server";
 import { and, eq, like } from "drizzle-orm";
@@ -6,20 +5,29 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-export const userRouter = createTRPCRouter({
-  getTrialPeriod: protectedProcedure.query(async ({ ctx }) => {
-    const { session } = ctx;
+const filterDataForClient = (user: User.Info) => {
+  const { id, email, time_email_verified, stripeSubscriptionStatus } = user;
+  return {
+    id,
+    email,
+    time_email_verified,
+    stripeSubscriptionStatus,
+  };
+};
 
+export const userRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    const { session } = ctx;
     const data = await fromId(session.userId);
 
-    if (!data || !data.time_email_verified) {
+    if (!data) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "User not found",
       });
     }
 
-    return getRemainingTrial(data.time_email_verified);
+    return filterDataForClient(data);
   }),
   subscriptionStatus: protectedProcedure.query(async ({ ctx }) => {
     const { session, db } = ctx;
