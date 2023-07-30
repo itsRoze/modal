@@ -33,7 +33,7 @@ const SignUp: NextPageWithLayout = () => {
     >
       <section className="flex flex-col items-center justify-center px-16">
         <h1 className="text-center text-2xl font-medium md:text-7xl">
-          Start with a 7 day free trial
+          Start with a 2 week free trial
         </h1>
         <h2 className="py-2 text-center text-lg font-light md:py-8 md:text-4xl">
           No credit card required

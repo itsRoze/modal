@@ -28,8 +28,6 @@ export default async function handler(
     });
   }
 
-  console.log("RECEIVED EMAIL", email);
-
   try {
     const user = await auth.createUser({
       primaryKey: {
@@ -41,8 +39,6 @@ export default async function handler(
         email,
       },
     });
-
-    console.log("ATTEMPTED CREATE");
 
     if (!user) throw new Error("User not created");
 

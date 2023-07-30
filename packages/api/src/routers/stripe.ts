@@ -33,8 +33,8 @@ export const stripeRouter = createTRPCRouter({
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/app/account?checkoutSuccess=true`,
-      cancel_url: `${baseUrl}/app/account?checkoutCanceled=true`,
+      success_url: `${baseUrl}/app?checkoutSuccess=true`,
+      cancel_url: `${baseUrl}/app?checkoutCanceled=true`,
       subscription_data: {
         metadata: {
           userId: session.userId,
@@ -73,7 +73,7 @@ export const stripeRouter = createTRPCRouter({
     const stripeBillingPortalSession =
       await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: `${baseUrl}/app/account`,
+        return_url: `${baseUrl}/app`,
       });
 
     if (!stripeBillingPortalSession) {

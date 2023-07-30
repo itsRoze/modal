@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import Upgrade from "@/components/upgrade";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
@@ -67,6 +68,8 @@ export interface IAppLayout {
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
+  const { data: remainingTrialDays, isLoading } =
+    api.user.getTrialPeriod.useQuery();
 
   const onMenuButtonClick = () => {
     setMobileMenu((prev) => {
@@ -81,9 +84,21 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
     }
   };
 
+  if (isLoading) return <LoadingPage />;
+  if (remainingTrialDays === undefined && !isLoading) return <div>404</div>;
+  if (remainingTrialDays <= 0)
+    return (
+      <main className={classNames("h-screen w-screen")}>
+        <Upgrade />
+      </main>
+    );
+
   return (
     <>
-      <Header onMenuButtonClick={onMenuButtonClick} />
+      <Header
+        onMenuButtonClick={onMenuButtonClick}
+        remainingTrialDays={remainingTrialDays}
+      />
       <main
         className={classNames(
           styles.main ?? "",
@@ -128,7 +143,6 @@ const Sidebar: React.FC<ISidebar> = ({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("search term", searchTerm);
       setDebouncedSearchTerm(searchTerm);
     }, 500);
 
