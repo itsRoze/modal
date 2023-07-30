@@ -30,7 +30,6 @@ export default async function handler(
 
     try {
       event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
-
       switch (event.type) {
         case "invoice.paid":
           // Used to provision services after the trial has ended.
@@ -100,7 +99,6 @@ export default async function handler(
 
       res.status(200).json({ received: true });
     } catch (error) {
-      console.log("ERROR");
       console.log(error);
       res.status(400).send(error);
       return;

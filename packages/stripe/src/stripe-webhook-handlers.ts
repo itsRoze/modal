@@ -79,10 +79,13 @@ export const handleSubscriptionCreatedOrUpdated = async ({
   if (!userId) throw new Error("User subscription not found");
 
   // update user with subscription data
-  await db.update(User.user).set({
-    stripeSubscriptionId: subscription.id,
-    stripeSubscriptionStatus: subscription.status,
-  });
+  await db
+    .update(User.user)
+    .set({
+      stripeSubscriptionId: subscription.id,
+      stripeSubscriptionStatus: subscription.status,
+    })
+    .where(eq(User.user.id, userId));
 };
 
 export const handleSubscriptionCanceled = async ({
