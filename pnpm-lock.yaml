@@ -305,6 +305,15 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
 
+  packages/email:
+    dependencies:
+      '@react-email/components':
+        specifier: 0.0.6
+        version: 0.0.6
+      react-email:
+        specifier: 1.9.3
+        version: 1.9.3
+
   packages/eslint-config:
     dependencies:
       '@types/eslint':
@@ -331,15 +340,6 @@ importers:
       eslint-plugin-react:
         specifier: ^7.32.2
         version: 7.32.2(eslint@8.40.0)
-
-  packages/react-email-starter:
-    dependencies:
-      '@react-email/components':
-        specifier: 0.0.6
-        version: 0.0.6
-      react-email:
-        specifier: 1.9.3
-        version: 1.9.3
 
   packages/stripe:
     dependencies:
@@ -5539,7 +5539,7 @@ packages:
     resolution: {integrity: sha512-xq+q3SRMOxGivLhBNaUdC64hDTQwejJ+H0T/NB1XMtTVEwNTrfFF3gAxiyW0Bu/xWEGhjVKgUcMhCrUy2+uCWg==}
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
     dev: true
 
@@ -8789,7 +8789,7 @@ packages:
       duplexify: 4.1.2
       help-me: 3.0.0
       inherits: 2.0.4
-      minimist: 1.2.6
+      minimist: 1.2.8
       mqtt-packet: 6.10.0
       pump: 3.0.0
       readable-stream: 3.6.2
