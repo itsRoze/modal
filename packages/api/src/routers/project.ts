@@ -12,7 +12,7 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await create({
         name: input.name,
-        userId: ctx.session.userId,
+        userId: ctx.session.user.userId,
         spaceId: input.spaceId,
       });
     }),
@@ -45,7 +45,7 @@ export const projectRouter = createTRPCRouter({
   getAllForUser: protectedProcedure
     .input(z.optional(z.string()))
     .query(async ({ ctx, input }) => {
-      const result = await getAll(input ?? ctx.session.userId);
+      const result = await getAll(input ?? ctx.session.user.userId);
       return result ?? [];
     }),
 });

@@ -10,7 +10,7 @@ import { space } from "../space/space.sql";
 import { task } from "../task/task.sql";
 import { timestamps } from "../utils/sql";
 
-export const user = mysqlTable("auth_user", {
+export const user = mysqlTable("user", {
   id: varchar("id", {
     length: 15, // change this when using custom user ids
   }).primaryKey(),

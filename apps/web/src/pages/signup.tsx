@@ -127,7 +127,7 @@ const SignupTokenForm = ({
       formSchema.parse({ otp });
       const response = await fetch("/api/auth/signup/validate", {
         method: "POST",
-        body: JSON.stringify({ token: otp, userId }),
+        body: JSON.stringify({ userProvidedToken: otp, userId }),
       });
       if (response.redirected) return router.push(response.url);
 

@@ -1,1 +1,1 @@
-export { TokenCodeEmail } from "./emails/token-code";
+export { sendTokenEmail } from "./utils/sendTokenEmail";

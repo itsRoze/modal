@@ -31,9 +31,8 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
-type AuthRequest = ReturnType<(typeof auth)["handleRequest"]>;
 
-type Session = Awaited<ReturnType<AuthRequest["validate"]>>;
+type Session = Awaited<ReturnType<(typeof auth)["getSession"]>>;
 
 type CreateContextOptions = {
   session: Session | null;
@@ -117,7 +116,7 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.userId) {
+  if (!ctx.session || !ctx.session.user.userId) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "User not authenticated",
@@ -126,7 +125,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 
   return next({
     ctx: {
-      session: { ...ctx.session, userId: ctx.session.userId },
+      session: { ...ctx.session, userId: ctx.session.user.userId },
     },
   });
 });

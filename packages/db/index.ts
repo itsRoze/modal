@@ -2,6 +2,7 @@ import { connect } from "@planetscale/database";
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { Config } from "sst/node/config";
 
+import * as tokenSchema from "./src/auth_token/token.sql";
 import * as projectSchema from "./src/project/project.sql";
 import * as spaceSchema from "./src/space/space.sql";
 import * as taskSchema from "./src/task/task.sql";
@@ -18,6 +19,7 @@ export const dbSchema = {
   ...spaceSchema,
   ...userSchena,
   ...taskSchema,
+  ...tokenSchema,
 };
 export const db = drizzle(connection, {
   schema: dbSchema,
@@ -29,3 +31,4 @@ export { StripeEvent } from "./src/stripe_event";
 export { Space } from "./src/space";
 export { Project } from "./src/project";
 export { Task } from "./src/task";
+export { Token } from "./src/auth_token";

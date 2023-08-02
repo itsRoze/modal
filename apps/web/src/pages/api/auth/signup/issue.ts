@@ -1,7 +1,12 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { otpToken } from "@modal/auth";
-import { create } from "@modal/db/src/user";
-import { LuciaError } from "lucia-auth";
+import {
+  create as createToken,
+  deleteByUserId as deleteTokenByUserId,
+} from "@modal/db/src/auth_token";
+import { create as createUser } from "@modal/db/src/user";
+import { sendTokenEmail } from "@modal/email";
+import { LuciaError } from "lucia";
 
 type Data = {
   error?: string;
@@ -13,7 +18,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
-  if (req.method !== "POST") res.status(404).json({ error: "Not found" });
+  if (req.method !== "POST") {
+    res.status(404).json({ error: "Not found" });
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { email } =
@@ -26,13 +33,21 @@ export default async function handler(
   }
 
   try {
-    console.log("before");
-    const user = await create({ email });
-    console.log("after");
+    const user = await createUser({ email });
 
     if (!user) throw new Error("User not created");
 
-    const otp = await otpToken.issue(user.userId);
+    // delete previous tokens
+    await deleteTokenByUserId(user.userId);
+    // generate new token
+    const otp = otpToken();
+    // save token
+    await createToken({
+      userId: user.userId,
+      token: otp.token,
+      expires: otp.expires,
+    });
+
     console.log(otp);
 
     res.status(200).json({ message: "OTP sent", userId: user.userId });

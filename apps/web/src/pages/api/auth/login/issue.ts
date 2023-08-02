@@ -1,7 +1,11 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { auth, otpToken } from "@modal/auth";
+import {
+  create as createToken,
+  deleteByUserId as deleteTokenByUserId,
+} from "@modal/db/src/auth_token";
 import { fromEmail } from "@modal/db/src/user";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 type Data = {
   error?: string;
@@ -30,7 +34,17 @@ export default async function handler(
     if (!user) throw new Error("No user found");
     const key = await auth.useKey("email", email, null);
 
-    const otp = await otpToken.issue(key.userId);
+    // delete previous tokens
+    await deleteTokenByUserId(user.id);
+    // generate new token
+    const otp = otpToken();
+    // save token
+    await createToken({
+      userId: user.id,
+      token: otp.token,
+      expires: otp.expires,
+    });
+
     console.log(otp);
 
     res.status(200).json({ message: "OTP sent", userId: key.userId });

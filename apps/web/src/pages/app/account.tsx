@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (
     props: {
       session: {
         sessionId: session.sessionId,
-        userId: session.userId,
+        userId: session.user.userId,
         state: session.state,
         idlePeriodExpiresAt: JSON.stringify(session.idlePeriodExpiresAt),
         activePeriodExpiresAt: JSON.stringify(session.activePeriodExpiresAt),

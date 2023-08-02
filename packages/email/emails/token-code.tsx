@@ -17,9 +17,7 @@ interface ITokenCodeEmail {
 const baseUrl =
   process.env.NODE_ENV === "production" ? `https://usemodal.com` : "";
 
-export const TokenCodeEmail: React.FC<ITokenCodeEmail> = ({
-  tokenCode = "INVALID",
-}) => {
+export const TokenCodeEmail = ({ tokenCode = "INVALID" }: ITokenCodeEmail) => {
   return (
     <Html>
       <Head />
