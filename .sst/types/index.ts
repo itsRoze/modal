@@ -53,6 +53,13 @@ declare module "sst/node/config" {
       value: string;
     }
   }
+}import "sst/node/config";
+declare module "sst/node/config" {
+  export interface SecretResources {
+    "RESEND_API_KEY": {
+      value: string;
+    }
+  }
 }import "sst/node/site";
 declare module "sst/node/site" {
   export interface NextjsSiteResources {

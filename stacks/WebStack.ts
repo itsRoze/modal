@@ -3,7 +3,7 @@ import { NextjsSite, use, type StackContext } from "sst/constructs";
 import { Secrets } from "./Secrets";
 
 export function WebStack({ stack, app }: StackContext) {
-  const { database, stripe } = use(Secrets);
+  const { database, stripe, resend } = use(Secrets);
   const site = new NextjsSite(stack, "modal-web", {
     path: "apps/web",
     environment: {
@@ -17,6 +17,7 @@ export function WebStack({ stack, app }: StackContext) {
       stripe.STRIPE_SK,
       stripe.STRIPE_PRICE_ID,
       stripe.STRIPE_WEBHOOK_SECRET,
+      resend.RESEND_API_KEY,
     ],
   });
 

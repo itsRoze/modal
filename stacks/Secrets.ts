@@ -15,5 +15,6 @@ export function Secrets(ctx: StackContext) {
       "STRIPE_WEBHOOK_SECRET",
       "STRIPE_PRICE_ID",
     ),
+    resend: Config.Secret.create(ctx.stack, "RESEND_API_KEY"),
   };
 }
