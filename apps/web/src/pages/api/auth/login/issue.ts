@@ -5,6 +5,7 @@ import {
   deleteByUserId as deleteTokenByUserId,
 } from "@modal/db/src/auth_token";
 import { fromEmail } from "@modal/db/src/user";
+import { sendTokenEmail } from "@modal/email";
 import { LuciaError } from "lucia";
 
 type Data = {
@@ -46,6 +47,15 @@ export default async function handler(
     });
 
     console.log(otp);
+    await sendTokenEmail({
+      token: otp.token,
+      userEmail:
+        process.env.NODE_ENV === "production" ? email : "elewis9989@gmail.com",
+      fromEmail:
+        process.env.NODE_ENV === "production"
+          ? "support@usemodal.com"
+          : "Acme <onboarding@resend.dev>",
+    });
 
     res.status(200).json({ message: "OTP sent", userId: key.userId });
   } catch (error) {
