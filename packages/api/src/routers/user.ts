@@ -81,14 +81,10 @@ export const userRouter = createTRPCRouter({
         return [];
       }
 
-      console.log("here");
-      console.log(`%${input}%`);
-
       const spaces = await db.query.space.findMany({
         where: (space) =>
           and(eq(space.userId, session.userId), like(space.name, `%${input}%`)),
       });
-      console.log("here spaces", spaces);
 
       const spacesWithType = spaces.map((userSpace) => ({
         ...userSpace,
@@ -102,8 +98,6 @@ export const userRouter = createTRPCRouter({
             like(project.name, `%${input}%`),
           ),
       });
-
-      console.log("here projects", projects);
 
       const projectsWithType = projects.map((userProject) => ({
         ...userProject,

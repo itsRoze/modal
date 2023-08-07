@@ -1,4 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { redis } from "@modal/api";
 import { otpToken } from "@modal/auth";
 import {
   create as createToken,
@@ -6,6 +7,7 @@ import {
 } from "@modal/db/src/auth_token";
 import { create as createUser } from "@modal/db/src/user";
 import { sendTokenEmail } from "@modal/email";
+import { Ratelimit } from "@upstash/ratelimit";
 import { LuciaError } from "lucia";
 
 type Data = {
@@ -13,6 +15,13 @@ type Data = {
   message?: string;
   userId?: string;
 };
+
+// 3 requests per 1 minute
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  analytics: true,
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,6 +42,12 @@ export default async function handler(
   }
 
   try {
+    // Use a constant string to limit all requests with a single ratelimit
+    const { success } = await ratelimit.limit("signup_issue");
+    if (!success) {
+      throw new Error("Too many requests");
+    }
+
     const user = await createUser({ email });
 
     if (!user) throw new Error("User not created");
@@ -61,6 +76,7 @@ export default async function handler(
 
     res.status(200).json({ message: "OTP sent", userId: user.userId });
   } catch (error) {
+    console.log("error", error);
     if (error instanceof LuciaError) {
       let errorMsg;
       switch (error.message) {

@@ -1,4 +1,3 @@
-import { exampleRouter } from "./routers/example";
 import { projectRouter } from "./routers/project";
 import { spaceRouter } from "./routers/space";
 import { stripeRouter } from "./routers/stripe";
@@ -12,7 +11,6 @@ import { createTRPCRouter } from "./trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
   user: userRouter,
   stripe: stripeRouter,
   space: spaceRouter,

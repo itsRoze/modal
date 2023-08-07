@@ -11,10 +11,20 @@ import {
   update,
 } from "@modal/db/src/task";
 import { task } from "@modal/db/src/task/task.sql";
+import { Ratelimit } from "@upstash/ratelimit";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
+import { ratelimit } from "../ratelimit";
+import { redis } from "../redis";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+
+// 5 requests per 5 seconds
+const ratelimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "5 s"),
+  analytics: true,
+});
 
 export const taskRouter = createTRPCRouter({
   create: protectedProcedure
@@ -31,11 +41,18 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+      await ratelimit(ratelimiter, userId, "You are creating too fast");
+
       return await create({ ...input, userId: ctx.session.userId });
     }),
   remove: protectedProcedure
     .input(Info.shape.id)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+
+      await ratelimit(ratelimiter, userId, "You are deleting too fast");
+
       return await remove(input);
     }),
   update: protectedProcedure
@@ -57,7 +74,11 @@ export const taskRouter = createTRPCRouter({
         priority: true,
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+
+      await ratelimit(ratelimiter, userId, "You are modifying too fast");
+
       const result = await update(input);
       if (result) {
         return input;

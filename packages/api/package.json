@@ -16,6 +16,8 @@
     "@modal/stripe": "workspace:*",
     "@trpc/client": "^10.25.1",
     "@trpc/server": "^10.25.1",
+    "@upstash/ratelimit": "^0.4.3",
+    "@upstash/redis": "^1.22.0",
     "drizzle-orm": "^0.27.0",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"

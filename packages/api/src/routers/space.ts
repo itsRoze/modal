@@ -10,8 +10,11 @@ import {
   update,
 } from "@modal/db/src/space";
 import { TRPCError } from "@trpc/server";
+import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 
+import { ratelimit } from "../ratelimit";
+import { redis } from "../redis";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 type Space = Awaited<ReturnType<typeof getAll>>[number];
@@ -21,15 +24,30 @@ export const filterSpaceForClient = (space: Space) => {
   return { id, name };
 };
 
+// 5 requests per 5 seconds
+const ratelimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "5 s"),
+  analytics: true,
+});
+
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createSpaceSchema)
     .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+
+      await ratelimit(ratelimiter, userId, "You are creating too fast");
+
       return await create({ name: input.name, userId: ctx.session.userId });
     }),
   update: protectedProcedure
     .input(editSpaceSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+
+      await ratelimit(ratelimiter, userId, "You are modifying too fast");
+
       await update({ id: input.id, name: input.name });
       const result = await fromID(input.id);
       if (!result) throw new TRPCError({ code: "NOT_FOUND" });
@@ -38,7 +56,11 @@ export const spaceRouter = createTRPCRouter({
     }),
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session.user;
+
+      await ratelimit(ratelimiter, userId, "You are deleting too fast");
+
       return await remove({ id: input.id });
     }),
   getAllForUser: protectedProcedure

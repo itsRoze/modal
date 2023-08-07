@@ -16,5 +16,11 @@ export function Secrets(ctx: StackContext) {
       "STRIPE_PRICE_ID",
     ),
     resend: Config.Secret.create(ctx.stack, "RESEND_API_KEY"),
+    upstash: Config.Secret.create(
+      ctx.stack,
+      "UPSTASH_ENDPOINT",
+      "UPSTASH_PASSWORD",
+      "UPSTASH_TOKEN",
+    ),
   };
 }

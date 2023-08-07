@@ -107,6 +107,9 @@ importers:
       '@trpc/server':
         specifier: ^10.25.1
         version: 10.25.1
+      '@upstash/ratelimit':
+        specifier: ^0.4.3
+        version: 0.4.3
       class-variance-authority:
         specifier: ^0.6.0
         version: 0.6.0(typescript@5.0.4)
@@ -207,6 +210,12 @@ importers:
       '@trpc/server':
         specifier: ^10.25.1
         version: 10.25.1
+      '@upstash/ratelimit':
+        specifier: ^0.4.3
+        version: 0.4.3
+      '@upstash/redis':
+        specifier: ^1.22.0
+        version: 1.22.0
       drizzle-orm:
         specifier: ^0.27.0
         version: 0.27.0(@aws-sdk/client-rds-data@3.379.1)(@planetscale/database@1.7.0)(kysely@0.25.0)(mysql2@3.3.0)
@@ -4915,6 +4924,31 @@ packages:
       eslint-visitor-keys: 3.4.2
     dev: false
 
+  /@upstash/core-analytics@0.0.6:
+    resolution: {integrity: sha512-cpPSR0XJAJs4Ddz9nq3tINlPS5aLfWVCqhhtHnXt4p7qr5+/Znlt1Es736poB/9rnl1hAHrOsOvVj46NEXcVqA==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@upstash/redis': 1.22.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@upstash/ratelimit@0.4.3:
+    resolution: {integrity: sha512-Dsp9Mw09Flg28JRklKgFiCXqr3bqv8bbG0kgpUYoHjcgPPolFFyaYOj/I2HExvYLZiogl77NUavBoNvMOK0zUQ==}
+    dependencies:
+      '@upstash/core-analytics': 0.0.6
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@upstash/redis@1.22.0:
+    resolution: {integrity: sha512-sXoJDoEqqik0HbrNE7yRWckOySEFsoBxfRdCgOqkc0w6py19ZZG50SpGkDDEUXSnBqP8VgGYXhWAiBpqxrt5oA==}
+    dependencies:
+      isomorphic-fetch: 3.0.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@whatwg-node/events@0.0.2:
     resolution: {integrity: sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==}
     dev: true
@@ -8227,6 +8261,15 @@ packages:
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  /isomorphic-fetch@3.0.0:
+    resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
+    dependencies:
+      node-fetch: 2.6.12
+      whatwg-fetch: 3.6.17
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /isomorphic-ws@4.0.1(ws@8.13.0):
     resolution: {integrity: sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==}
     peerDependencies:
@@ -11242,6 +11285,10 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
+
+  /whatwg-fetch@3.6.17:
+    resolution: {integrity: sha512-c4ghIvG6th0eudYwKZY5keb81wtFz9/WeAHAoy8+r18kcWlitUIrmGFQ2rWEl4UCKUilD3zCLHOIPheHx5ypRQ==}
+    dev: false
 
   /whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}

@@ -60,6 +60,27 @@ declare module "sst/node/config" {
       value: string;
     }
   }
+}import "sst/node/config";
+declare module "sst/node/config" {
+  export interface SecretResources {
+    "UPSTASH_ENDPOINT": {
+      value: string;
+    }
+  }
+}import "sst/node/config";
+declare module "sst/node/config" {
+  export interface SecretResources {
+    "UPSTASH_PASSWORD": {
+      value: string;
+    }
+  }
+}import "sst/node/config";
+declare module "sst/node/config" {
+  export interface SecretResources {
+    "UPSTASH_TOKEN": {
+      value: string;
+    }
+  }
 }import "sst/node/site";
 declare module "sst/node/site" {
   export interface NextjsSiteResources {
