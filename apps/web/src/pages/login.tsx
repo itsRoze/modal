@@ -34,7 +34,7 @@ const Login: NextPageWithLayout = () => {
           Welcome back
         </h2>
       </section>
-      <section className="bg-blur-screenshot flex w-full flex-col items-center space-y-4 bg-cover bg-fixed bg-no-repeat ">
+      <section className="flex w-full flex-col items-center space-y-4">
         <div className="my-10 rounded-lg bg-white py-2 shadow-lg md:p-10">
           {!userId ? (
             <LoginEmailForm setUserId={setUserId} />

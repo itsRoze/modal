@@ -39,7 +39,7 @@ const SignUp: NextPageWithLayout = () => {
           No credit card required
         </h2>
       </section>
-      <section className="bg-blur-screenshot flex flex-col items-center space-y-4 bg-cover bg-fixed bg-no-repeat">
+      <section className="flex flex-col items-center space-y-4">
         <div className="my-10 rounded-lg bg-white py-2 shadow-lg md:p-10">
           {!userId || !email ? (
             <SignupEmailForm setUserId={setUserId} setEmail={setEmail} />
