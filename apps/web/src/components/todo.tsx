@@ -130,7 +130,6 @@ const Todo: React.FC<ITodo> = ({
   }, [selectable]);
 
   const closeTodo = () => {
-    console.log("hit!");
     setIsSelected(false);
   };
 

@@ -114,7 +114,6 @@ const LoginTokenForm = ({
         method: "POST",
         body: JSON.stringify({ token: otp, userId }),
       });
-      console.log("outside");
       if (response.redirected) return router.push(response.url);
 
       const data = (await response.json()) as {
@@ -126,7 +125,6 @@ const LoginTokenForm = ({
       if (error instanceof ZodError) {
         setError(error.message);
       }
-      console.log(error);
     }
   };
 

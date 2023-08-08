@@ -63,20 +63,18 @@ export default async function handler(
       expires: otp.expires,
     });
 
-    console.log(otp);
-    await sendTokenEmail({
-      token: otp.token,
-      userEmail:
-        process.env.NODE_ENV === "production" ? email : "elewis9989@gmail.com",
-      fromEmail:
-        process.env.NODE_ENV === "production"
-          ? "support@usemodal.com"
-          : "Acme <onboarding@resend.dev>",
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log(otp);
+    } else {
+      await sendTokenEmail({
+        token: otp.token,
+        userEmail: email,
+        fromEmail: "support@usemodal.com",
+      });
+    }
 
     res.status(200).json({ message: "OTP sent", userId: user.userId });
   } catch (error) {
-    console.log("error", error);
     if (error instanceof LuciaError) {
       let errorMsg;
       switch (error.message) {
@@ -92,7 +90,6 @@ export default async function handler(
     } else if (error instanceof Error) {
       res.status(400).json({ error: error.message });
     } else {
-      console.log(error);
       res.status(400).json({
         error: "Unknown error occurred",
       });

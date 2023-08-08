@@ -325,6 +325,9 @@ importers:
       '@react-email/components':
         specifier: 0.0.6
         version: 0.0.6
+      '@sentry/node':
+        specifier: ^7.61.1
+        version: 7.61.1
       react-email:
         specifier: 1.9.3
         version: 1.9.3

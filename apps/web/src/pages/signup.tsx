@@ -83,8 +83,6 @@ const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
       setEmail(values.email);
       if (data.userId) setUserId(data.userId);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof Error) setError(error.message);
       else setError("Something went wrong");
     }
@@ -141,7 +139,6 @@ const SignupTokenForm = ({
         setError(error.message);
       } else {
         setError("Something went wrong");
-        console.log(error);
       }
     }
   };

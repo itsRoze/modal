@@ -34,9 +34,7 @@ const AccountPage: NextPageWithLayout<PageProps> = ({ session }) => {
     try {
       const { checkoutUrl } = await createCheckoutSession();
       if (checkoutUrl) void push(checkoutUrl);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handleManageSubscription = async () => {
