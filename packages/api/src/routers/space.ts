@@ -37,7 +37,7 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are creating too fast");
+      await ratelimit(ratelimiter, userId, "You are creating spaces too fast");
 
       return await create({ name: input.name, userId: ctx.session.userId });
     }),
@@ -46,11 +46,15 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are modifying too fast");
+      await ratelimit(ratelimiter, userId, "You are modifying spaces too fast");
 
       await update({ id: input.id, name: input.name });
       const result = await fromID(input.id);
-      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!result)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Space ${input.id} not found`,
+        });
 
       return result;
     }),
@@ -59,7 +63,7 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are deleting too fast");
+      await ratelimit(ratelimiter, userId, "You are deleting spaces too fast");
 
       return await remove({ id: input.id });
     }),
@@ -82,7 +86,11 @@ export const spaceRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input }) => {
       const result = await fromIdWithProjects(input);
-      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!result)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Space ${input} not found`,
+        });
 
       return result;
     }),

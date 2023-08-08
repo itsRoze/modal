@@ -207,6 +207,12 @@ importers:
       '@modal/stripe':
         specifier: workspace:*
         version: link:../stripe
+      '@sentry/cli':
+        specifier: ^2.20.4
+        version: 2.20.4
+      '@sentry/node':
+        specifier: ^7.61.1
+        version: 7.61.1
       '@trpc/client':
         specifier: ^10.25.1
         version: 10.25.1(@trpc/server@10.25.1)
@@ -4156,6 +4162,22 @@ packages:
     dependencies:
       https-proxy-agent: 5.0.1
       mkdirp: 0.5.6
+      node-fetch: 2.6.12
+      progress: 2.0.3
+      proxy-from-env: 1.1.0
+      which: 2.0.2
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: false
+
+  /@sentry/cli@2.20.4:
+    resolution: {integrity: sha512-mycBCKQmLdaJpSKpXc3IXrQwb5HLxrdjgJgLGbb8saFHIkXl/1ePH171j+REq4dIP1uetu0bdDgEYj6AQjkleQ==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      https-proxy-agent: 5.0.1
       node-fetch: 2.6.12
       progress: 2.0.3
       proxy-from-env: 1.1.0

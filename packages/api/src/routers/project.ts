@@ -21,7 +21,11 @@ export const projectRouter = createTRPCRouter({
     .input(createProjectSchema)
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
-      await ratelimit(ratelimiter, userId, "You are creating too fast");
+      await ratelimit(
+        ratelimiter,
+        userId,
+        "You are creating projects too fast",
+      );
       return await create({
         name: input.name,
         userId,
@@ -33,7 +37,11 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are modifying too fast");
+      await ratelimit(
+        ratelimiter,
+        userId,
+        "You are modifying projects too fast",
+      );
 
       await update({
         id: input.id,
@@ -42,7 +50,11 @@ export const projectRouter = createTRPCRouter({
       });
 
       const result = await fromID(input.id);
-      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!result)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Project ${input.id} not found`,
+        });
 
       return result;
     }),
@@ -51,7 +63,11 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are deleting too fast");
+      await ratelimit(
+        ratelimiter,
+        userId,
+        "You are deleting projects too fast",
+      );
 
       return await remove({ id: input.id });
     }),
@@ -59,7 +75,11 @@ export const projectRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input }) => {
       const result = await fromID(input);
-      if (!result) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!result)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Project ${input} not found`,
+        });
 
       return result;
     }),

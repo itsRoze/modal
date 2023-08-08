@@ -8,6 +8,7 @@ export const ratelimit = async (
 ) => {
   const { success } = await ratelimiter.limit(id);
   if (!success) {
+    console.error(`Ratelimit hit for ${id}: `, message);
     throw new TRPCError({
       code: "TOO_MANY_REQUESTS",
       message,

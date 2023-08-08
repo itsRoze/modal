@@ -1,4 +1,5 @@
 import { appRouter, createTRPCContext } from "@modal/api";
+import * as Sentry from "@sentry/node";
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 // export API handler
@@ -12,5 +13,7 @@ export default createNextApiHandler({
             `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
           );
         }
-      : undefined,
+      : ({ error }) => {
+          Sentry.captureException(error);
+        },
 });

@@ -23,7 +23,7 @@ export const userRouter = createTRPCRouter({
     if (!data) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "User not found",
+        message: `User ${session.userId} not found`,
       });
     }
 
@@ -41,7 +41,10 @@ export const userRouter = createTRPCRouter({
 
     const user = data[0];
     if (!user) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `User ${session.userId} not found`,
+      });
     }
 
     return user.subscriptionStatus;

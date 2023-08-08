@@ -42,7 +42,7 @@ export const taskRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
-      await ratelimit(ratelimiter, userId, "You are creating too fast");
+      await ratelimit(ratelimiter, userId, "You are creating tasks too fast");
 
       return await create({ ...input, userId: ctx.session.userId });
     }),
@@ -51,7 +51,7 @@ export const taskRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are deleting too fast");
+      await ratelimit(ratelimiter, userId, "You are deleting tasks too fast");
 
       return await remove(input);
     }),
@@ -77,7 +77,7 @@ export const taskRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are modifying too fast");
+      await ratelimit(ratelimiter, userId, "You are modifying tasks too fast");
 
       const result = await update(input);
       if (result) {
