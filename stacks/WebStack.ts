@@ -6,6 +6,7 @@ export function WebStack({ stack, app }: StackContext) {
   const { database, stripe, resend, upstash } = use(Secrets);
   const site = new NextjsSite(stack, "modal-web", {
     path: "apps/web",
+    customDomain: app.mode === "dev" ? undefined : "www.usemodal.com",
     environment: {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
     },
@@ -25,6 +26,9 @@ export function WebStack({ stack, app }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.url || "https://localhost:3000",
+    SiteUrl:
+      app.mode === "dev"
+        ? site.url || "https://localhost:3000"
+        : site.customDomainUrl || site.url,
   });
 }
