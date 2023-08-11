@@ -6,7 +6,13 @@ export function WebStack({ stack, app }: StackContext) {
   const { database, stripe, resend, upstash } = use(Secrets);
   const site = new NextjsSite(stack, "modal-web", {
     path: "apps/web",
-    customDomain: stack.stage === "prod" ? "usemodal.com" : undefined,
+    customDomain:
+      stack.stage === "prod"
+        ? {
+            domainName: "usemodal.com",
+            hostedZone: "usemodal.com",
+          }
+        : undefined,
     environment: {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
     },
