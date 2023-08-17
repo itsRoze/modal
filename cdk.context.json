@@ -1,1 +1,6 @@
-{}
+{
+  "hosted-zone:account=849356115576:domainName=usemodal.com:region=us-east-1": {
+    "Id": "/hostedzone/Z06398573PR8AM0Y8DHKD",
+    "Name": "usemodal.com."
+  }
+}
