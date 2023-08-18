@@ -28,6 +28,7 @@ const SiteNavigation = () => {
             <motion.div whileHover={{ scale: 1.1 }}>
               <Link href="/">
                 <Image
+                  priority
                   src="/images/Logo.png"
                   alt="Modal Logo"
                   width={1025}
@@ -68,6 +69,7 @@ const SiteNavigation = () => {
           </button>
           <Link href="/">
             <Image
+              priority
               src="/images/Logo.png"
               alt="Modal Logo"
               width={1025}

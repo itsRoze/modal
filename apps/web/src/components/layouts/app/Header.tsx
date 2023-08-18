@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import MailTo from "@/components/mailto";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,6 +73,16 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
           <DropdownMenuItem>
             <button onClick={handleManageSubscription}>
               Manage subscription
+            </button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>
+              <MailTo
+                email="support@usemodal.com"
+                subject="Modal App - Feedback"
+              >
+                Submit feedback
+              </MailTo>
             </button>
           </DropdownMenuItem>
         </DropdownMenuContent>

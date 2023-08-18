@@ -85,6 +85,7 @@ const Screenshot = () => {
   return (
     <div className="relative flex w-full items-center justify-center">
       <Image
+        priority
         src={"/images/app-screenshot.png"}
         alt="screenshot of app"
         width={1755}

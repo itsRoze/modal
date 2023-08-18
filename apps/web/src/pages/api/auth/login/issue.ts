@@ -67,7 +67,7 @@ export default async function handler(
       await sendTokenEmail({
         token: otp.token,
         userEmail: email,
-        fromEmail: "support@usemodal.com",
+        fromEmail: "no-reply@account.usemodal.com",
       });
     }
 
