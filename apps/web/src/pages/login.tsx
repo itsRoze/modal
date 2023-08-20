@@ -5,7 +5,7 @@ import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import TokenForm from "@/components/tokenform";
 import { auth } from "@modal/auth";
-import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/nextjs";
 import { motion } from "framer-motion";
 import { ZodError, z } from "zod";
 
