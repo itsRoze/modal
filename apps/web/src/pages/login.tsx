@@ -51,7 +51,7 @@ const Login: NextPageWithLayout = () => {
       </section>
       <section className="flex w-full flex-col items-center space-y-4">
         <div className="my-10 rounded-lg bg-white py-2 shadow-lg md:p-10">
-          {!userId ? <EmailForm onSubmit={onSubmit} /> : null}
+          {!userId ? <EmailForm onSubmit={onSubmit} error={null} /> : null}
         </div>
       </section>
     </motion.article>
