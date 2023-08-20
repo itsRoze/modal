@@ -5,6 +5,7 @@ import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import TokenForm from "@/components/tokenform";
 import { auth } from "@modal/auth";
+import * as Sentry from "@sentry/node";
 import { motion } from "framer-motion";
 import { ZodError, z } from "zod";
 
@@ -72,15 +73,14 @@ const LoginEmailForm = ({
         body: JSON.stringify({ email: formData.email }),
       });
 
-      alert("got response");
-      alert(response);
       console.log("res", response);
+      console.log(await response.json());
       const data = (await response.json()) as ResponseData;
-      alert("got data");
+
       if (!data.userId) throw new Error(data.error ?? "Something went wrong");
       setUserId(data.userId);
     } catch (error) {
-      alert(error);
+      Sentry.captureException(error);
       if (error instanceof Error) setError(error.message);
       else setError("Something went wrong");
     }

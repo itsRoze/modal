@@ -7,6 +7,7 @@ import {
 } from "@modal/db/src/auth_token";
 import { fromEmail } from "@modal/db/src/user";
 import { sendTokenEmail } from "@modal/email";
+import * as Sentry from "@sentry/node";
 import { Ratelimit } from "@upstash/ratelimit";
 import { LuciaError } from "lucia";
 
@@ -73,6 +74,7 @@ export default async function handler(
 
     res.status(200).json({ message: "OTP sent", userId: key.userId });
   } catch (error) {
+    Sentry.captureException(error);
     if (error instanceof LuciaError) {
       if (error.message === "AUTH_INVALID_KEY_ID")
         res.status(400).json({ error: "No user found" });
