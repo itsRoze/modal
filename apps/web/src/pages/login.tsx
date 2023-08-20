@@ -67,12 +67,15 @@ const LoginEmailForm = ({
 
   const onSubmit = async (formData: FormInput) => {
     try {
+      alert("got here");
       const response = await fetch("/api/auth/login/issue", {
         method: "POST",
         body: JSON.stringify({ email: formData.email }),
       });
 
+      alert("got response");
       const data = (await response.json()) as ResponseData;
+      alert("got data");
       if (!data.userId) throw new Error(data.error ?? "Something went wrong");
       setUserId(data.userId);
     } catch (error) {
