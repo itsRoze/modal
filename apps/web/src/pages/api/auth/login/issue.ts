@@ -71,6 +71,8 @@ export default async function handler(
       });
     }
 
+    throw new Error("API throw error test");
+
     res.status(200).json({ message: "OTP sent", userId: key.userId });
   } catch (error) {
     if (error instanceof LuciaError) {
