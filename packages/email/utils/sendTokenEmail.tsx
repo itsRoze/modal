@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/node";
 import { Resend } from "resend";
 import { Config } from "sst/node/config";
 
@@ -26,7 +25,5 @@ export const sendTokenEmail = async ({
     });
 
     return data;
-  } catch (error) {
-    Sentry.captureException(error);
-  }
+  } catch (error) {}
 };

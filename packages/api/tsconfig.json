@@ -1,12 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "index.ts", "sst-env.d.ts", "lucia.d.ts"],
-  "compilerOptions": {
-    "sourceMap": true,
-    "inlineSources": true,
-
-    // Set `sourceRoot` to  "/" to strip the build path prefix from
-    // generated source code references. This will improve issue grouping in Sentry.
-    "sourceRoot": "/"
-  }
+  "include": ["src", "index.ts", "sst-env.d.ts", "lucia.d.ts"]
 }

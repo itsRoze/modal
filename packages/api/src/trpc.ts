@@ -18,7 +18,6 @@
 import { auth } from "@modal/auth";
 import { db } from "@modal/db";
 import { stripe } from "@modal/stripe";
-import * as Sentry from "@sentry/node";
 /**
  * 2. INITIALIZATION
  *
@@ -50,15 +49,6 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  Sentry.init({
-    dsn: "https://e31fa493a2b0185229ab5244fbca4fd5@o4505665637646336.ingest.sentry.io/4505665638760448",
-
-    // We recommend adjusting this value in production, or using tracesSampler
-    // for finer control
-    tracesSampleRate: 1.0,
-    environment: process.env.NODE_ENV,
-  });
-
   return {
     session: opts.session,
     db,

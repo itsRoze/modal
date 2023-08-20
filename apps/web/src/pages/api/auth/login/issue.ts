@@ -7,7 +7,6 @@ import {
 } from "@modal/db/src/auth_token";
 import { fromEmail } from "@modal/db/src/user";
 import { sendTokenEmail } from "@modal/email";
-import * as Sentry from "@sentry/node";
 import { Ratelimit } from "@upstash/ratelimit";
 import { LuciaError } from "lucia";
 
