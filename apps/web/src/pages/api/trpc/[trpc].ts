@@ -12,6 +12,7 @@ export default createNextApiHandler({
           console.error(
             `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
           );
+          Sentry.captureException(error);
         }
       : ({ error }) => {
           Sentry.captureException(error);

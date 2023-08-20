@@ -27,6 +27,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
+  throw new Error("API throw error test");
+
   if (req.method !== "POST") res.status(404).json({ error: "Not found" });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
