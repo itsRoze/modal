@@ -66,7 +66,7 @@ const EmailForm: React.FC<IEmailForm> = ({
           </p>
         ) : null}
 
-        <Button>Submit</Button>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );

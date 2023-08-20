@@ -60,13 +60,8 @@ const LoginEmailForm = ({
 }) => {
   const [error, setError] = useState<string | null>(null);
 
-  const formSchema = z.object({
-    email: z.string().email(),
-  });
-
-  type FormInput = z.infer<typeof formSchema>;
-
-  const onSubmit = async (formData: FormInput) => {
+  const onSubmit = async (formData: { email: string }) => {
+    console.log("SUBMIT", formData.email);
     try {
       const response = await fetch("/api/auth/login/issue", {
         method: "POST",
@@ -74,6 +69,7 @@ const LoginEmailForm = ({
       });
 
       const data = await response.text();
+      console.log("RES DATA", data);
 
       if (!response.ok) {
         throw new Error(data ?? "Something went wrong");
