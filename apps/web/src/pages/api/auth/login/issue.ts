@@ -73,6 +73,7 @@ export default async function handler(
     }
 
     res.status(200).json({ message: "OTP sent", userId: key.userId });
+    console.log("OTP sent");
   } catch (error) {
     Sentry.captureException(error);
     if (error instanceof LuciaError) {
