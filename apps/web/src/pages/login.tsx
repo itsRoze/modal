@@ -73,9 +73,9 @@ const LoginEmailForm = ({
         body: JSON.stringify({ email: formData.email }),
       });
 
-      console.log("res", response);
-      console.log(await response.json());
+      console.log("RESPONSE", response);
       const data = (await response.json()) as ResponseData;
+      console.log("DATA", data);
 
       if (!data.userId) throw new Error(data.error ?? "Something went wrong");
       setUserId(data.userId);
