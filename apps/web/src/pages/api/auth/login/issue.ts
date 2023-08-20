@@ -26,9 +26,17 @@ const ratelimit = new Ratelimit({
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<string>,
 ) {
-  if (req.method !== "POST") res.status(404).json({ error: "Not found" });
+  if (req.method !== "POST") res.status(404).json("Not found");
 
-  res.status(200).json({ userId: "123" });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { email } =
+    typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+  if (!email || typeof email !== "string") {
+    return res.status(400).json("Invalid input");
+  }
+
+  res.status(200).json("123");
 }

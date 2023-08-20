@@ -73,12 +73,13 @@ const LoginEmailForm = ({
         body: JSON.stringify({ email: formData.email }),
       });
 
-      console.log("RESPONSE", response);
-      const data = (await response.json()) as ResponseData;
-      console.log("DATA", data);
+      const data = await response.text();
 
-      if (!data.userId) throw new Error(data.error ?? "Something went wrong");
-      setUserId(data.userId);
+      if (!response.ok) {
+        throw new Error(data ?? "Something went wrong");
+      }
+
+      setUserId(data);
     } catch (error) {
       Sentry.captureException(error);
       if (error instanceof Error) setError(error.message);
