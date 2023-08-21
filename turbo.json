@@ -23,6 +23,9 @@
     },
     "db:push": {
       "cache": false
+    },
+    "email:dev": {
+      "cache": false
     }
   },
   "globalEnv": [

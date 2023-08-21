@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import { anybody } from "@/utils/fonts";
 import { motion } from "framer-motion";
 
+import MailTo from "./mailto";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
@@ -89,18 +90,15 @@ const Upgrade = () => {
                 I really hoped you enjoyed this free trial. I charge a small fee
                 to help cover the costs of running this app. If you believe in
                 this app, you can upgrade your plan here. If you have any
-                feedback (good or bad!), you can email me at{" "}
-                <a
-                  href="mailto:hello@aroze.xyz"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-400 hover:underline"
-                >
-                  hello@aroze.xyz
-                </a>
+                feedback (good or bad!), you can{" "}
+                <span className="text-blue-300 hover:underline">
+                  <MailTo email="contact@codestache.com">
+                    send me an email
+                  </MailTo>{" "}
+                </span>
                 🚀
               </p>
-              <p className="italic">— Roze, solo founder and engineer</p>
+              <p className="italic">— Roze 🌹, solo founder and engineer</p>
             </div>
           </div>
           <div className="space-x-4 md:mt-20">

@@ -78,7 +78,7 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
           <DropdownMenuItem>
             <button>
               <MailTo
-                email="support@usemodal.com"
+                email="contact@codestache.com"
                 subject="Modal App - Feedback"
               >
                 Submit feedback
