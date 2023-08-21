@@ -14,8 +14,10 @@ interface ITokenCodeEmail {
   tokenCode: string;
 }
 
-const baseUrl =
-  process.env.NODE_ENV === "production" ? `https://usemodal.com` : "";
+const logoUrl =
+  process.env.NODE_ENV === "production"
+    ? `https://usemodal.com/images/Logo.png`
+    : "/static/Logo.png";
 
 export const TokenCodeEmail = ({ tokenCode = "INVALID" }: ITokenCodeEmail) => {
   return (
@@ -24,7 +26,7 @@ export const TokenCodeEmail = ({ tokenCode = "INVALID" }: ITokenCodeEmail) => {
       <Body style={main}>
         <Container style={container}>
           <Img
-            src={`${baseUrl}/static/Logo.png`}
+            src={logoUrl}
             width="1025"
             height="237"
             alt="Modal logo"
