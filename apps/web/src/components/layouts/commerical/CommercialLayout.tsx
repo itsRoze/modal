@@ -40,8 +40,9 @@ const CommercialLayout: React.FC<ICommericalLayout> = ({ children }) => {
       >
         <SiteNavigation />
         <div className="flex h-full w-full flex-1 flex-col">{children}</div>
-        <footer className="flex items-end justify-center pb-4 pt-8">
-          <Link href="/">© Code Stache, LLC {new Date().getFullYear()}</Link>
+        <footer className="flex flex-col items-center justify-end pb-4 pt-8 text-sm">
+          <p>Made with ❤️ </p>
+          <Link href="/">© Code Stache LLC {new Date().getFullYear()}</Link>
         </footer>
       </main>
     </>

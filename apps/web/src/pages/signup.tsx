@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import Divider from "@/components/divider";
 import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import TokenForm from "@/components/tokenform";
@@ -46,6 +48,26 @@ const SignUp: NextPageWithLayout = () => {
           ) : (
             <SignupTokenForm userId={userId} otp={token} setOtp={setToken} />
           )}
+        </div>
+        <div className="px-2 md:w-96">
+          <p className="text-sm text-gray-500">
+            By continuing with email, you agree to Modal&apos;s{" "}
+            <a
+              className="underline"
+              target="_blank"
+              href="https://www.iubenda.com/privacy-policy/92713926"
+            >
+              Privacy Policy
+            </a>{" "}
+            and certify you are at least 13 years of age.
+          </p>
+          <Divider />
+          <p className="text-center text-sm text-gray-500">
+            Already signed up?{" "}
+            <Link href="/login" className="underline">
+              Go to login
+            </Link>{" "}
+          </p>
         </div>
       </section>
     </motion.article>
