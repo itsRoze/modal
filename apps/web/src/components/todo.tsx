@@ -517,11 +517,8 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({
     >
       <div className="flex items-start">
         <NameForm task={task} closeTodo={closeTodo} />
-        <button
-          onClick={handleClose}
-          className="rounded-md p-1 opacity-50 hover:opacity-100"
-        >
-          <Check />
+        <button onClick={handleClose} className="rounded-md p-2 ">
+          <Check className="text-slate-400 hover:text-slate-500" />
         </button>
       </div>
       <div className="my-0 flex select-none items-center gap-2">
