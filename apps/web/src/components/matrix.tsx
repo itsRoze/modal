@@ -1,44 +1,19 @@
-import { useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { type TaskType } from "@/utils/types";
-import { organizeTasks } from "@modal/common";
 
 import Todo from "./todo";
 
 const Matrix = () => {
-  const { data } = api.task.getDashboardTasks.useQuery();
-  const [typeOneTasks, setTypeOne] = useState<TaskType[]>([]);
-  const [typeTwoTasks, setTypeTwo] = useState<TaskType[]>([]);
-  const [typeThreeTasks, setTypeThree] = useState<TaskType[]>([]);
-  const [typeFourTasks, setTypeFour] = useState<TaskType[]>([]);
-
-  useEffect(() => {
-    if (!data) return;
-
-    const {
-      typeOneTasks: t1,
-      typeTwoTasks: t2,
-      typeThreeTasks: t3,
-      typeFourTasks: t4,
-    } = organizeTasks(data);
-
-    setTypeOne(t1);
-    setTypeTwo(t2);
-    setTypeThree(t3);
-    setTypeFour(t4);
-  }, [data]);
-
   return (
     <div className="h-full w-full">
       <div className="flex h-1/2 w-full">
-        <MatrixQuadrant type="1" tasks={typeOneTasks} />
-        <MatrixQuadrant type="2" tasks={typeTwoTasks} />
+        <MatrixQuadrantOne />
+        <MatrixQuadrantTwo />
       </div>
 
       <div className="flex h-1/2 w-full">
-        <MatrixQuadrant type="3" tasks={typeThreeTasks} />
-        <MatrixQuadrant type="4" tasks={typeFourTasks} />
+        <MatrixQuadrantThree />
+        <MatrixQuadrantFour />
       </div>
     </div>
   );
@@ -46,48 +21,140 @@ const Matrix = () => {
 
 export default Matrix;
 
-interface IMatrixQuadrant {
-  type: "1" | "2" | "3" | "4";
-  tasks: TaskType[];
-}
+const MatrixQuadrantOne = () => {
+  const { data: tasks } = api.task.getImportantAndDueSoon.useQuery();
 
-const MatrixQuadrant: React.FC<IMatrixQuadrant> = ({ type, tasks }) => {
   return (
     <div
       className={cn({
-        "border-b-2 border-r-2": type === "1",
-        "border-b-2 border-l-2": type === "2",
-        "border-r-2 border-t-2": type === "3",
-        "border-l-2 border-t-2": type === "4",
+        "border-b-2 border-r-2": true,
         "relative h-full w-full overflow-x-hidden border-black p-0": true,
       })}
     >
       {/* Labels */}
       <div>
-        {type === "1" ? <MatrixLabel type="Due Soon" /> : null}
-        {type === "1" ? <MatrixLabel type="Important" /> : null}
-        {type === "2" ? <MatrixLabel type="Due Later" /> : null}
-        {type === "3" ? <MatrixLabel type="Not Important" /> : null}
+        <MatrixLabel type="Due Soon" />
+        <MatrixLabel type="Important" />
       </div>
       {/* Tasks */}
       <div className="h-full w-full pl-8 pt-8">
         <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
-          {tasks.map((task) => (
-            <Todo key={task.id} task={task} />
-          ))}
+          {tasks
+            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            : null}
         </ul>
       </div>
       {/* Number */}
       <div
         className={cn({
-          "bottom-0 right-0 pb-1 pr-2": type === "1",
-          "bottom-0 pb-1 pl-2": type === "2",
-          "right-0 top-0 pr-2 pt-1": type === "3",
-          "top-0 pl-2 pt-1": type === "4",
+          "bottom-0 right-0 pb-1 pr-2": true,
           "absolute text-gray-500": true,
         })}
       >
-        {type}
+        1
+      </div>
+    </div>
+  );
+};
+
+const MatrixQuadrantTwo = () => {
+  const { data: tasks } = api.task.getImportantAndDueLater.useQuery();
+
+  return (
+    <div
+      className={cn({
+        "border-b-2 border-l-2": true,
+        "relative h-full w-full overflow-x-hidden border-black p-0": true,
+      })}
+    >
+      {/* Labels */}
+      <div>
+        <MatrixLabel type="Due Later" />
+      </div>
+      {/* Tasks */}
+      <div className="h-full w-full pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+          {tasks
+            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            : null}
+        </ul>
+      </div>
+      {/* Number */}
+      <div
+        className={cn({
+          "bottom-0 pb-1 pl-2": true,
+          "absolute text-gray-500": true,
+        })}
+      >
+        2
+      </div>
+    </div>
+  );
+};
+
+const MatrixQuadrantThree = () => {
+  const { data: tasks } = api.task.getNotImportantAndDueSoon.useQuery();
+
+  return (
+    <div
+      className={cn({
+        "border-r-2 border-t-2": true,
+        "relative h-full w-full overflow-x-hidden border-black p-0": true,
+      })}
+    >
+      {/* Labels */}
+      <div>
+        <MatrixLabel type="Not Important" />
+      </div>
+      {/* Tasks */}
+      <div className="h-full w-full pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+          {tasks
+            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            : null}
+        </ul>
+      </div>
+      {/* Number */}
+      <div
+        className={cn({
+          "right-0 top-0 pr-2 pt-1": true,
+          "absolute text-gray-500": true,
+        })}
+      >
+        3
+      </div>
+    </div>
+  );
+};
+
+const MatrixQuadrantFour = () => {
+  const { data: tasks } = api.task.getNotImportantAndDueLater.useQuery();
+
+  return (
+    <div
+      className={cn({
+        "border-l-2 border-t-2": true,
+        "relative h-full w-full overflow-x-hidden border-black p-0": true,
+      })}
+    >
+      {/* Labels */}
+      <div></div>
+      {/* Tasks */}
+      <div className="h-full w-full pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+          {tasks
+            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            : null}
+        </ul>
+      </div>
+      {/* Number */}
+      <div
+        className={cn({
+          "top-0 pl-2 pt-1": true,
+          "absolute text-gray-500": true,
+        })}
+      >
+        4
       </div>
     </div>
   );
