@@ -7,9 +7,6 @@ on:
     branches: ["*"]
   merge_group:
 
-env:
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
 jobs:
   build-lint:
     runs-on: ubuntu-latest
