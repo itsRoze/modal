@@ -1,4 +1,4 @@
-import { sortTasks } from "@modal/common";
+import { getDeadlineDiffFromToday, sortTasks } from "@modal/common";
 import { fromID as fromProjectId } from "@modal/db/src/project";
 import { fromID as fromSpaceId } from "@modal/db/src/space";
 import {
@@ -123,5 +123,85 @@ export const taskRouter = createTRPCRouter({
         ),
       );
     return tasks ?? [];
+  }),
+  getImportantAndDueSoon: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNotNull(task.deadline),
+          eq(task.priority, true),
+        ),
+      );
+
+    const tasksDueSoon = tasks.filter(
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+    );
+
+    return tasksDueSoon ?? [];
+  }),
+  getImportantAndDueLater: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNotNull(task.deadline),
+          eq(task.priority, true),
+        ),
+      );
+
+    const tasksDueLater = tasks.filter(
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+    );
+
+    return tasksDueLater ?? [];
+  }),
+  getNotImportantAndDueSoon: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNotNull(task.deadline),
+          eq(task.priority, false),
+        ),
+      );
+
+    const tasksDueSoon = tasks.filter(
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+    );
+
+    return tasksDueSoon ?? [];
+  }),
+  getNotImportantAndDueLater: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNotNull(task.deadline),
+          eq(task.priority, false),
+        ),
+      );
+
+    const tasksDueLater = tasks.filter(
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+    );
+
+    return tasksDueLater ?? [];
   }),
 });

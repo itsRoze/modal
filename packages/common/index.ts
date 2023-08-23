@@ -11,3 +11,4 @@ export { sortTasks } from "./helpers/sortTasks";
 export { organizeTasks } from "./helpers/organizeTasks";
 export { getCompletedDate } from "./helpers/getCompletedDate";
 export { getRemainingTrial } from "./helpers/getRemainingTrial";
+export { getDeadlineDiffFromToday } from "./helpers/getDeadlineDiffFromToday";
