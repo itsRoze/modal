@@ -102,6 +102,55 @@ export const taskRouter = createTRPCRouter({
       const result = await getAllCompleted(input ?? ctx.session.userId);
       return result ?? [];
     }),
+  getSomedayTasksByList: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+
+    const tasks = await db.transaction(async (tx) => {
+      const spaceTasks = await tx.query.space.findMany({
+        where: (space) => and(eq(space.userId, session.userId)),
+        with: {
+          tasks: {
+            where: (task) =>
+              and(isNull(task.completedTime), isNull(task.deadline)),
+          },
+        },
+      });
+
+      const projectTasks = await tx.query.project.findMany({
+        where: (project) => and(eq(project.userId, session.userId)),
+        with: {
+          tasks: {
+            where: (task) =>
+              and(isNull(task.completedTime), isNull(task.deadline)),
+          },
+        },
+      });
+
+      return {
+        spaceTasks,
+        projectTasks,
+      };
+    });
+
+    return tasks ?? { spaceTasks: [], projectTasks: [] };
+  }),
+  getSomeday: protectedProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.completedTime),
+          isNull(task.deadline),
+        ),
+      )
+      .orderBy(task.listId);
+
+    return tasks ?? [];
+  }),
   getListInfo: protectedProcedure
     .input(Info.pick({ listId: true, listType: true }))
     .query(async ({ input }) => {
@@ -110,20 +159,6 @@ export const taskRouter = createTRPCRouter({
       }
       return await fromProjectId(input.listId);
     }),
-  getDashboardTasks: protectedProcedure.query(async ({ ctx }) => {
-    const { db, session } = ctx;
-    const tasks = await db
-      .select()
-      .from(task)
-      .where(
-        and(
-          eq(task.userId, session.userId),
-          isNull(task.completedTime),
-          isNotNull(task.deadline),
-        ),
-      );
-    return tasks ?? [];
-  }),
   getImportantAndDueSoon: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
     const tasks = await db

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ProjectIcon } from "@/components/icons/project";
+import { SpaceIcon } from "@/components/icons/space";
 import { LoadingPage } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,12 +47,11 @@ import { createProjectSchema } from "@modal/common/schemas/project/createSchema"
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import {
   BookOpenCheck,
-  Boxes,
   ChevronDown,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Circle,
+  CloudMoon,
   Home,
   Loader2,
   Plus,
@@ -223,7 +224,7 @@ const Sidebar: React.FC<ISidebar> = ({
           </div>
           {!debouncedSearchTerm ? (
             <>
-              <ul className="my-2 flex flex-col items-stretch gap-2">
+              <ul className="my-2 flex flex-col items-stretch gap-1">
                 <li
                   key={1}
                   className={cn({
@@ -236,9 +237,9 @@ const Sidebar: React.FC<ISidebar> = ({
                   <Link
                     onClick={handleMobileClick}
                     href={"/app"}
-                    className="flex w-full items-center gap-2"
+                    className="flex w-full items-center gap-1"
                   >
-                    <Home size={24} className="text-fuchsia-600" />
+                    <Home size={18} className="text-fuchsia-600" />
                     Dashboard
                   </Link>
                 </li>
@@ -254,10 +255,28 @@ const Sidebar: React.FC<ISidebar> = ({
                   <Link
                     onClick={handleMobileClick}
                     href="/app/history"
-                    className="flex w-full gap-2"
+                    className="flex w-full items-center gap-1"
                   >
-                    <BookOpenCheck size={24} className="text-green-600" />
+                    <BookOpenCheck size={18} className="text-green-600" />
                     History
+                  </Link>
+                </li>
+                <li
+                  key={3}
+                  className={cn({
+                    "flex hover:bg-slate-200": true,
+                    "transition-colors duration-300": true,
+                    "gap-4 rounded-md py-2 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                  })}
+                >
+                  <Link
+                    onClick={handleMobileClick}
+                    href="/app/someday"
+                    className="flex w-full items-center gap-1"
+                  >
+                    <CloudMoon size={18} className="text-indigo-300" />
+                    Someday
                   </Link>
                 </li>
               </ul>
@@ -462,16 +481,16 @@ const SidebarMenu = () => {
           <div className="flex flex-col items-start gap-2">
             <button
               onClick={() => setShowProject(true)}
-              className="flex w-full items-center rounded-md p-1 hover:bg-slate-100"
+              className="flex w-full items-center gap-1 rounded-md p-1 hover:bg-slate-100"
             >
-              <Circle size={24} className="mr-2" />
+              <ProjectIcon size={24} />
               New Project
             </button>
             <button
-              className="flex w-full items-center rounded-md p-1 hover:bg-slate-100"
+              className="flex w-full items-center gap-1 rounded-md p-1 hover:bg-slate-100"
               onClick={() => setShowSpace(true)}
             >
-              <Boxes size={24} className="mr-2" /> New Space
+              <SpaceIcon size={24} /> New Space
             </button>
           </div>
         </PopoverContent>
