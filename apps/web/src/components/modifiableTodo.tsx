@@ -1,0 +1,374 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { api } from "@/utils/api";
+import { cn } from "@/utils/cn";
+import { type TaskType } from "@/utils/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type RouterOutputs } from "@modal/api";
+import { dateToMySqlFormat, mySqlFormatToDate } from "@modal/common";
+import { addDays, format } from "date-fns";
+import { CalendarIcon, Check, StarIcon } from "lucide-react";
+import { useForm, type ControllerRenderProps } from "react-hook-form";
+import { z } from "zod";
+
+import { ProjectIcon } from "./icons/project";
+import { SpaceIcon } from "./icons/space";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Input } from "./ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useToast } from "./ui/use-toast";
+
+enum PriorityValues {
+  Important = "Important",
+  Unimportant = "Not important",
+}
+const schema = z.object({
+  name: z.string().nonempty(),
+  deadline: z.date().nullable(),
+  priority: z.enum([PriorityValues.Important, PriorityValues.Unimportant]),
+  listInfo: z.string().nonempty(),
+});
+
+type FormValues = z.infer<typeof schema>;
+
+interface IModifiableTodo {
+  task: TaskType;
+  closeTodo: () => void;
+  handleOnSelect: () => void;
+}
+
+const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
+  const ref = useRef<HTMLFormElement>(null);
+  const [datePickOpen, setDatePickOpen] = useState(false);
+  const [priorityPickOpen, setPriorityPickOpen] = useState(false);
+  const [listPickOpen, setListPickOpen] = useState(false);
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
+  const { data: listInfo } = api.task.getListInfo.useQuery({
+    listId: task.listId,
+    listType: task.listType,
+  });
+
+  const { data: lists } = api.user.getLists.useQuery();
+
+  const { mutate } = api.task.update.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const form = useForm<FormValues>({
+    values: {
+      name: task.name,
+      deadline: task.deadline ? mySqlFormatToDate(task.deadline) : null,
+      priority: task.priority
+        ? PriorityValues.Important
+        : PriorityValues.Unimportant,
+      listInfo: `${task.listType}-${task.listId}`,
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (values: FormValues) => {
+    const [listType, listId] = values.listInfo.split("-");
+    mutate({
+      id: task.id,
+      name: values.name.trim(),
+      deadline: values.deadline ? dateToMySqlFormat(values.deadline) : null,
+      priority: values.priority === PriorityValues.Important ? true : false,
+      listType:
+        listType === "space" || listType === "project"
+          ? listType
+          : task.listType,
+      listId: listId ?? task.listId,
+    });
+    closeTodo();
+  };
+
+  const onSubmitCallback = useCallback(onSubmit, [
+    closeTodo,
+    mutate,
+    task.id,
+    task.listId,
+    task.listType,
+  ]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const clickedElement = event.target as HTMLElement;
+      if (
+        ref.current &&
+        !ref.current.contains(clickedElement) &&
+        !datePickOpen &&
+        !priorityPickOpen &&
+        !listPickOpen
+      ) {
+        onSubmitCallback(form.getValues());
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [form, onSubmitCallback, datePickOpen, priorityPickOpen, listPickOpen]);
+
+  // When clicking a todo to modify, put cursor in name form
+  useEffect(() => {
+    form.setFocus("name");
+  }, [form]);
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const { key } = e;
+
+    if (key === "Enter") {
+      onSubmit(form.getValues());
+    }
+
+    if (key === "Escape") {
+      closeTodo();
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        ref={ref}
+        onSubmit={form.handleSubmit(onSubmit)}
+        onKeyDown={onKeyDown}
+        className="flex w-full items-start justify-between"
+      >
+        <div>
+          <div className="flex items-start">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="New Task"
+                      {...field}
+                      className="w-full border-none focus:font-semibold  focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="my-0 flex select-none items-center gap-2">
+            <FormField
+              control={form.control}
+              name="deadline"
+              render={({ field }) => (
+                <DatePicker
+                  field={field}
+                  open={datePickOpen}
+                  setOpen={setDatePickOpen}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="priority"
+              render={({ field }) => (
+                <PriorityPicker
+                  field={field}
+                  open={priorityPickOpen}
+                  setOpen={setPriorityPickOpen}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="listInfo"
+              render={({ field }) => (
+                <ListPicker
+                  field={field}
+                  open={listPickOpen}
+                  setOpen={setListPickOpen}
+                  lists={lists ?? []}
+                  listInfo={listInfo}
+                />
+              )}
+            />
+          </div>
+        </div>
+        <button type="submit" className="rounded-md p-2 ">
+          <Check className="text-slate-400 hover:text-slate-500" />
+        </button>
+      </form>
+    </Form>
+  );
+};
+
+interface IDatePicker {
+  field: ControllerRenderProps<FormValues, "deadline">;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
+  return (
+    <FormItem>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <FormControl>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-fit justify-start border-none text-left text-sm font-normal",
+                !field.value && "text-muted-foreground",
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {field.value ? format(field.value, "PPP") : <span>Deadline</span>}
+            </Button>
+          </FormControl>
+        </PopoverTrigger>
+        <PopoverContent
+          id="datepicker"
+          side="right"
+          className="flex w-auto flex-col space-y-2 p-2 text-sm"
+        >
+          <Select
+            onValueChange={(value) =>
+              field.onChange(addDays(new Date(), parseInt(value)))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="0">Today</SelectItem>
+              <SelectItem value="1">Tomorrow</SelectItem>
+              <SelectItem value="3">In 3 days</SelectItem>
+              <SelectItem value="7">In a week</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="rounded-md border">
+            <Calendar
+              mode="single"
+              selected={field.value ?? undefined}
+              onSelect={field.onChange}
+            />
+          </div>
+        </PopoverContent>
+      </Popover>
+    </FormItem>
+  );
+};
+
+interface IPriorityPicker {
+  field: ControllerRenderProps<FormValues, "priority">;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+const PriorityPicker: React.FC<IPriorityPicker> = ({
+  field,
+  open,
+  setOpen,
+}) => {
+  return (
+    <FormItem>
+      <Select
+        open={open}
+        onOpenChange={setOpen}
+        onValueChange={field.onChange}
+        defaultValue={field.value}
+      >
+        <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
+          <SelectValue placeholder="Priority" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={PriorityValues.Important}>
+            <div className="flex items-center gap-1 text-sm">
+              <StarIcon
+                size={14}
+                data-tip
+                data-for="priority"
+                className="text-logo"
+                fill="rgb(246 191 95)"
+              />
+              <p>Important</p>
+            </div>
+          </SelectItem>
+          <SelectItem value={PriorityValues.Unimportant}>
+            <div className="flex items-center gap-1 text-sm">
+              <p>Not important</p>
+            </div>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </FormItem>
+  );
+};
+
+interface IListPicker {
+  field: ControllerRenderProps<FormValues, "listInfo">;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  lists: RouterOutputs["user"]["getLists"];
+  listInfo: RouterOutputs["task"]["getListInfo"];
+}
+
+const ListPicker: React.FC<IListPicker> = ({
+  field,
+  open,
+  setOpen,
+  lists,
+  listInfo,
+}) => {
+  if (!lists) return null;
+  if (!listInfo) return null;
+  return (
+    <FormItem>
+      <Select
+        open={open}
+        onOpenChange={setOpen}
+        onValueChange={field.onChange}
+        defaultValue={field.value}
+      >
+        <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
+          <SelectValue placeholder={listInfo.name} className="text-sm" />
+        </SelectTrigger>
+        <SelectContent>
+          {lists.map((list) => (
+            <SelectItem
+              key={`${list.type}-${list.id}`}
+              value={`${list.type}-${list.id}`}
+            >
+              <div className="flex items-center gap-1">
+                {list.type === "project" ? (
+                  <ProjectIcon size={14} />
+                ) : (
+                  <SpaceIcon size={14} />
+                )}
+                {list.name}
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </FormItem>
+  );
+};
+
+export default ModifiableTodo;

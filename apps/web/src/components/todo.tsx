@@ -16,26 +16,12 @@ import {
   getCompletedDate,
   getDeadlineDateName,
   isOverdue,
-  mySqlFormatToDate,
 } from "@modal/common";
-import { addDays, format } from "date-fns";
-import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { CheckIcon, StarIcon } from "lucide-react";
 
 import { ProjectIcon } from "./icons/project";
 import { SpaceIcon } from "./icons/space";
-import { Button } from "./ui/button";
-import { Calendar } from "./ui/calendar";
-import { Form, FormControl, FormField, FormItem } from "./ui/form";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import ModifiableTodo from "./modifiableTodo";
 import { useToast } from "./ui/use-toast";
 
 interface ITodo {
@@ -175,9 +161,8 @@ const Todo: React.FC<ITodo> = ({
       {isSelected ? (
         <ModifiableTodo
           task={task}
-          handleOnSelect={handleOnSelect}
-          selectable={selectable}
           closeTodo={closeTodo}
+          handleOnSelect={handleOnSelect}
         />
       ) : completedTime ? (
         <CompletedTodo
@@ -310,7 +295,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   selectable,
   displayPriority,
   displayList,
-  displayDeadline
+  displayDeadline,
 }) => {
   const { id, name, priority, listId, listType, completedTime } = task;
   const { data: listInfo } = api.task.getListInfo.useQuery({
@@ -349,7 +334,9 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
           {/* Priority */}
           {displayPriority && priority ? <Priority checked={checked} /> : null}
           {/* Deadline */}
-          {displayDeadline && !completedTime ? <DeadlineDisplay task={task} /> : null}
+          {displayDeadline && !completedTime ? (
+            <DeadlineDisplay task={task} />
+          ) : null}
           {/* Name */}
           <Name checked={checked} selectable={selectable} name={name} />
         </div>
@@ -494,324 +481,6 @@ const Name: React.FC<IName> = ({ checked, selectable, name }) => {
         {name}
       </p>
     </div>
-  );
-};
-
-interface IModifiableTodo extends ITask {
-  handleOnSelect: () => void;
-  selectable: boolean;
-  closeTodo: () => void;
-}
-
-const ModifiableTodo: React.FC<IModifiableTodo> = ({
-  task,
-  handleOnSelect,
-  selectable,
-  closeTodo,
-}) => {
-  const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    closeTodo();
-  };
-
-  return (
-    <div
-      onClick={handleOnSelect}
-      className={cn({
-        "cursor-pointer": selectable,
-        "cursor-default": !selectable,
-      })}
-    >
-      <div className="flex items-start">
-        <NameForm task={task} closeTodo={closeTodo} />
-        <button onClick={handleClose} className="rounded-md p-2 ">
-          <Check className="text-slate-400 hover:text-slate-500" />
-        </button>
-      </div>
-      <div className="my-0 flex select-none items-center gap-2">
-        <DatePicker task={task} />
-        <PriorityDropdown task={task} />
-        <ListDisplay task={task} />
-      </div>
-    </div>
-  );
-};
-
-interface INameForm extends ITask {
-  closeTodo: () => void;
-}
-const NameForm: React.FC<INameForm> = ({ task, closeTodo }) => {
-  const { toast } = useToast();
-  const ctx = api.useContext();
-  const { mutate } = api.task.update.useMutation({
-    onSuccess() {
-      void ctx.invalidate();
-    },
-    onError(error) {
-      toast({
-        title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
-        variant: "destructive",
-      });
-    },
-  });
-
-  type FormValues = {
-    name: string;
-  };
-
-  const form = useForm<FormValues>({
-    values: {
-      name: task.name,
-    },
-  });
-
-  const nameValue = form.watch("name");
-
-  useEffect(() => {
-    form.setFocus("name");
-  }, [form]);
-
-  const onSubmit = (values: FormValues) => {
-    const { name } = values;
-    if (!name || !name.trim() || name.trim() === task.name) {
-      form.reset();
-      return;
-    }
-
-    mutate({ id: task.id, name: name.trim() });
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    if (e.key === "Enter") {
-      onSubmit({ name: nameValue });
-      closeTodo();
-    }
-  };
-  return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        onBlur={form.handleSubmit(onSubmit)}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={onKeyDown}
-        className="w-full"
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  placeholder="New Task"
-                  {...field}
-                  className="w-full border-none focus:font-semibold  focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
-  );
-};
-
-const DatePicker: React.FC<ITask> = ({ task }) => {
-  const [date, setDate] = useState<Date | null>(
-    task.deadline ? mySqlFormatToDate(task.deadline) : null,
-  );
-
-  const ctx = api.useContext();
-  const { toast } = useToast();
-  const { mutate } = api.task.update.useMutation({
-    onSuccess() {
-      void ctx.invalidate();
-    },
-    onError(error) {
-      toast({
-        title: "Uh oh!",
-        variant: "destructive",
-        description: error.message ?? "Something went wrong",
-      });
-    },
-  });
-
-  const onSelectChange = (value: string) => {
-    const selectedDate = addDays(new Date(), parseInt(value));
-    mutate({ id: task.id, deadline: dateToMySqlFormat(selectedDate) });
-  };
-
-  const onCalendarChange = (day: Date | undefined) => {
-    setDate(day ?? null);
-    mutate({ id: task.id, deadline: day ? dateToMySqlFormat(day) : null });
-  };
-
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          onClick={(e) => e.stopPropagation()}
-          variant={"outline"}
-          className={cn(
-            "w-fit justify-start border-none text-left text-sm font-normal",
-            !date && "text-muted-foreground",
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Deadline</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        onClick={(e) => e.stopPropagation()}
-        side="right"
-        className="flex w-auto flex-col space-y-2 p-2 text-sm"
-      >
-        <Select onValueChange={onSelectChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            <SelectItem value="0">Today</SelectItem>
-            <SelectItem value="1">Tomorrow</SelectItem>
-            <SelectItem value="3">In 3 days</SelectItem>
-            <SelectItem value="7">In a week</SelectItem>
-          </SelectContent>
-        </Select>
-        <div className="rounded-md border">
-          <Calendar
-            mode="single"
-            selected={date ?? undefined}
-            onSelect={onCalendarChange}
-          />
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-enum PriorityValues {
-  Important = "Important",
-  Unimportant = "Not important",
-}
-
-const PriorityDropdown: React.FC<ITask> = ({ task }) => {
-  const ctx = api.useContext();
-  const { toast } = useToast();
-  const { mutate } = api.task.update.useMutation({
-    onSuccess() {
-      void ctx.invalidate();
-    },
-    onError(error) {
-      toast({
-        title: "Uh oh!",
-        variant: "destructive",
-        description: error.message ?? "Something went wrong",
-      });
-    },
-  });
-
-  const onSubmit = (value: string) => {
-    mutate({
-      id: task.id,
-      priority: value === PriorityValues.Important ? true : false,
-    });
-  };
-
-  return (
-    <Select
-      onValueChange={onSubmit}
-      defaultValue={
-        task.priority ? PriorityValues.Important : PriorityValues.Unimportant
-      }
-    >
-      <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
-        <SelectValue placeholder="Priority" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value={PriorityValues.Important}>
-          <div className="flex items-center gap-1 text-sm">
-            <StarIcon
-              size={14}
-              data-tip
-              data-for="priority"
-              className="text-logo"
-              fill="rgb(246 191 95)"
-            />
-            <p>Important</p>
-          </div>
-        </SelectItem>
-        <SelectItem value={PriorityValues.Unimportant}>
-          <div className="flex items-center gap-1 text-sm">
-            <p>Not important</p>
-          </div>
-        </SelectItem>
-      </SelectContent>
-    </Select>
-  );
-};
-
-const ListDisplay: React.FC<ITask> = ({ task }) => {
-  const { setSelectedTodo } = useAppContext();
-  const { toast } = useToast();
-  const ctx = api.useContext();
-
-  const { data: listInfo } = api.task.getListInfo.useQuery({
-    listId: task.listId,
-    listType: task.listType,
-  });
-
-  const { data: lists } = api.user.getLists.useQuery();
-
-  const { mutate } = api.task.update.useMutation({
-    onSuccess() {
-      setSelectedTodo(undefined);
-      void ctx.invalidate();
-    },
-    onError() {
-      toast({
-        title: "Uh oh!",
-        description: "Something went wrong",
-        variant: "destructive",
-      });
-    },
-  });
-
-  if (!lists) return null;
-  if (!listInfo) return null;
-
-  const { listId, listType } = task;
-
-  const onSubmit = (value: string) => {
-    const [type, id] = value.split("-");
-    if (id && (type === "space" || type === "project")) {
-      mutate({ id: task.id, listId: id, listType: type });
-    }
-  };
-
-  return (
-    <Select onValueChange={onSubmit} defaultValue={`${listType}-${listId}`}>
-      <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
-        <SelectValue placeholder={listInfo.name} className="text-sm" />
-      </SelectTrigger>
-      <SelectContent>
-        {lists.map((list) => (
-          <SelectItem
-            key={`${list.type}-${list.id}`}
-            value={`${list.type}-${list.id}`}
-          >
-            <div className="flex items-center gap-1">
-              {list.type === "project" ? (
-                <ProjectIcon size={14} />
-              ) : (
-                <SpaceIcon size={14} />
-              )}
-              {list.name}
-            </div>
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
   );
 };
 

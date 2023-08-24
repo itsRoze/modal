@@ -52,7 +52,7 @@ export const userRouter = createTRPCRouter({
   getLists: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
 
-    return await db.transaction(async (tx) => {
+    const lists = await db.transaction(async (tx) => {
       const spaces = await tx.query.space.findMany({
         where: (space) => eq(space.userId, session.userId),
       });
@@ -74,6 +74,8 @@ export const userRouter = createTRPCRouter({
         a.name.localeCompare(b.name),
       );
     });
+
+    return lists.length > 0 ? lists : [];
   }),
   findList: protectedProcedure
     .input(z.string().optional())
