@@ -23,7 +23,7 @@ export const task = mysqlTable(
     deadline: date("deadline", {
       mode: "string",
     }),
-    priority: boolean("priority").default(false),
+    priority: boolean("priority").default(false).notNull(),
     completedTime: date("completed_time", {
       mode: "string",
     }),
