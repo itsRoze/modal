@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Divider from "@/components/divider";
-import ProjectIcon from "@/components/icons/project";
+import { ProjectIcon } from "@/components/icons/project";
 import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
@@ -257,8 +257,9 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
         <DialogHeader>
           <DialogTitle>Delete</DialogTitle>
           <DialogDescription>
-            This will delete all projects and tasks within this space too. Are you sure
-            you want to delete <span className="italic">{data.name}</span>?
+            This will delete all projects and tasks within this space too. Are
+            you sure you want to delete{" "}
+            <span className="italic">{data.name}</span>?
           </DialogDescription>
         </DialogHeader>
         <div>

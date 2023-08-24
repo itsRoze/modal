@@ -40,7 +40,9 @@ const MatrixQuadrantOne = () => {
       <div className="h-full w-full pl-8 pt-8">
         <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
           {tasks
-            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            ? tasks.map((task) => (
+                <Todo key={task.id} task={task} displayList={true} />
+              ))
             : null}
         </ul>
       </div>
@@ -75,7 +77,9 @@ const MatrixQuadrantTwo = () => {
       <div className="h-full w-full pl-8 pt-8">
         <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
           {tasks
-            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            ? tasks.map((task) => (
+                <Todo key={task.id} task={task} displayList={true} />
+              ))
             : null}
         </ul>
       </div>
@@ -110,7 +114,9 @@ const MatrixQuadrantThree = () => {
       <div className="h-full w-full pl-8 pt-8">
         <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
           {tasks
-            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            ? tasks.map((task) => (
+                <Todo key={task.id} task={task} displayList={true} />
+              ))
             : null}
         </ul>
       </div>
@@ -143,7 +149,9 @@ const MatrixQuadrantFour = () => {
       <div className="h-full w-full pl-8 pt-8">
         <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
           {tasks
-            ? tasks.map((task) => <Todo key={task.id} task={task} />)
+            ? tasks.map((task) => (
+                <Todo key={task.id} task={task} displayList={true} />
+              ))
             : null}
         </ul>
       </div>

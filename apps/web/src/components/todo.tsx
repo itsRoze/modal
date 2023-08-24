@@ -22,7 +22,7 @@ import { addDays, format } from "date-fns";
 import { CalendarIcon, Check, CheckIcon, StarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import ProjectIcon from "./icons/project";
+import { ProjectIcon } from "./icons/project";
 import { SpaceIcon } from "./icons/space";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
@@ -44,6 +44,7 @@ interface ITodo {
   selectable?: boolean;
   initialChecked?: boolean;
   displayList?: boolean;
+  displayDeadline?: boolean;
 }
 
 const Todo: React.FC<ITodo> = ({
@@ -52,6 +53,7 @@ const Todo: React.FC<ITodo> = ({
   selectable = true,
   initialChecked = false,
   displayList = false,
+  displayDeadline = true,
 }) => {
   const { pathname } = useRouter();
   const { id, completedTime } = task;
@@ -188,6 +190,7 @@ const Todo: React.FC<ITodo> = ({
           selectable={selectable}
           displayPriority={displayPriority}
           displayList={displayList}
+          displayDeadline={displayDeadline}
         />
       ) : (
         <CheckableTodo
@@ -200,6 +203,7 @@ const Todo: React.FC<ITodo> = ({
           selectable={selectable}
           displayPriority={displayPriority}
           displayList={displayList}
+          displayDeadline={displayDeadline}
         />
       )}
     </div>
@@ -219,6 +223,7 @@ interface ICheckableTodo extends ITask {
   selectable: boolean;
   displayPriority: boolean;
   displayList: boolean;
+  displayDeadline: boolean;
 }
 
 const CompletedTodo: React.FC<ICheckableTodo> = ({
@@ -304,6 +309,8 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   setHovering,
   selectable,
   displayPriority,
+  displayList,
+  displayDeadline
 }) => {
   const { id, name, priority, listId, listType, completedTime } = task;
   const { data: listInfo } = api.task.getListInfo.useQuery({
@@ -342,7 +349,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
           {/* Priority */}
           {displayPriority && priority ? <Priority checked={checked} /> : null}
           {/* Deadline */}
-          {!completedTime ? <DeadlineDisplay task={task} /> : null}
+          {displayDeadline && !completedTime ? <DeadlineDisplay task={task} /> : null}
           {/* Name */}
           <Name checked={checked} selectable={selectable} name={name} />
         </div>
@@ -354,7 +361,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
           "pl-12 text-sm": true,
         })}
       >
-        {listInfo ? (
+        {displayList && listInfo ? (
           <div className="flex items-center gap-1">
             {listType === "project" ? (
               <ProjectIcon size={14} />
