@@ -73,14 +73,19 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
       name: "",
     },
   });
+
+  const close = () => {
+    form.reset();
+    setAddingNewTodo(false);
+  };
+
   const onSubmit = (data: FormValues) => {
     if (!listInfo) return;
     const { name } = data;
 
     const trimmedName = name.trim();
     if (!trimmedName) {
-      form.reset();
-      setAddingNewTodo(false);
+      close();
       return;
     }
 
@@ -90,8 +95,7 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
       listId,
     });
 
-    form.reset();
-    setAddingNewTodo(false);
+    close();
   };
 
   useEffect(() => {
@@ -109,6 +113,11 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         onBlur={form.handleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            close();
+          }
+        }}
         className="mx-1"
       >
         <FormField
