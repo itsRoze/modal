@@ -1,9 +1,16 @@
 import { useRef } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { classNames } from "@modal/common";
 import { Plus, Trash } from "lucide-react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const ActionBar: React.FC = () => {
   const { toast } = useToast();
@@ -29,6 +36,8 @@ const ActionBar: React.FC = () => {
     setAddingNewTodo(true);
   };
 
+  useHotkeys("ctrl+n", handleCreateClick);
+
   const handleDeleteClick = () => {
     if (selectedTodo) {
       mutate(selectedTodo.id);
@@ -40,18 +49,28 @@ const ActionBar: React.FC = () => {
       id="actionbar"
       className="flex w-full items-center justify-center pb-4"
     >
-      <div className="z-20 w-fit translate-y-0 rounded-lg border border-slate-100 shadow-lg hover:-translate-y-1 hover:border-[3px] hover:shadow-none">
+      <div className="z-20 w-fit translate-y-0 rounded-lg border border-slate-100 shadow-lg">
         <div
           className="flex w-full items-center justify-between p-1"
           ref={actionbarVisbileRef}
         >
-          {/* Add */}
-          <button
-            onClick={handleCreateClick}
-            className="rounded-lg p-1 hover:bg-slate-100"
-          >
-            <Plus size={24} />
-          </button>
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger>
+                {/* Add */}
+                <button
+                  onClick={handleCreateClick}
+                  className="rounded-lg p-1 hover:bg-slate-100"
+                >
+                  <Plus size={24} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create task (ctrl+n)</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           {/* Trash */}
           <button
             disabled={!selectedTodo}
