@@ -200,6 +200,7 @@ const Sidebar: React.FC<ISidebar> = ({
         >
           {!collapsed && <span className="whitespace-nowrap"></span>}
           <button
+            aria-label="Toggle sidebar"
             onClick={() => setCollapsed((prev) => !prev)}
             className={cn({
               "grid place-content-center": true, // position
@@ -207,7 +208,7 @@ const Sidebar: React.FC<ISidebar> = ({
               "h-10 w-10 rounded-full": true, // shape
             })}
           >
-            <Icon size={24} />
+            <Icon size={24} aria-hidden />
           </button>
         </div>
         {/* Menu */}
@@ -480,8 +481,8 @@ const SidebarMenu = () => {
   return (
     <>
       <Popover>
-        <PopoverTrigger className="bg-logo rounded-full p-2 shadow-md hover:opacity-75">
-          <Plus size={32} className=" text-white" />
+        <PopoverTrigger aria-label="New list" className="bg-logo rounded-full p-2 shadow-md hover:opacity-75">
+          <Plus aria-hidden size={32} className=" text-white" />
         </PopoverTrigger>
         <PopoverContent className={`${inter.variable} ml-2 font-sans`}>
           <div className="flex flex-col items-start gap-2">

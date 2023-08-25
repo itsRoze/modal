@@ -382,11 +382,14 @@ const Checkbox: React.FC<ICheckbox> = ({
       onMouseOver={(e) => e.stopPropagation()}
     >
       <label
+        id={`check-box-label-${id}`}
         htmlFor={`check-box-${id}`}
         className="pointer-events-none relative flex items-center rounded-full p-2 hover:bg-slate-100"
       >
         <input
           id={`check-box-${id}`}
+          aria-labelledby={`check-box-label-${id}`}
+          aria-label="Check box"
           type={"checkbox"}
           checked={checked}
           onChange={handleOnCheck}
@@ -414,8 +417,9 @@ const Priority: React.FC<IPriority> = ({ checked }) => {
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger aria-label="Important">
           <StarIcon
+            aria-hidden
             size={18}
             className={` ${checked ? "text-orange-200" : "text-logo"} `}
             fill={` ${checked ? "rgb(254 215 170)" : "rgb(246 191 95)"} `}
