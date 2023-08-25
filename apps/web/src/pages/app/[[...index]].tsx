@@ -18,8 +18,8 @@ const Dashboard: NextPageWithLayout = () => {
         <Title title="Dashboard" Icon={Home} iconColor="text-fuchsia-500" />
         <TooltipProvider delayDuration={100}>
           <Tooltip>
-            <TooltipTrigger>
-              <Info size={18} />
+            <TooltipTrigger aria-label="Dashboard information tooltip">
+              <Info aria-hidden size={18} />
             </TooltipTrigger>
             <TooltipContent>
               <p>Only tasks with deadlines appear here</p>
