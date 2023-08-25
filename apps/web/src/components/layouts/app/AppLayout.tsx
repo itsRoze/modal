@@ -61,6 +61,7 @@ import { type z } from "zod";
 
 import styles from "./AppLayout.module.css";
 import Header from "./Header";
+import Metadata, { type MetaType } from "@/components/metadata";
 
 export interface IAppLayout {
   children: React.ReactNode;
@@ -70,6 +71,10 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
   const { data: userData, isLoading } = api.user.get.useQuery();
+
+  const meta: MetaType = {
+    path: "/app",
+  }
 
   const onMenuButtonClick = () => {
     setMobileMenu((prev) => {
@@ -104,6 +109,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
 
   return (
     <>
+      <Metadata meta={meta} />
       <Header userData={userData} onMenuButtonClick={onMenuButtonClick} />
       <main
         className={classNames(

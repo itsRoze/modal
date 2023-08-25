@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
+import Metadata from "@/components/metadata";
 import { anybody } from "@/utils/fonts";
 import { motion } from "framer-motion";
 
@@ -15,6 +16,7 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
+      <Metadata />
       <motion.article
         variants={variants} // Pass the variant object into Framer Motion
         initial="hidden" // Set the initial state to variants.hidden
