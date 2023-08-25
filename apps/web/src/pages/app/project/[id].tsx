@@ -92,8 +92,8 @@ const Menu: React.FC<IData> = ({ data }) => {
   return (
     <>
       <Popover>
-        <PopoverTrigger>
-          <MoreHorizontal size={24} />
+        <PopoverTrigger aria-label="Project Menu">
+          <MoreHorizontal aria-hidden size={24} />
         </PopoverTrigger>
         <PopoverContent>
           <div className="flex flex-col items-start gap-2">
