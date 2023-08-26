@@ -56,13 +56,14 @@ const ActionBar: React.FC = () => {
         >
           <TooltipProvider delayDuration={100}>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger aria-label="Add new task">
                 {/* Add */}
                 <button
+                  aria-label="Add new task"
                   onClick={handleCreateClick}
                   className="rounded-lg p-1 hover:bg-slate-100"
                 >
-                  <Plus size={24} />
+                  <Plus aria-hidden size={24} />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
@@ -73,6 +74,8 @@ const ActionBar: React.FC = () => {
 
           {/* Trash */}
           <button
+            aria-label="Delete task"
+            aria-disabled={!selectedTodo}
             disabled={!selectedTodo}
             onClick={handleDeleteClick}
             className={classNames(
@@ -82,7 +85,7 @@ const ActionBar: React.FC = () => {
                 : "cursor-not-allowed opacity-50",
             )}
           >
-            <Trash size={24} />
+            <Trash aria-hidden size={24} />
           </button>
         </div>
       </div>

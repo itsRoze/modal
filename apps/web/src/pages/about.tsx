@@ -44,13 +44,13 @@ const About: NextPageWithLayout = () => {
           />
         </section>
         <section className="flex items-center justify-center py-4 md:py-10">
-          <h3 className="px-10 text-center text-lg font-medium md:px-0 md:text-3xl">
+          <h1 className="px-10 text-center text-lg font-medium md:px-0 md:text-3xl">
             I am the{" "}
             <span className="border-b-4 border-b-green-300">founder</span>,{" "}
             <span className="border-b-4 border-b-blue-300">engineer</span>, and{" "}
             <span className="border-b-4 border-b-red-300 ">designer</span> of{" "}
             <span className=" text-blue-700">Modal</span>
-          </h3>
+          </h1>
         </section>
         <section className="flex flex-col items-center justify-center py-2">
           <p className="mb-6 font-light md:text-2xl  xl:w-1/2">

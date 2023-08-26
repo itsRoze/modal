@@ -63,8 +63,8 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
         />
       ) : null}
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <UserCircle2 size={28} />
+        <DropdownMenuTrigger aria-label="User Settings">
+          <UserCircle2 size={28} aria-hidden />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem>
