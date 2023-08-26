@@ -46,7 +46,7 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
   };
 
   return (
-    <div className="bg-logo flex items-center gap-2 px-9 py-2 shadow-[0_4px_10px_rgba(0,0,0,0.2)]">
+    <div className="bg-logo flex items-center gap-2 px-2 py-2 shadow-[0_4px_10px_rgba(0,0,0,0.2)] md:px-9">
       <div className="flex-grow">
         <Image
           src="/images/app-logo.svg"
@@ -120,7 +120,7 @@ const TrialBanner = ({ remainingDays }: { remainingDays: number }) => {
         <button
           onClick={handleUpgrade}
           className={cn(
-            "rounded-md bg-red-100 px-1 font-medium shadow-md",
+            "rounded-md bg-red-100 px-1 text-sm font-medium shadow-md md:text-base",
             `${inter.variable} font-sans`,
           )}
         >

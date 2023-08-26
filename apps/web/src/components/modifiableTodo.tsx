@@ -5,7 +5,9 @@ import { type TaskType } from "@/utils/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { dateToMySqlFormat, mySqlFormatToDate } from "@modal/common";
-import { addDays, format } from "date-fns";
+import { useMediaQuery } from "@uidotdev/usehooks";
+import { addDays } from "date-fns";
+import dayjs from "dayjs";
 import { CalendarIcon, Check, StarIcon } from "lucide-react";
 import { useForm, type ControllerRenderProps } from "react-hook-form";
 import { z } from "zod";
@@ -46,6 +48,7 @@ interface IModifiableTodo {
 }
 
 const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const ref = useRef<HTMLFormElement>(null);
   const [datePickOpen, setDatePickOpen] = useState(false);
   const [priorityPickOpen, setPriorityPickOpen] = useState(false);
@@ -152,7 +155,7 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
         ref={ref}
         onSubmit={form.handleSubmit(onSubmit)}
         onKeyDown={onKeyDown}
-        className="flex w-full items-start justify-between"
+        className="mb-10 flex w-full items-start justify-between"
       >
         <div>
           <div className="flex items-start">
@@ -165,50 +168,94 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
                     <Input
                       placeholder="New Task"
                       {...field}
-                      className="w-full border-none focus:font-semibold  focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="w-full border-none focus:font-semibold focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
-          <div className="my-0 flex select-none items-center gap-2">
-            <FormField
-              control={form.control}
-              name="deadline"
-              render={({ field }) => (
-                <DatePicker
-                  field={field}
-                  open={datePickOpen}
-                  setOpen={setDatePickOpen}
+          {isSmallDevice ? (
+            <>
+              <div className="flex select-none items-center gap-2">
+                <FormField
+                  control={form.control}
+                  name="deadline"
+                  render={({ field }) => (
+                    <DatePicker
+                      field={field}
+                      open={datePickOpen}
+                      setOpen={setDatePickOpen}
+                    />
+                  )}
                 />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <PriorityPicker
-                  field={field}
-                  open={priorityPickOpen}
-                  setOpen={setPriorityPickOpen}
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <PriorityPicker
+                      field={field}
+                      open={priorityPickOpen}
+                      setOpen={setPriorityPickOpen}
+                    />
+                  )}
                 />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="listInfo"
-              render={({ field }) => (
-                <ListPicker
-                  field={field}
-                  open={listPickOpen}
-                  setOpen={setListPickOpen}
-                  lists={lists ?? []}
-                  listInfo={listInfo}
+              </div>
+              <div className="px-4">
+                <FormField
+                  control={form.control}
+                  name="listInfo"
+                  render={({ field }) => (
+                    <ListPicker
+                      field={field}
+                      open={listPickOpen}
+                      setOpen={setListPickOpen}
+                      lists={lists ?? []}
+                      listInfo={listInfo}
+                    />
+                  )}
                 />
-              )}
-            />
-          </div>
+              </div>
+            </>
+          ) : (
+            <div className="my-0 flex select-none items-center gap-2">
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <DatePicker
+                    field={field}
+                    open={datePickOpen}
+                    setOpen={setDatePickOpen}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <PriorityPicker
+                    field={field}
+                    open={priorityPickOpen}
+                    setOpen={setPriorityPickOpen}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="listInfo"
+                render={({ field }) => (
+                  <ListPicker
+                    field={field}
+                    open={listPickOpen}
+                    setOpen={setListPickOpen}
+                    lists={lists ?? []}
+                    listInfo={listInfo}
+                  />
+                )}
+              />
+            </div>
+          )}
         </div>
         <button type="submit" className="rounded-md p-2 ">
           <Check className="text-slate-400 hover:text-slate-500" />
@@ -225,6 +272,7 @@ interface IDatePicker {
 }
 
 const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   return (
     <FormItem>
       <Popover open={open} onOpenChange={setOpen}>
@@ -237,14 +285,18 @@ const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
                 !field.value && "text-muted-foreground",
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {field.value ? format(field.value, "PPP") : <span>Deadline</span>}
+              <CalendarIcon size={isSmallDevice ? 12 : 14} className="mr-1" />
+              {field.value ? (
+                dayjs(field.value).format("ddd, MMM D")
+              ) : (
+                <span className="text-sm md:text-base">Deadline</span>
+              )}
             </Button>
           </FormControl>
         </PopoverTrigger>
         <PopoverContent
           id="datepicker"
-          side="right"
+          side={isSmallDevice ? "bottom" : "right"}
           className="flex w-auto flex-col space-y-2 p-2 text-sm"
         >
           <Select
@@ -286,6 +338,7 @@ const PriorityPicker: React.FC<IPriorityPicker> = ({
   open,
   setOpen,
 }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   return (
     <FormItem>
       <Select
@@ -301,7 +354,7 @@ const PriorityPicker: React.FC<IPriorityPicker> = ({
           <SelectItem value={PriorityValues.Important}>
             <div className="flex items-center gap-1 text-sm">
               <StarIcon
-                size={14}
+                size={isSmallDevice ? 12 : 14}
                 data-tip
                 data-for="priority"
                 className="text-logo"
@@ -336,6 +389,8 @@ const ListPicker: React.FC<IListPicker> = ({
   lists,
   listInfo,
 }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
   if (!lists) return null;
   if (!listInfo) return null;
   return (
@@ -357,9 +412,9 @@ const ListPicker: React.FC<IListPicker> = ({
             >
               <div className="flex items-center gap-1">
                 {list.type === "project" ? (
-                  <ProjectIcon size={14} />
+                  <ProjectIcon size={isSmallDevice ? 12 : 14} />
                 ) : (
-                  <SpaceIcon size={14} />
+                  <SpaceIcon size={isSmallDevice ? 12 : 14} />
                 )}
                 {list.name}
               </div>
