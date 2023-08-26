@@ -33,6 +33,7 @@
     "@trpc/next": "^10.25.1",
     "@trpc/react-query": "^10.25.1",
     "@trpc/server": "^10.25.1",
+    "@uidotdev/usehooks": "^2.1.1",
     "@upstash/ratelimit": "^0.4.3",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
