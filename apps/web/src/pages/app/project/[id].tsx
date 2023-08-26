@@ -42,6 +42,7 @@ import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { editProjectSchema } from "@modal/common/schemas/project/editSchema";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import { Circle, Loader2, MoreHorizontal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
@@ -65,11 +66,11 @@ const ProjectPage: NextPageWithLayout = () => {
 
   return (
     <article id="project-page" className="relative flex flex-col">
-      <div className="flex items-center">
+      <div className="flex items-center gap-1">
         <Title title={data.name} Icon={Circle} />
         <Menu data={data} />
       </div>
-      <div className="custom-scroll ml-5 flex h-full flex-col overflow-y-scroll">
+      <div className="custom-scroll flex h-full flex-col overflow-y-scroll">
         <div className="flex-grow py-2">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
@@ -86,6 +87,7 @@ interface IData {
 }
 
 const Menu: React.FC<IData> = ({ data }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
@@ -93,7 +95,7 @@ const Menu: React.FC<IData> = ({ data }) => {
     <>
       <Popover>
         <PopoverTrigger aria-label="Project Menu">
-          <MoreHorizontal aria-hidden size={24} />
+          <MoreHorizontal aria-hidden size={isSmallDevice ? 18 : 24} />
         </PopoverTrigger>
         <PopoverContent>
           <div className="flex flex-col items-start gap-2">

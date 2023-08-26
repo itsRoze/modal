@@ -17,6 +17,7 @@ import {
   getDeadlineDateName,
   isOverdue,
 } from "@modal/common";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import { CheckIcon, StarIcon } from "lucide-react";
 
 import { ProjectIcon } from "./icons/project";
@@ -221,6 +222,7 @@ const CompletedTodo: React.FC<ICheckableTodo> = ({
   selectable,
   displayPriority,
 }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const { id, name, priority, listId, listType } = task;
   const { data: listInfo } = api.task.getListInfo.useQuery({
     listId,
@@ -244,6 +246,7 @@ const CompletedTodo: React.FC<ICheckableTodo> = ({
           checked={checked}
           handleOnCheck={handleOnCheck}
           setCheckHovering={setCheckHovering}
+          task={task}
         />
         <CompletedTimeDisplay task={task} />
         <div
@@ -271,9 +274,9 @@ const CompletedTodo: React.FC<ICheckableTodo> = ({
             {listInfo ? (
               <div className="flex items-center gap-1">
                 {listType === "project" ? (
-                  <ProjectIcon size={14} />
+                  <ProjectIcon size={isSmallDevice ? 12 : 14} />
                 ) : (
-                  <SpaceIcon size={14} />
+                  <SpaceIcon size={isSmallDevice ? 12 : 14} />
                 )}
                 <span>{listInfo.name}</span>
               </div>
@@ -320,6 +323,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
           checked={checked}
           handleOnCheck={handleOnCheck}
           setCheckHovering={setCheckHovering}
+          task={task}
         />
         <div
           className={cn({
@@ -349,7 +353,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
         })}
       >
         {displayList && listInfo ? (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 text-sm md:text-base">
             {listType === "project" ? (
               <ProjectIcon size={14} />
             ) : (
@@ -363,7 +367,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   );
 };
 
-interface ICheckbox {
+interface ICheckbox extends ITask {
   id: string;
   checked: boolean;
   handleOnCheck: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -374,17 +378,21 @@ const Checkbox: React.FC<ICheckbox> = ({
   checked,
   handleOnCheck,
   setCheckHovering,
+  task,
 }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+  const someday = task.deadline === null;
+
   return (
     <fieldset
-      className="z-0"
+      className="z-0 pr-1 md:pr-0"
       onMouseOut={(e) => e.stopPropagation()}
       onMouseOver={(e) => e.stopPropagation()}
     >
       <label
         id={`check-box-label-${id}`}
         htmlFor={`check-box-${id}`}
-        className="pointer-events-none relative flex items-center rounded-full p-2 hover:bg-slate-100"
+        className="pointer-events-none relative flex items-center rounded-full p-0 md:p-2 md:hover:bg-slate-100"
       >
         <input
           id={`check-box-${id}`}
@@ -395,14 +403,21 @@ const Checkbox: React.FC<ICheckbox> = ({
           onChange={handleOnCheck}
           onMouseOut={() => setCheckHovering(false)}
           onMouseOver={() => setCheckHovering(true)}
-          className="bg-transparent-100 peer pointer-events-auto z-10 cursor-pointer appearance-none rounded-lg border-2 border-transparent p-3"
+          className="bg-transparent-100 peer pointer-events-auto z-10 cursor-pointer appearance-none rounded-sm border-2 border-transparent p-2 md:rounded-lg md:p-3"
         />
-        <span className="absolute rounded-lg border-2 border-slate-200 p-3 peer-checked:bg-slate-500 "></span>
+        <span
+          className={cn({
+            "absolute left-0 rounded-md border-2 p-2 peer-checked:bg-slate-500 md:left-auto md:rounded-lg md:p-3 ":
+              true,
+            "border-slate-200": !someday,
+            "border-dashed border-gray-300": someday,
+          })}
+        ></span>
         <CheckIcon
-          size={18}
-          strokeWidth={3}
+          size={isSmallDevice ? 14 : 18}
+          strokeWidth={isSmallDevice ? 2 : 3}
           absoluteStrokeWidth
-          className="stroke-logo absolute left-[0.85rem] opacity-0 peer-checked:opacity-100 peer-hover:opacity-60 "
+          className="stroke-logo absolute left-[0.2rem] opacity-0 peer-checked:opacity-100 md:left-[0.85rem] md:peer-hover:opacity-60 "
         />
       </label>
     </fieldset>
@@ -414,13 +429,14 @@ interface IPriority {
 }
 
 const Priority: React.FC<IPriority> = ({ checked }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger aria-label="Important">
           <StarIcon
             aria-hidden
-            size={18}
+            size={isSmallDevice ? 16 : 18}
             className={` ${checked ? "text-orange-200" : "text-logo"} `}
             fill={` ${checked ? "rgb(254 215 170)" : "rgb(246 191 95)"} `}
           />
@@ -443,6 +459,8 @@ const CompletedTimeDisplay: React.FC<ITask> = ({ task }) => {
 
 const DeadlineDisplay: React.FC<ITask> = ({ task }) => {
   const { deadline } = task;
+  if (!deadline) return null;
+
   const userFriendlyDeadline = getDeadlineDateName(deadline);
   const isDeadlineOverdue = isOverdue(deadline);
 
@@ -450,7 +468,7 @@ const DeadlineDisplay: React.FC<ITask> = ({ task }) => {
     <div
       className={cn({
         "mx-1 flex items-center self-center rounded px-1": true,
-        "bg-red-500 text-white": isDeadlineOverdue,
+        "bg-red-500 text-white ": isDeadlineOverdue,
         "bg-gray-600 text-white": !isDeadlineOverdue && deadline,
         "border-2 border-dashed border-gray-600 bg-none": !deadline,
       })}
@@ -477,7 +495,7 @@ const Name: React.FC<IName> = ({ checked, selectable, name }) => {
     <div className="w-full truncate pl-1 text-left">
       <p
         className={classNames(
-          "truncate text-lg",
+          "truncate text-sm md:text-lg",
           checked ? "text-gray-400 line-through" : "",
           selectable ? "cursor-pointer" : "cursor-default",
         )}

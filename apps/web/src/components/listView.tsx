@@ -13,7 +13,7 @@ import Todo from "./todo";
 
 const ListView = () => {
   return (
-    <div className="h-full w-full px-2">
+    <div className="h-full w-full">
       <ListSectionOne />
       <ListSectionTwo />
       <ListSectionThree />
@@ -75,10 +75,10 @@ const ListSectionDefault: React.FC<IListSection> = ({ title, tasks }) => {
         <Icon size={18} className="mr-2 text-gray-500" />
         <h1 className="font-light md:text-2xl">{title}</h1>
       </CollapsibleTrigger>
-      <Divider />
+      <Divider widthMargin="mx-1" heightPadding="py-3" />
       <CollapsibleContent>
         <div className="h-full w-full pb-3">
-          <ul className="custom-scroll h-full w-full overflow-y-scroll pl-2">
+          <ul className="custom-scroll h-full w-full overflow-y-scroll">
             {tasks
               ? tasks.map((task) => (
                   <li key={task.id}>

@@ -20,9 +20,9 @@ const Someday: NextPageWithLayout = () => {
   return (
     <article>
       <Title title="Someday" Icon={CloudMoon} iconColor="text-indigo-300" />
-      <section className="mb-4 ml-5 mt-2">
+      <section className="mb-4 mt-2">
         {data.spaceTasks.map((space) => (
-          <div key={`space-${space.id}`}>
+          <div key={`space-${space.id}`} className="mb-6">
             <Link href={`/app/space/${encodeURIComponent(space.id)}`}>
               <h2 className="flex w-fit items-center gap-1 text-lg font-bold text-gray-500">
                 <SpaceIcon /> {space.name}
@@ -39,10 +39,10 @@ const Someday: NextPageWithLayout = () => {
           </div>
         ))}
       </section>
-      <section className="my-4 ml-5">
+      <section className="my-4">
         {data.projectTasks.map((project) =>
           project.tasks.length ? (
-            <div key={`project-${project.id}`}>
+            <div key={`project-${project.id}`} className="mb-6">
               <Link href={`/app/project/${encodeURIComponent(project.id)}`}>
                 <h2 className="flex w-fit items-center gap-1 text-lg font-bold text-gray-500">
                   <ProjectIcon />
