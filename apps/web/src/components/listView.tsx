@@ -13,7 +13,7 @@ import Todo from "./todo";
 
 const ListView = () => {
   return (
-    <div className="h-full w-full">
+    <div className="w-full">
       <ListSectionOne />
       <ListSectionTwo />
       <ListSectionThree />

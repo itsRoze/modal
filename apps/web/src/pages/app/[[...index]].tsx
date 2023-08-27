@@ -67,7 +67,7 @@ const Dashboard: NextPageWithLayout = () => {
           </div>
         ) : null}
       </div>
-      <section className="custom-scroll flex-grow overflow-y-scroll py-4">
+      <section className="custom-scroll h-[calc(100%-150px)] overflow-y-scroll md:h-auto md:flex-grow">
         {matrixSelected && !isSmallDevice ? <Matrix /> : <ListView />}
       </section>
     </article>

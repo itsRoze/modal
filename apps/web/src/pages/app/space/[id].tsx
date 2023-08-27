@@ -64,7 +64,7 @@ const SpacePage: NextPageWithLayout = () => {
         <Title title={data.name} Icon={Boxes} />
         <Menu data={data} />
       </div>
-      <div className="custom-scroll flex h-full flex-col overflow-y-scroll">
+      <div className="custom-scroll flex h-[calc(100%-150px)] flex-col overflow-y-scroll md:h-[calc(100%-69px)]">
         <div className="py-2">
           <h2 className="text-gray-500">Projects</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />

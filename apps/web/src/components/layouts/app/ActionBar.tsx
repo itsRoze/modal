@@ -47,7 +47,7 @@ const ActionBar: React.FC = () => {
   return (
     <div
       id="actionbar"
-      className="flex w-full items-center justify-center pb-4"
+      className="fixed bottom-0 flex w-full items-center justify-center pb-4 md:static md:bottom-auto"
     >
       <div className="z-20 w-fit translate-y-0 rounded-lg border border-slate-100 shadow-lg">
         <div

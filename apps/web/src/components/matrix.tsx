@@ -38,7 +38,7 @@ const MatrixQuadrantOne = () => {
       </div>
       {/* Tasks */}
       <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pt-4">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -77,7 +77,7 @@ const MatrixQuadrantTwo = () => {
       </div>
       {/* Tasks */}
       <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll pt-2">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -115,8 +115,8 @@ const MatrixQuadrantThree = () => {
         <MatrixLabel type="Not Important" />
       </div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+      <div className="h-full w-full pl-8 pt-2">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -152,8 +152,8 @@ const MatrixQuadrantFour = () => {
       {/* Labels */}
       <div></div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pl-8 pt-8">
+      <div className="h-full w-full pl-8 pt-2">
+        <ul className="custom-scroll h-full w-full overflow-y-scroll">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>

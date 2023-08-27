@@ -47,6 +47,9 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
 
   return (
     <div className="bg-logo flex items-center gap-2 px-2 py-2 shadow-[0_4px_10px_rgba(0,0,0,0.2)] md:px-9">
+      <button className="lg:hidden" onClick={onMenuButtonClick}>
+        <Menu size={24} className="text-black" />
+      </button>
       <div className="flex-grow">
         <Image
           src="/images/app-logo.svg"
@@ -87,9 +90,6 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <button className="lg:hidden" onClick={onMenuButtonClick}>
-        <Menu size={24} className="text-gray-200" />
-      </button>
     </div>
   );
 };
