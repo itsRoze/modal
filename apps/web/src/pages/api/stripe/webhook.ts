@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { StripeEvent, db } from "@modal/db";
 import {
+  handleCheckoutSessionCompleted,
   handleInvoicePaid,
   handleSubscriptionCanceled,
   handleSubscriptionCreatedOrUpdated,
@@ -26,10 +27,13 @@ export default async function handler(
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"] as string;
 
-    let event: Stripe.Event;
-
     try {
-      event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+      const event: Stripe.Event = stripe.webhooks.constructEvent(
+        buf,
+        sig,
+        webhookSecret,
+      );
+
       switch (event.type) {
         case "invoice.paid":
           // Used to provision services after the trial has ended.
@@ -41,9 +45,9 @@ export default async function handler(
           });
           break;
 
-        case "customer.subscription.created":
+        case "checkout.session.completed":
           // Used to provision services as they are added to a subscription.
-          await handleSubscriptionCreatedOrUpdated({
+          await handleCheckoutSessionCompleted({
             event,
             db,
           });
@@ -55,14 +59,6 @@ export default async function handler(
             event,
             db,
           });
-          break;
-
-        case "invoice.payment_failed":
-          // If the payment fails or the customer does not have a valid payment method,
-          //  an invoice.payment_failed event is sent, the subscription becomes past_due.
-          // Use this webhook to notify your user that their payment has
-          // failed and to retrieve new card details.
-          // Can also have Stripe send an email to the customer notifying them of the failure. See settings: https://dashboard.stripe.com/settings/billing/automatic
           break;
 
         case "customer.subscription.deleted":

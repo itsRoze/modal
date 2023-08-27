@@ -3,6 +3,8 @@ import { User, fromId } from "@modal/db/src/user";
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 
+import { stripe } from "..";
+
 // retrieves a Stripe customer id for a given user if it exists or creates a new one
 export const getOrCreateStripeCustomerIdForUser = async ({
   stripe,
@@ -54,6 +56,31 @@ export const handleInvoicePaid = async ({
   const subscription = await stripe.subscriptions.retrieve(
     subscriptionId as string,
   );
+  const userId = subscription.metadata.userId;
+  if (!userId) throw new Error("User subscription not found");
+
+  // update user with subscription data
+  await db
+    .update(User.user)
+    .set({
+      stripeSubscriptionId: subscription.id,
+      stripeSubscriptionStatus: subscription.status,
+    })
+    .where(eq(User.user.id, userId));
+};
+
+export const handleCheckoutSessionCompleted = async ({
+  event,
+  db,
+}: {
+  event: Stripe.Event;
+  db: db;
+}) => {
+  const session = event.data.object as Stripe.Checkout.Session;
+  const subscriptionId = session.subscription as string;
+
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
   const userId = subscription.metadata.userId;
   if (!userId) throw new Error("User subscription not found");
 
