@@ -18,9 +18,9 @@ const Someday: NextPageWithLayout = () => {
   if (!data && !isLoading) return <div>404</div>;
 
   return (
-    <article>
+    <article className="">
       <Title title="Someday" Icon={CloudMoon} iconColor="text-indigo-300" />
-      <section className="mb-4 mt-2">
+      <section className="custom-scroll h-[calc(100%-150px)] overflow-y-scroll md:h-[calc(100%-69px)]">
         {data.spaceTasks.map((space) => (
           <div key={`space-${space.id}`} className="mb-6">
             <Link href={`/app/space/${encodeURIComponent(space.id)}`}>
@@ -38,8 +38,6 @@ const Someday: NextPageWithLayout = () => {
             </ul>
           </div>
         ))}
-      </section>
-      <section className="my-4">
         {data.projectTasks.map((project) =>
           project.tasks.length ? (
             <div key={`project-${project.id}`} className="mb-6">

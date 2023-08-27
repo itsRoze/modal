@@ -26,7 +26,7 @@ const History: NextPageWithLayout = () => {
   return (
     <article>
       <Title title="History" Icon={BookOpenCheck} iconColor="text-green-600" />
-      <section className="">
+      <section className="custom-scroll h-[calc(100%-150px)] overflow-y-scroll md:h-[calc(100%-69px)]">
         {groupedTasks.map(({ monthYear, tasks }) => (
           <div key={monthYear} className="py-2">
             <h2 className="text-lg font-bold text-gray-500 ">{monthYear}</h2>

@@ -108,7 +108,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
     );
 
   return (
-    <>
+    <div className="h-full overflow-hidden">
       <Metadata meta={meta} />
       <Header userData={userData} onMenuButtonClick={onMenuButtonClick} />
       <main
@@ -130,7 +130,7 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
         />
         {children}
       </main>
-    </>
+    </div>
   );
 };
 
