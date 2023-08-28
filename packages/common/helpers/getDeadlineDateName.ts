@@ -7,7 +7,7 @@ export const getDeadlineDateName = (deadline: string | null) => {
   const todayDate = dayjs();
 
   if (deadlineDate.isSame(todayDate, "day")) {
-    return "today";
+    return "Today";
   }
 
   return deadlineDate.format("MMM D");
