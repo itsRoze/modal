@@ -56,12 +56,6 @@ const Todo: React.FC<ITodo> = ({
   const { toast } = useToast();
   const { mutate } = api.task.update.useMutation({
     onSuccess() {
-      if (!completedTime) {
-        toast({
-          title: "Task completed!",
-          variant: "success",
-        });
-      }
       void ctx.invalidate();
     },
     onError() {
@@ -411,6 +405,7 @@ const Checkbox: React.FC<ICheckbox> = ({
               true,
             "border-slate-200": !someday,
             "border-dashed border-gray-300": someday,
+            "border-solid": checked,
           })}
         ></span>
         <CheckIcon

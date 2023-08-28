@@ -39,6 +39,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { classNames, getRemainingTrial } from "@modal/common";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import {
   BookOpenCheck,
   ChevronDown,
@@ -49,6 +50,7 @@ import {
   Home,
   Loader2,
   Plus,
+  X,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
@@ -145,6 +147,7 @@ const Sidebar: React.FC<ISidebar> = ({
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -170,6 +173,7 @@ const Sidebar: React.FC<ISidebar> = ({
           "-translate-x-full": !shown,
           "w-screen lg:w-[300px]": !collapsed,
           "lg:w-16": collapsed,
+          "": isSmallDevice,
         },
         styles.sidebar,
       )}
@@ -177,10 +181,12 @@ const Sidebar: React.FC<ISidebar> = ({
       <div
         id="sidebar-container"
         className={cn({
-          "relative z-20 h-full overflow-x-hidden rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
+          "relative z-20 overflow-x-hidden rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
             true,
           "overflow-y-hidden": collapsed,
-          "custom-scroll overflow-y-auto": !collapsed,
+          "custom-scroll overflow-y-scroll": !collapsed,
+          "h-full": !isSmallDevice,
+          "h-[calc(100vh-165px)]": isSmallDevice,
         })}
       >
         {/* Button */}
@@ -213,15 +219,23 @@ const Sidebar: React.FC<ISidebar> = ({
           })}
         >
           {/* Search bar */}
-          <div className="flex justify-center px-4">
+          <label className="relative flex justify-center px-4 py-2 md:py-0">
             <Input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
+              className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white pr-7 shadow-sm"
               placeholder="🔎 Search"
             />
-          </div>
+            {searchTerm ? (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-5 md:top-3 top-5"
+              >
+                <X size={18} className="text-red-700" strokeWidth={3} />
+              </button>
+            ) : null}
+          </label>
           {!debouncedSearchTerm ? (
             <>
               <ul className="my-2 flex flex-col items-stretch gap-0.5">
@@ -339,14 +353,14 @@ const SearchResults: React.FC<ISearchResults> = ({
           <Link
             onClick={handleMobileClick}
             href={`/app/${list.type}/${encodeURIComponent(list.id)}`}
-            className="flex w-full items-center gap-1 font-normal text-black"
+            className="flex items-center gap-1 font-normal text-black"
           >
             {list.type === "project" ? (
               <ProjectIcon size={18} />
             ) : (
               <SpaceIcon size={18} />
             )}
-            {list.name}
+            <p className="w-64 truncate">{list.name}</p>
           </Link>
         </li>
       ))}
@@ -375,7 +389,7 @@ const ProjectsDisplay: React.FC<IProjectsDisplay> = ({ handleMobileClick }) => {
             onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="w-full font-normal text-black "
+            className="w-64 truncate font-normal text-black "
           >
             {userProject.name}
           </Link>
@@ -442,27 +456,26 @@ const SpaceSection: React.FC<ISpaceSection> = ({
     >
       <CollapsibleTrigger
         className={cn({
-          "flex w-full justify-between rounded-md pr-2 hover:bg-slate-200":
-            true,
+          "flex w-full items-center gap-2 pr-2 ": true,
           "transition-colors duration-300": true,
         })}
       >
+        <Icon size={18} className="text-gray-500" />
         <Link
           onClick={handleMobileClick}
           href={`/app/space/${encodeURIComponent(userSpace.id)}`}
-          className="flex-grow text-left"
+          className="w-60 truncate rounded-md text-left hover:bg-slate-200"
         >
           {userSpace.name}
         </Link>
-        <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col py-1">
+      <CollapsibleContent className="flex flex-col py-1 pl-6">
         {userSpace.projects.map((userProject) => (
           <Link
             onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="rounded-md px-1 py-1 font-normal text-black hover:bg-slate-200"
+            className="w-56 truncate rounded-md px-1 py-1 font-normal text-black hover:bg-slate-200"
           >
             {userProject.name}
           </Link>
@@ -481,7 +494,7 @@ const SidebarMenu = () => {
       <Popover>
         <PopoverTrigger
           aria-label="New list"
-          className="bg-logo rounded-full p-2 shadow-md hover:opacity-75"
+          className="bg-logo fixed bottom-3 right-5 rounded-full p-2 shadow-md hover:opacity-75 md:bottom-10"
         >
           <Plus aria-hidden size={32} className=" text-white" />
         </PopoverTrigger>
