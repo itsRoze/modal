@@ -15,7 +15,9 @@ const Title: React.FC<ITitle> = ({ title, Icon, iconColor }) => {
         size={isSmallDevice ? 24 : 26}
         className={iconColor ?? "text-black"}
       />
-      <h1 className="text-lg font-medium md:text-2xl">{title}</h1>
+      <h1 className="max-w-[18rem] truncate text-lg font-medium md:text-2xl">
+        {title}
+      </h1>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { ProjectMenu } from "@/components/forms/newProject";
+import Hotkey from "@/components/hotkey";
 import {
   Tooltip,
   TooltipContent,
@@ -40,6 +41,9 @@ const ActionBar: React.FC = () => {
   };
 
   useHotkeys("ctrl+n", handleCreateClick);
+  useHotkeys("ctrl+shift+n", () => {
+    if (listInfo && listInfo.type === "space") setShowProject(true);
+  });
 
   const handleDeleteClick = () => {
     if (selectedTodo) {
@@ -64,16 +68,16 @@ const ActionBar: React.FC = () => {
               <Tooltip>
                 <TooltipTrigger aria-label="Add new task">
                   {/* Add */}
-                  <button
+                  <div
                     aria-label="Add new task"
                     onClick={handleCreateClick}
                     className="rounded-lg p-1 hover:bg-slate-100"
                   >
                     <Plus aria-hidden size={24} />
-                  </button>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Create task (ctrl+n)</p>
+                  <Hotkey text="New task" keys={["Ctrl", "N"]} />
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -83,16 +87,16 @@ const ActionBar: React.FC = () => {
               <TooltipProvider delayDuration={100}>
                 <Tooltip>
                   <TooltipTrigger aria-label="Add new project">
-                    <button
+                    <div
                       onClick={() => setShowProject(true)}
                       aria-label="Add Project"
                       className="rounded-lg p-1 hover:bg-slate-100"
                     >
                       <ListPlus aria-hidden size={24} />
-                    </button>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Create project (ctrl+shift+p)</p>
+                    <Hotkey text="New project" keys={["Ctrl", "Shift", "N"]} />
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

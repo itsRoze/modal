@@ -39,6 +39,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { classNames, getRemainingTrial } from "@modal/common";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import {
   BookOpenCheck,
   ChevronDown,
@@ -49,6 +50,7 @@ import {
   Home,
   Loader2,
   Plus,
+  X,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
@@ -145,6 +147,7 @@ const Sidebar: React.FC<ISidebar> = ({
   const Icon = collapsed ? ChevronsRight : ChevronsLeft;
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -170,6 +173,7 @@ const Sidebar: React.FC<ISidebar> = ({
           "-translate-x-full": !shown,
           "w-screen lg:w-[300px]": !collapsed,
           "lg:w-16": collapsed,
+          "": isSmallDevice,
         },
         styles.sidebar,
       )}
@@ -177,10 +181,12 @@ const Sidebar: React.FC<ISidebar> = ({
       <div
         id="sidebar-container"
         className={cn({
-          "relative z-20 h-full overflow-x-hidden rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
+          "relative z-20 overflow-x-hidden rounded-r-3xl border-r border-gray-100 bg-gray-50 shadow-[2px_1px_8px_rgba(0,0,0,0.25)]":
             true,
           "overflow-y-hidden": collapsed,
-          "custom-scroll overflow-y-auto": !collapsed,
+          "custom-scroll overflow-y-scroll": !collapsed,
+          "h-full": !isSmallDevice,
+          "h-[calc(100vh-165px)]": isSmallDevice,
         })}
       >
         {/* Button */}
@@ -213,25 +219,33 @@ const Sidebar: React.FC<ISidebar> = ({
           })}
         >
           {/* Search bar */}
-          <div className="flex justify-center px-4 py-2">
+          <label className="relative flex justify-center px-4 py-2 md:py-0">
             <Input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white shadow-sm"
+              className="min-w-[16rem] max-w-full rounded-2xl border-gray-300 bg-white pr-7 shadow-sm"
               placeholder="🔎 Search"
             />
-          </div>
+            {searchTerm ? (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-5 md:top-3 top-5"
+              >
+                <X size={18} className="text-red-700" strokeWidth={3} />
+              </button>
+            ) : null}
+          </label>
           {!debouncedSearchTerm ? (
             <>
-              <ul className="my-2 flex flex-col items-stretch gap-1">
+              <ul className="my-2 flex flex-col items-stretch gap-0.5">
                 <li
                   key={1}
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -248,8 +262,8 @@ const Sidebar: React.FC<ISidebar> = ({
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -266,8 +280,8 @@ const Sidebar: React.FC<ISidebar> = ({
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -330,18 +344,23 @@ const SearchResults: React.FC<ISearchResults> = ({
     return <p className="pl-5 text-sm">No results found</p>;
 
   return (
-    <ul className="pl-5">
+    <ul className="my-2 pl-5">
       {lists.map((list) => (
         <li
           key={list.id}
-          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+          className="flex w-full flex-col rounded-md px-1 py-1 hover:bg-slate-200"
         >
           <Link
             onClick={handleMobileClick}
             href={`/app/${list.type}/${encodeURIComponent(list.id)}`}
-            className="w-full font-normal text-black "
+            className="flex items-center gap-1 font-normal text-black"
           >
-            {list.name}
+            {list.type === "project" ? (
+              <ProjectIcon size={18} />
+            ) : (
+              <SpaceIcon size={18} />
+            )}
+            <p className="w-64 truncate">{list.name}</p>
           </Link>
         </li>
       ))}
@@ -360,17 +379,17 @@ const ProjectsDisplay: React.FC<IProjectsDisplay> = ({ handleMobileClick }) => {
   if (!projects || projectsIsLoading) return null;
 
   return (
-    <ul className="w-full pl-5">
+    <ul className="w-full py-1 pl-5">
       {projects.map((userProject) => (
         <li
           key={userProject.id}
-          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+          className="flex w-full flex-col rounded-md px-1 py-1 hover:bg-slate-200"
         >
           <Link
             onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="w-full font-normal text-black "
+            className="w-64 truncate font-normal text-black "
           >
             {userProject.name}
           </Link>
@@ -395,12 +414,12 @@ const SpacesDisplay: React.FC<ISpacesDisplay> = ({
   if (!spaces || spacesIsLoading) return null;
 
   return (
-    <ul className="my-2 flex flex-col items-stretch gap-2">
+    <ul className="my-1 flex flex-col items-stretch gap-1">
       {spaces.map((userSpace) => (
         <li
           key={userSpace.id}
           className={cn({
-            "flex w-full py-2 pl-5 font-medium text-gray-500 ": true,
+            "flex w-full py-1 pl-5 font-medium text-gray-500 ": true,
             "gap-4": !collapsed,
             "h-10 w-10": collapsed,
           })}
@@ -437,27 +456,26 @@ const SpaceSection: React.FC<ISpaceSection> = ({
     >
       <CollapsibleTrigger
         className={cn({
-          "flex w-full justify-between rounded-md pr-2 hover:bg-slate-200":
-            true,
+          "flex w-full items-center gap-2 pr-2 ": true,
           "transition-colors duration-300": true,
         })}
       >
+        <Icon size={18} className="text-gray-500" />
         <Link
           onClick={handleMobileClick}
           href={`/app/space/${encodeURIComponent(userSpace.id)}`}
-          className="flex-grow text-left"
+          className="w-60 truncate rounded-md text-left hover:bg-slate-200"
         >
           {userSpace.name}
         </Link>
-        <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col py-2">
+      <CollapsibleContent className="flex flex-col py-1 pl-6">
         {userSpace.projects.map((userProject) => (
           <Link
             onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="rounded-md px-1 py-2 font-normal text-black hover:bg-slate-200"
+            className="w-56 truncate rounded-md px-1 py-1 font-normal text-black hover:bg-slate-200"
           >
             {userProject.name}
           </Link>
@@ -476,7 +494,7 @@ const SidebarMenu = () => {
       <Popover>
         <PopoverTrigger
           aria-label="New list"
-          className="bg-logo rounded-full p-2 shadow-md hover:opacity-75"
+          className="bg-logo fixed bottom-3 right-5 rounded-full p-2 shadow-md hover:opacity-75 md:bottom-10"
         >
           <Plus aria-hidden size={32} className=" text-white" />
         </PopoverTrigger>

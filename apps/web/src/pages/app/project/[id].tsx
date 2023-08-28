@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Divider from "@/components/divider";
+import { ProjectIcon } from "@/components/icons/project";
 import ActionBar from "@/components/layouts/app/ActionBar";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
@@ -43,7 +44,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { editProjectSchema } from "@modal/common/schemas/project/editSchema";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import { Circle, Loader2, MoreHorizontal } from "lucide-react";
+import { Loader2, MoreHorizontal, type LucideIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -67,11 +68,11 @@ const ProjectPage: NextPageWithLayout = () => {
   return (
     <article id="project-page" className="relative flex flex-col">
       <div className="flex items-center gap-1">
-        <Title title={data.name} Icon={Circle} />
+        <Title title={data.name} Icon={ProjectIcon as LucideIcon} />
         <Menu data={data} />
       </div>
       <div className="custom-scroll flex h-[calc(100%-150px)] flex-col overflow-y-scroll md:h-[calc(100%-69px)]">
-        <div className="flex-grow py-2">
+        <div className="flex flex-col flex-grow py-2">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <TodoList listType="project" listId={id} />

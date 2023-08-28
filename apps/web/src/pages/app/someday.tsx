@@ -13,31 +13,53 @@ import { type NextPageWithLayout } from "../_app";
 
 const Someday: NextPageWithLayout = () => {
   const { data, isLoading } = api.task.getSomedayTasksByList.useQuery();
+  const { data: taskCount, isLoading: isTaskCountLoading } =
+    api.task.getSomedayTaskCount.useQuery();
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || isTaskCountLoading) return <LoadingPage />;
   if (!data && !isLoading) return <div>404</div>;
 
+  // == since taskCount type also includes undefined
+  if (taskCount !== undefined && taskCount == 0) {
+    return (
+      <article>
+        <Title title="Someday" Icon={CloudMoon} iconColor="text-indigo-300" />
+        <section className="custom-scroll flex h-[calc(100%-150px)] items-center justify-center overflow-y-scroll md:h-[calc(100%-69px)]">
+          <div className="text-center text-gray-500">
+            <p>Incomplete tasks without deadlines are displayed here.</p>
+            <blockquote className="mt-4 italic">
+              &ldquo;The journey of a thousand miles begins with one
+              step.&rdquo; - Lao Tzu
+            </blockquote>
+          </div>
+        </section>
+      </article>
+    );
+  }
+
   return (
-    <article className="">
+    <article>
       <Title title="Someday" Icon={CloudMoon} iconColor="text-indigo-300" />
       <section className="custom-scroll h-[calc(100%-150px)] overflow-y-scroll md:h-[calc(100%-69px)]">
-        {data.spaceTasks.map((space) => (
-          <div key={`space-${space.id}`} className="mb-6">
-            <Link href={`/app/space/${encodeURIComponent(space.id)}`}>
-              <h2 className="flex w-fit items-center gap-1 text-lg font-bold text-gray-500">
-                <SpaceIcon /> {space.name}
-              </h2>
-            </Link>
-            <Divider widthMargin="mx-1" heightPadding="py-2" />
-            <ul>
-              {space.tasks.map((task) => (
-                <li key={task.id} className="">
-                  <Todo task={task} displayDeadline={false} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {data.spaceTasks.map((space) =>
+          space.tasks.length ? (
+            <div key={`space-${space.id}`} className="mb-6">
+              <Link href={`/app/space/${encodeURIComponent(space.id)}`}>
+                <h2 className="flex w-fit items-center gap-1 text-lg font-bold text-gray-500">
+                  <SpaceIcon /> {space.name}
+                </h2>
+              </Link>
+              <Divider widthMargin="mx-1" heightPadding="py-2" />
+              <ul>
+                {space.tasks.map((task) => (
+                  <li key={task.id} className="">
+                    <Todo task={task} displayDeadline={false} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null,
+        )}
         {data.projectTasks.map((project) =>
           project.tasks.length ? (
             <div key={`project-${project.id}`} className="mb-6">
