@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { ProjectMenu } from "@/components/forms/newProject";
 import {
   Tooltip,
   TooltipContent,
@@ -9,14 +10,16 @@ import { useToast } from "@/components/ui/use-toast";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { classNames } from "@modal/common";
-import { Plus, Trash } from "lucide-react";
+import { ListPlus, Plus, Trash } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 const ActionBar: React.FC = () => {
   const { toast } = useToast();
   const ctx = api.useContext();
 
-  const { setAddingNewTodo, selectedTodo } = useAppContext();
+  const { setAddingNewTodo, selectedTodo, listInfo } = useAppContext();
+  const [showProject, setShowProject] = useState(false);
+
   const { mutate } = api.task.remove.useMutation({
     onSuccess() {
       void ctx.invalidate();
@@ -44,52 +47,81 @@ const ActionBar: React.FC = () => {
     }
   };
 
-  return (
-    <div
-      id="actionbar"
-      className="fixed bottom-0 flex w-full items-center justify-center pb-4 md:static md:bottom-auto"
-    >
-      <div className="z-20 w-fit translate-y-0 rounded-lg border border-slate-100 shadow-lg">
-        <div
-          className="flex w-full items-center justify-between p-1"
-          ref={actionbarVisbileRef}
-        >
-          <TooltipProvider delayDuration={100}>
-            <Tooltip>
-              <TooltipTrigger aria-label="Add new task">
-                {/* Add */}
-                <button
-                  aria-label="Add new task"
-                  onClick={handleCreateClick}
-                  className="rounded-lg p-1 hover:bg-slate-100"
-                >
-                  <Plus aria-hidden size={24} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Create task (ctrl+n)</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+  if (!listInfo) return null;
 
-          {/* Trash */}
-          <button
-            aria-label="Delete task"
-            aria-disabled={!selectedTodo}
-            disabled={!selectedTodo}
-            onClick={handleDeleteClick}
-            className={classNames(
-              "rounded-lg p-1",
-              selectedTodo
-                ? "hover:bg-slate-100"
-                : "cursor-not-allowed opacity-50",
-            )}
+  return (
+    <>
+      <div
+        id="actionbar"
+        className="fixed bottom-0 flex w-full items-center justify-center pb-4 md:static md:bottom-auto"
+      >
+        <div className="z-20 w-fit translate-y-0 rounded-lg border border-slate-100 shadow-lg">
+          <div
+            className="flex w-full items-center justify-between p-1"
+            ref={actionbarVisbileRef}
           >
-            <Trash aria-hidden size={24} />
-          </button>
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger aria-label="Add new task">
+                  {/* Add */}
+                  <button
+                    aria-label="Add new task"
+                    onClick={handleCreateClick}
+                    className="rounded-lg p-1 hover:bg-slate-100"
+                  >
+                    <Plus aria-hidden size={24} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Create task (ctrl+n)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Add Project */}
+            {listInfo.type === "space" ? (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger aria-label="Add new project">
+                    <button
+                      onClick={() => setShowProject(true)}
+                      aria-label="Add Project"
+                      className="rounded-lg p-1 hover:bg-slate-100"
+                    >
+                      <ListPlus aria-hidden size={24} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Create project (ctrl+shift+p)</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : null}
+
+            {/* Delete Task */}
+            <button
+              aria-label="Delete task"
+              aria-disabled={!selectedTodo}
+              disabled={!selectedTodo}
+              onClick={handleDeleteClick}
+              className={classNames(
+                "rounded-lg p-1",
+                selectedTodo
+                  ? "hover:bg-slate-100"
+                  : "cursor-not-allowed opacity-50",
+              )}
+            >
+              <Trash aria-hidden size={24} />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <ProjectMenu
+        open={showProject}
+        setOpen={setShowProject}
+        defaultSpaceId={listInfo.id}
+      />
+    </>
   );
 };
 

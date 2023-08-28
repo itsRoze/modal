@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ProjectMenu } from "@/components/forms/newProject";
 import { ProjectIcon } from "@/components/icons/project";
 import { SpaceIcon } from "@/components/icons/space";
 import { LoadingPage } from "@/components/loading";
@@ -29,13 +30,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import Upgrade from "@/components/upgrade";
 import { api } from "@/utils/api";
@@ -44,7 +38,6 @@ import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
 import { classNames, getRemainingTrial } from "@modal/common";
-import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import {
   BookOpenCheck,
@@ -508,137 +501,6 @@ const SidebarMenu = () => {
       <ProjectMenu open={showProject} setOpen={setShowProject} />
       <SpaceMenu open={showSpace} setOpen={setShowSpace} />
     </>
-  );
-};
-
-interface IProjectMenu {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const ProjectMenu: React.FC<IProjectMenu> = ({ open, setOpen }) => {
-  const { toast } = useToast();
-  const ctx = api.useContext();
-
-  const { data: spaces, isLoading: spacesIsLoading } =
-    api.space.getSpacesForUser.useQuery();
-
-  const { mutate, isLoading } = api.project.create.useMutation({
-    onSuccess() {
-      setOpen(false);
-      form.reset();
-      void ctx.invalidate();
-      toast({
-        variant: "success",
-        title: "Project added!",
-      });
-    },
-    onError(error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
-      });
-    },
-  });
-
-  const NO_SPACE = "None";
-  type Inputs = z.infer<typeof createProjectSchema>;
-
-  const form = useForm<Inputs>({
-    resolver: zodResolver(createProjectSchema),
-    defaultValues: {
-      name: "",
-      spaceId: undefined,
-    },
-  });
-
-  const onSubmit = (data: Inputs) => {
-    const { spaceId, name } = data;
-    const modifiedName = name.trim();
-
-    mutate({
-      name: modifiedName,
-      spaceId: spaceId === NO_SPACE ? undefined : spaceId,
-    });
-  };
-
-  const onOpenChange = () => {
-    setOpen((val) => !val);
-    form.reset();
-  };
-
-  return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className={`${inter.variable} font-sans`}>
-        <DialogHeader>
-          <DialogTitle>Create a new project</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            {/* Project Space */}
-            <FormField
-              control={form.control}
-              name="spaceId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Space</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger aria-label="Select space">
-                        <SelectValue placeholder="None" />
-                      </SelectTrigger>
-                    </FormControl>
-                    {spaces && !spacesIsLoading ? (
-                      <SelectContent className={`${inter.variable} font-sans`}>
-                        <SelectItem value={NO_SPACE}>None</SelectItem>
-                        {spaces.map((userSpace) => (
-                          <SelectItem key={userSpace.id} value={userSpace.id}>
-                            {userSpace.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    ) : null}
-                  </Select>
-                </FormItem>
-              )}
-            />
-            {/* Project Name */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="My new project"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="float-right mt-4">
-              {isLoading ? (
-                <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating
-                </Button>
-              ) : (
-                <Button type="submit" disabled={!form.formState.isValid}>
-                  Submit
-                </Button>
-              )}
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
   );
 };
 
