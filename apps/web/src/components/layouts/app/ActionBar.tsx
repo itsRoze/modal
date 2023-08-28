@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { ProjectMenu } from "@/components/forms/newProject";
+import Hotkey from "@/components/hotkey";
 import {
   Tooltip,
   TooltipContent,
@@ -40,6 +41,9 @@ const ActionBar: React.FC = () => {
   };
 
   useHotkeys("ctrl+n", handleCreateClick);
+  useHotkeys("ctrl+shift+n", () => {
+    if (listInfo && listInfo.type === "space") setShowProject(true);
+  });
 
   const handleDeleteClick = () => {
     if (selectedTodo) {
@@ -73,7 +77,7 @@ const ActionBar: React.FC = () => {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Create task (ctrl+n)</p>
+                  <Hotkey text="New task" keys={["Ctrl", "N"]} />
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -92,7 +96,7 @@ const ActionBar: React.FC = () => {
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Create project (ctrl+shift+p)</p>
+                    <Hotkey text="New project" keys={["Ctrl", "Shift", "N"]} />
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
