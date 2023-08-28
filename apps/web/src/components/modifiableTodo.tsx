@@ -8,7 +8,7 @@ import { dateToMySqlFormat, mySqlFormatToDate } from "@modal/common";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { addDays } from "date-fns";
 import dayjs from "dayjs";
-import { CalendarIcon, Check, StarIcon } from "lucide-react";
+import { CalendarIcon, Check, StarIcon, Trash } from "lucide-react";
 import { useForm, type ControllerRenderProps } from "react-hook-form";
 import { z } from "zod";
 
@@ -76,6 +76,19 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
     },
   });
 
+  const { mutate: deleteTask } = api.task.remove.useMutation({
+    onSuccess() {
+      void ctx.invalidate();
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
   const form = useForm<FormValues>({
     values: {
       name: task.name,
@@ -111,6 +124,11 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
     task.listId,
     task.listType,
   ]);
+
+  const onDelete = () => {
+    closeTodo();
+    deleteTask(task.id);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -257,9 +275,25 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
             </div>
           )}
         </div>
-        <button type="submit" className="rounded-md p-2 ">
-          <Check className="text-slate-400 hover:text-slate-500" />
-        </button>
+        <div className="flex items-center gap-1 px-2">
+          <button type="submit" className="rounded-md p-1" aria-label="Save">
+            <Check
+              aria-hidden
+              className="text-slate-400 hover:text-slate-500"
+            />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="rounded-md p-1"
+            aria-label="Delete"
+          >
+            <Trash
+              aria-hidden
+              className="text-slate-400 hover:text-slate-500"
+            />
+          </button>
+        </div>
       </form>
     </Form>
   );
@@ -273,6 +307,17 @@ interface IDatePicker {
 
 const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
+  const SOMEDAY = "Someday";
+
+  const onValueSelect = (value: string) => {
+    if (value === SOMEDAY) {
+      field.onChange(null);
+    } else {
+      field.onChange(addDays(new Date(), parseInt(value)));
+    }
+  };
+
   return (
     <FormItem>
       <Popover open={open} onOpenChange={setOpen}>
@@ -289,7 +334,7 @@ const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
               {field.value ? (
                 dayjs(field.value).format("ddd, MMM D")
               ) : (
-                <span className="text-sm md:text-base">Deadline</span>
+                <span className="text-sm md:text-base">Someday</span>
               )}
             </Button>
           </FormControl>
@@ -299,19 +344,15 @@ const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
           side={isSmallDevice ? "bottom" : "right"}
           className="flex w-auto flex-col space-y-2 p-2 text-sm"
         >
-          <Select
-            onValueChange={(value) =>
-              field.onChange(addDays(new Date(), parseInt(value)))
-            }
-          >
+          <Select onValueChange={onValueSelect}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent position="popper">
               <SelectItem value="0">Today</SelectItem>
               <SelectItem value="1">Tomorrow</SelectItem>
-              <SelectItem value="3">In 3 days</SelectItem>
               <SelectItem value="7">In a week</SelectItem>
+              <SelectItem value={SOMEDAY}>{SOMEDAY}</SelectItem>
             </SelectContent>
           </Select>
           <div className="rounded-md border">
