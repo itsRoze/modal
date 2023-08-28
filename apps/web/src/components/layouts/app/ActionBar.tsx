@@ -68,13 +68,13 @@ const ActionBar: React.FC = () => {
               <Tooltip>
                 <TooltipTrigger aria-label="Add new task">
                   {/* Add */}
-                  <button
+                  <div
                     aria-label="Add new task"
                     onClick={handleCreateClick}
                     className="rounded-lg p-1 hover:bg-slate-100"
                   >
                     <Plus aria-hidden size={24} />
-                  </button>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <Hotkey text="New task" keys={["Ctrl", "N"]} />
@@ -87,13 +87,13 @@ const ActionBar: React.FC = () => {
               <TooltipProvider delayDuration={100}>
                 <Tooltip>
                   <TooltipTrigger aria-label="Add new project">
-                    <button
+                    <div
                       onClick={() => setShowProject(true)}
                       aria-label="Add Project"
                       className="rounded-lg p-1 hover:bg-slate-100"
                     >
                       <ListPlus aria-hidden size={24} />
-                    </button>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <Hotkey text="New project" keys={["Ctrl", "Shift", "N"]} />

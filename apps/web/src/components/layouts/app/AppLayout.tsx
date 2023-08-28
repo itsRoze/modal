@@ -213,7 +213,7 @@ const Sidebar: React.FC<ISidebar> = ({
           })}
         >
           {/* Search bar */}
-          <div className="flex justify-center px-4 py-2">
+          <div className="flex justify-center px-4">
             <Input
               type="text"
               value={searchTerm}
@@ -224,14 +224,14 @@ const Sidebar: React.FC<ISidebar> = ({
           </div>
           {!debouncedSearchTerm ? (
             <>
-              <ul className="my-2 flex flex-col items-stretch gap-1">
+              <ul className="my-2 flex flex-col items-stretch gap-0.5">
                 <li
                   key={1}
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -248,8 +248,8 @@ const Sidebar: React.FC<ISidebar> = ({
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -266,8 +266,8 @@ const Sidebar: React.FC<ISidebar> = ({
                   className={cn({
                     "flex hover:bg-slate-200": true,
                     "transition-colors duration-300": true,
-                    "gap-4 rounded-md py-2 pl-5": !collapsed,
-                    "h-10 w-10 rounded-full py-2 pl-5": collapsed,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
                   })}
                 >
                   <Link
@@ -330,17 +330,22 @@ const SearchResults: React.FC<ISearchResults> = ({
     return <p className="pl-5 text-sm">No results found</p>;
 
   return (
-    <ul className="pl-5">
+    <ul className="my-2 pl-5">
       {lists.map((list) => (
         <li
           key={list.id}
-          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+          className="flex w-full flex-col rounded-md px-1 py-1 hover:bg-slate-200"
         >
           <Link
             onClick={handleMobileClick}
             href={`/app/${list.type}/${encodeURIComponent(list.id)}`}
-            className="w-full font-normal text-black "
+            className="flex w-full items-center gap-1 font-normal text-black"
           >
+            {list.type === "project" ? (
+              <ProjectIcon size={18} />
+            ) : (
+              <SpaceIcon size={18} />
+            )}
             {list.name}
           </Link>
         </li>
@@ -360,11 +365,11 @@ const ProjectsDisplay: React.FC<IProjectsDisplay> = ({ handleMobileClick }) => {
   if (!projects || projectsIsLoading) return null;
 
   return (
-    <ul className="w-full pl-5">
+    <ul className="w-full py-1 pl-5">
       {projects.map((userProject) => (
         <li
           key={userProject.id}
-          className="flex w-full flex-col rounded-md px-1 py-2 hover:bg-slate-200"
+          className="flex w-full flex-col rounded-md px-1 py-1 hover:bg-slate-200"
         >
           <Link
             onClick={handleMobileClick}
@@ -395,12 +400,12 @@ const SpacesDisplay: React.FC<ISpacesDisplay> = ({
   if (!spaces || spacesIsLoading) return null;
 
   return (
-    <ul className="my-2 flex flex-col items-stretch gap-2">
+    <ul className="my-1 flex flex-col items-stretch gap-1">
       {spaces.map((userSpace) => (
         <li
           key={userSpace.id}
           className={cn({
-            "flex w-full py-2 pl-5 font-medium text-gray-500 ": true,
+            "flex w-full py-1 pl-5 font-medium text-gray-500 ": true,
             "gap-4": !collapsed,
             "h-10 w-10": collapsed,
           })}
@@ -451,13 +456,13 @@ const SpaceSection: React.FC<ISpaceSection> = ({
         </Link>
         <Icon size={18} className="text-gray-500" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col py-2">
+      <CollapsibleContent className="flex flex-col py-1">
         {userSpace.projects.map((userProject) => (
           <Link
             onClick={handleMobileClick}
             key={userProject.id}
             href={`/app/project/${encodeURIComponent(userProject.id)}`}
-            className="rounded-md px-1 py-2 font-normal text-black hover:bg-slate-200"
+            className="rounded-md px-1 py-1 font-normal text-black hover:bg-slate-200"
           >
             {userProject.name}
           </Link>
