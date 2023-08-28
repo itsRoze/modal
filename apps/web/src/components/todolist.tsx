@@ -15,9 +15,13 @@ interface ITodoList {
 }
 
 const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
-  const { setSelectedTodo } = useAppContext();
+  const { setSelectedTodo, addingNewTodo } = useAppContext();
 
-  const { data: tasks, isLoading } = api.task.getAllForList.useQuery({
+  const {
+    data: tasks,
+    isLoading,
+    isRefetching,
+  } = api.task.getAllForList.useQuery({
     listId,
     listType,
   });
@@ -29,6 +33,12 @@ const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
 
   if (isLoading) return <LoadingPage />;
   if (!tasks && !isLoading) return <div>404</div>;
+
+  if (tasks.length === 0 && !addingNewTodo && !isRefetching) {
+    return (
+      <p className="flex py-4 text-center italic text-gray-500">Zero tasks</p>
+    );
+  }
 
   return (
     <div className="">
@@ -50,15 +60,18 @@ interface INewTodo {
 }
 
 const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
+  const { setAddingNewTodo, addingNewTodo, listInfo } = useAppContext();
   const ctx = api.useContext();
   const { toast } = useToast();
 
-  const { mutate } = api.task.create.useMutation({
+  const { mutate, isLoading } = api.task.create.useMutation({
     onSuccess() {
       form.reset();
       void ctx.invalidate();
+      setAddingNewTodo(false);
     },
     onError(error) {
+      setAddingNewTodo(false);
       toast({
         variant: "destructive",
         title: "Uh oh!",
@@ -67,7 +80,6 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
     },
   });
 
-  const { setAddingNewTodo, addingNewTodo, listInfo } = useAppContext();
   const form = useForm<FormValues>({
     defaultValues: {
       name: "",
@@ -76,7 +88,7 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
 
   const close = () => {
     form.reset();
-    setAddingNewTodo(false);
+    if (!isLoading) setAddingNewTodo(false);
   };
 
   const onSubmit = (data: FormValues) => {

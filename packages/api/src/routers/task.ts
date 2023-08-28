@@ -12,7 +12,7 @@ import {
 } from "@modal/db/src/task";
 import { task } from "@modal/db/src/task/task.sql";
 import { Ratelimit } from "@upstash/ratelimit";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { ratelimit } from "../ratelimit";
@@ -134,11 +134,11 @@ export const taskRouter = createTRPCRouter({
 
     return tasks ?? { spaceTasks: [], projectTasks: [] };
   }),
-  getSomeday: protectedProcedure.query(async ({ ctx }) => {
+  getSomedayTaskCount: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
 
     const tasks = await db
-      .select()
+      .select({ count: sql<number>`count(*)` })
       .from(task)
       .where(
         and(
@@ -149,7 +149,7 @@ export const taskRouter = createTRPCRouter({
       )
       .orderBy(task.listId);
 
-    return tasks ?? [];
+    return tasks[0] ? tasks[0].count : 0;
   }),
   getListInfo: protectedProcedure
     .input(Info.pick({ listId: true, listType: true }))
