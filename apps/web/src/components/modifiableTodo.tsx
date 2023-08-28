@@ -273,6 +273,17 @@ interface IDatePicker {
 
 const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
+  const SOMEDAY = "Someday";
+
+  const onValueSelect = (value: string) => {
+    if (value === SOMEDAY) {
+      field.onChange(null);
+    } else {
+      field.onChange(addDays(new Date(), parseInt(value)));
+    }
+  };
+
   return (
     <FormItem>
       <Popover open={open} onOpenChange={setOpen}>
@@ -289,7 +300,7 @@ const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
               {field.value ? (
                 dayjs(field.value).format("ddd, MMM D")
               ) : (
-                <span className="text-sm md:text-base">Deadline</span>
+                <span className="text-sm md:text-base">Someday</span>
               )}
             </Button>
           </FormControl>
@@ -299,19 +310,15 @@ const DatePicker: React.FC<IDatePicker> = ({ field, open, setOpen }) => {
           side={isSmallDevice ? "bottom" : "right"}
           className="flex w-auto flex-col space-y-2 p-2 text-sm"
         >
-          <Select
-            onValueChange={(value) =>
-              field.onChange(addDays(new Date(), parseInt(value)))
-            }
-          >
+          <Select onValueChange={onValueSelect}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent position="popper">
               <SelectItem value="0">Today</SelectItem>
               <SelectItem value="1">Tomorrow</SelectItem>
-              <SelectItem value="3">In 3 days</SelectItem>
               <SelectItem value="7">In a week</SelectItem>
+              <SelectItem value={SOMEDAY}>{SOMEDAY}</SelectItem>
             </SelectContent>
           </Select>
           <div className="rounded-md border">
