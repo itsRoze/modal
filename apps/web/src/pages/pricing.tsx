@@ -29,7 +29,7 @@ const Pricing: NextPageWithLayout = () => {
         transition={{ type: "linear" }} // Set the transition to linear
         className={`${anybody.variable} font-mono`}
       >
-        <section className="flex flex-col items-center justify-center px-16">
+        <section className="flex flex-col items-center justify-center">
           <h1 className="text-center text-2xl font-medium md:text-7xl">
             Less than a{" "}
             <span className="relative">
@@ -67,25 +67,29 @@ const Pricing: NextPageWithLayout = () => {
             </div>
           </div>
         </section>
-        <section className="mt-4 flex flex-col items-center gap-8  bg-orange-100 py-8 md:mt-16 md:flex-row md:items-start md:justify-center  md:py-16">
-          <div className="flex w-3/4 md:w-1/2 md:justify-center">
-            <div className="space-y-2 md:space-y-4">
-              <h3 className={`font-medium md:text-4xl`}>Why a subscription?</h3>
-              <p className="text-sm font-light md:text-2xl lg:w-96">
-                I&apos;m just one developer 😎. I wanted a model that&apos;s
-                sustainable, covers costs, and provides validation for the app
-                💖.
-              </p>
+        <section className="mt-4 flex w-full justify-center bg-orange-100 py-8 md:mt-16 md:py-16">
+          <div className="3xl:w-1/2 flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-center 2xl:w-2/3">
+            <div className="flex w-3/4 md:w-1/2 md:justify-center">
+              <div className="space-y-2 md:space-y-4">
+                <h3 className={`font-medium md:text-4xl`}>
+                  Why a subscription?
+                </h3>
+                <p className="text-sm font-light md:text-2xl lg:w-96">
+                  I&apos;m just one developer 😎. I wanted a model that&apos;s
+                  sustainable, covers costs, and provides validation for the app
+                  💖.
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex w-3/4 md:w-1/2 md:justify-center">
-            <div className="space-y-2 md:space-y-4">
-              <h3 className={`font-medium md:text-4xl`}>Why this Price?</h3>
-              <p className="text-sm font-light md:text-2xl lg:w-96">
-                Whether you&apos;re a student, stay-at-home parent, or a
-                hustle-and-bustle laborer -- I want everyone to be able to
-                afford this app if they want to use it.
-              </p>
+            <div className="flex w-3/4 md:w-1/2 md:justify-center">
+              <div className="space-y-2 md:space-y-4">
+                <h3 className={`font-medium md:text-4xl`}>Why this Price?</h3>
+                <p className="text-sm font-light md:text-2xl lg:w-96">
+                  Whether you&apos;re a student, stay-at-home parent, or a
+                  hustle-and-bustle laborer -- I want everyone to be able to
+                  afford this app if they want to use it.
+                </p>
+              </div>
             </div>
           </div>
         </section>

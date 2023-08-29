@@ -53,7 +53,7 @@ const About: NextPageWithLayout = () => {
           </h1>
         </section>
         <section className="flex flex-col items-center justify-center py-2">
-          <p className="mb-6 font-light md:text-2xl  xl:w-1/2">
+          <p className="3xl:w-1/3 mb-6 font-light  md:text-2xl xl:w-1/2">
             I created Modal because I&apos;m a productivity nerd 🤓 and have
             tried countless task management systems! I have a number of hobbies,
             projects, and errands -- how can I account for all of this? I never
