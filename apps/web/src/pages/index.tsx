@@ -104,7 +104,7 @@ const Screenshot = () => {
         alt="screenshot of app"
         width={1755}
         height={1294}
-        className="h-auto lg:w-2/3"
+        className="h-auto lg:w-2/3 2xl:max-w-4xl"
       />
       <div className="absolute bottom-0 flex h-12 w-full items-center justify-center bg-white md:h-36">
         <h3
@@ -192,7 +192,7 @@ const FAQ = () => {
   ];
 
   return (
-    <section className="mt-8 w-full px-2 py-4">
+    <section className="mt-8 w-full px-2 py-4 2xl:max-w-7xl">
       <h3
         className={`${anybody.variable} text-center font-mono text-xl font-medium md:pt-6 md:text-5xl`}
       >
