@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, desc, eq, isNotNull, isNull } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
@@ -115,7 +115,7 @@ export const getAllCompleted = zod(Info.shape.userId, async (userId) =>
       .select()
       .from(task)
       .where(and(eq(task.userId, userId), isNotNull(task.completedTime)))
-      .orderBy(task.timeUpdated)
+      .orderBy(desc(task.completedTime))
       .limit(50)
       .execute();
   }),

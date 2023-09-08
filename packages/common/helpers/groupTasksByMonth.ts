@@ -6,6 +6,11 @@ export interface IGroupedTasks {
   tasks: Info[];
 }
 
+/**
+ *
+ * @param tasks: Comes in ordered by completed time (newest first)
+ *
+ */
 export const groupTasksByMonth = (tasks: Info[]) => {
   const groupedTasks: IGroupedTasks[] = [];
 
