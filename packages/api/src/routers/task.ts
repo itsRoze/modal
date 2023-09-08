@@ -171,8 +171,8 @@ export const taskRouter = createTRPCRouter({
           isNotNull(task.deadline),
           eq(task.priority, true),
         ),
-      );
-
+      )
+      .orderBy(task.deadline);
     const tasksDueSoon = tasks.filter(
       (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
     );
@@ -191,7 +191,8 @@ export const taskRouter = createTRPCRouter({
           isNotNull(task.deadline),
           eq(task.priority, true),
         ),
-      );
+      )
+      .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
       (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
@@ -211,7 +212,8 @@ export const taskRouter = createTRPCRouter({
           isNotNull(task.deadline),
           eq(task.priority, false),
         ),
-      );
+      )
+      .orderBy(task.deadline);
 
     const tasksDueSoon = tasks.filter(
       (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
@@ -231,7 +233,8 @@ export const taskRouter = createTRPCRouter({
           isNotNull(task.deadline),
           eq(task.priority, false),
         ),
-      );
+      )
+      .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
       (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
