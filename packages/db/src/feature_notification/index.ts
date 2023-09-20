@@ -48,6 +48,21 @@ export const update = zod(
   },
 );
 
+export const updateByUserId = zod(
+  Info.pick({ userId: true, modalType: true, showModal: true }),
+  async (input) => {
+    await db
+      .update(feature_notification)
+      .set({ showModal: input.showModal })
+      .where(
+        and(
+          eq(feature_notification.userId, input.userId),
+          eq(feature_notification.modalType, input.modalType),
+        ),
+      );
+  },
+);
+
 export const fromUserId = zod(
   Info.pick({ userId: true, modalType: true }),
   async (input) =>

@@ -1,3 +1,4 @@
+import { featureRouter } from "./routers/feature";
 import { projectRouter } from "./routers/project";
 import { spaceRouter } from "./routers/space";
 import { stripeRouter } from "./routers/stripe";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   space: spaceRouter,
   project: projectRouter,
   task: taskRouter,
+  featureNotification: featureRouter,
 });
 
 // export type definition of API

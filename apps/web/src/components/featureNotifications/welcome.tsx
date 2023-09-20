@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { api } from "@/utils/api";
 import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { BookOpenCheck, CloudMoon, Home, Plus, X } from "lucide-react";
 
+import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 import ModalPopup from "./modalpopup";
 
 type SeenSlide = { [key: number]: boolean };
@@ -12,9 +15,14 @@ const WelcomeGuide = () => {
     1: false,
     2: false,
   });
+
   const slides = [
     <Slide1 key={1} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
     <Slide2 key={2} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide3 key={3} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide4 key={4} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide5 key={5} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide6 key={6} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
   ];
 
   return <ModalPopup slides={slides} />;
@@ -104,7 +112,7 @@ const Slide2: React.FC<ISlide> = ({}) => {
           better suited as <b>Projects</b>
         </p>
         <p>
-          You can create a new Project from the{" "}
+          Create projects with the{" "}
           <Image
             src={"/images/add-list.svg"}
             width={60}
@@ -112,25 +120,159 @@ const Slide2: React.FC<ISlide> = ({}) => {
             alt="Plus Button"
             className="inline-block h-auto w-5 pb-1 md:w-7"
           />{" "}
-          button in the sidebar menu.
+          button.
         </p>
-        <p>
-          Within a Project, you can create <b>tasks</b> with the{" "}
+        <div>
+          Create <b>tasks</b> in a Project (or Space which we&apos;ll talk about
+          next) with the{" "}
           <div aria-label="Add new task" className="-pt-5 inline-block pr-2">
             <Plus
               aria-hidden
               className="h-auto w-4 rounded-md bg-gray-200 md:w-5"
             />
           </div>
-          button at the bottom of the screen or with the hotkey{" "}
+          button or with the hotkey{" "}
           <span className="rounded-sm border border-slate-300 p-0.5 text-sm text-gray-500">
             Ctrl
           </span>{" "}
           <span className="rounded-sm border border-slate-300 p-0.5 text-sm text-gray-500">
             N
           </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Slide3: React.FC<ISlide> = () => {
+  return (
+    <div className="flex flex-col gap-5 md:gap-20">
+      <h1 className="text-lg text-gray-500 md:text-2xl">2. Spaces</h1>
+      <h2 className="text-2xl md:text-5xl">Organize your responsibilities</h2>
+      <div className="space-y-3 md:space-y-10 md:text-2xl">
+        <p>
+          Often, we have projects and tasks that span many different areas in
+          our life. You may have work projects, personal errands, appointments,
+          and so forth. You can place projects and tasks within <b>Spaces</b>.
+        </p>
+        <p>
+          Create spaces with the{" "}
+          <Image
+            src={"/images/add-list.svg"}
+            width={60}
+            height={59}
+            alt="Plus Button"
+            className="inline-block h-auto w-5 pb-1 md:w-7"
+          />{" "}
+          button (just like projects).
         </p>
       </div>
+    </div>
+  );
+};
+
+const Slide4: React.FC<ISlide> = () => {
+  return (
+    <div className="flex flex-col gap-5 md:gap-20">
+      <h1 className="text-lg text-gray-500 md:text-2xl">3. Dates</h1>
+      <h2 className="text-2xl md:text-5xl">
+        Tasks without a deadline will be done <em>Someday</em>
+      </h2>
+      <div className="space-y-3 md:space-y-10 md:text-2xl">
+        <p>
+          By default, tasks are created without <b>deadlines</b>.{" "}
+        </p>
+        <p>
+          You can view these tasks in the{" "}
+          <span className="inline-block">
+            <CloudMoon className="inline-block pb-1 text-indigo-300" />{" "}
+            <b>Someday</b>
+          </span>{" "}
+          page
+        </p>
+        <p>
+          Tasks that have been completed can be viewed in{" "}
+          <span className="inline-block">
+            <BookOpenCheck className="inline-block pb-1 text-green-600" />{" "}
+            <b>History</b>
+          </span>
+        </p>
+        <p>
+          Any incomplete task with a deadline will appear in your{" "}
+          <span className="inline-block">
+            <Home className="inline-block pb-1 text-fuchsia-500" />{" "}
+            <b>Dashboard</b>
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const Slide5: React.FC<ISlide> = () => {
+  return (
+    <div className="flex flex-col gap-5 md:gap-20">
+      <h1 className="text-lg text-gray-500 md:text-2xl">4. Priority</h1>
+      <h2 className="text-2xl md:text-5xl">Modal is opinionated</h2>
+      <div className="space-y-3 md:space-y-10 md:text-2xl">
+        <p>
+          In the{" "}
+          <span className="inline-block">
+            <Home className="inline-block pb-1 text-fuchsia-500" />{" "}
+            <b>Dashboard</b>
+          </span>
+          , you should perform tasks in the following order:
+        </p>
+        <ol className="list-inside list-decimal">
+          <li>Important and Due Soon</li>
+          <li>Important and Due Later</li>
+          <li>Not Important and Due Soon</li>
+          <li>Not Important and Due Later</li>
+        </ol>
+        <p>
+          You can set tasks as Important. Remember, tasks must have a deadline
+          in order to appear in the{" "}
+          <span className="inline-block">
+            <Home className="inline-block pb-1 text-fuchsia-500" />{" "}
+            <b>Dashboard</b>.
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const Slide6: React.FC<ISlide> = () => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+  const { mutate } = api.featureNotification.completeWelcome.useMutation({
+    onSuccess: () => {
+      void ctx.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  const complete = () => {
+    mutate();
+  };
+
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-5 md:gap-20">
+      <h2 className="text-center text-2xl md:text-5xl">
+        Cool! Let&apos;s get started?
+      </h2>
+      <Button onClick={complete}>
+        <X className="mr-2" /> Close
+      </Button>
+      <p className="text-center">
+        You can always see this guide again from the settings
+      </p>
     </div>
   );
 };
