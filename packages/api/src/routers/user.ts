@@ -1,3 +1,4 @@
+import { FeatureNotification } from "@modal/db";
 import { User, fromId } from "@modal/db/src/user";
 import { TRPCError } from "@trpc/server";
 import { and, eq, like } from "drizzle-orm";
@@ -48,6 +49,23 @@ export const userRouter = createTRPCRouter({
     }
 
     return user.subscriptionStatus;
+  }),
+  isNewUser: protectedProcedure.query(async ({ ctx }) => {
+    const { session } = ctx;
+
+    const welcomeNotification = await FeatureNotification.fromUserId({
+      userId: session.userId,
+      modalType: "welcome",
+    });
+
+    if (!welcomeNotification) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `User ${session.userId} has no welcome notification`,
+      });
+    }
+
+    return welcomeNotification.showModal;
   }),
   getLists: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import WelcomeGuide from "@/components/featureNotifications/welcome";
 import { ProjectMenu } from "@/components/forms/newProject";
 import { ProjectIcon } from "@/components/icons/project";
 import { SpaceIcon } from "@/components/icons/space";
@@ -30,6 +32,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import Upgrade from "@/components/upgrade";
 import { api } from "@/utils/api";
@@ -66,6 +69,8 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
   const { data: userData, isLoading } = api.user.get.useQuery();
+  const { data: isNewUser, isLoading: newUserLoading } =
+    api.user.isNewUser.useQuery();
 
   const meta: MetaType = {
     path: "/app",
@@ -85,22 +90,65 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   };
 
   // Loading state
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || newUserLoading) return <LoadingPage />;
 
   // Potential Errors
   if (!userData && !isLoading) return <div>404</div>;
   if (!userData.time_email_verified) return <div>404</div>;
+  if (isNewUser === undefined && !newUserLoading) return <div>404</div>;
 
   // Free trial over
   if (
     userData.stripeSubscriptionStatus !== "active" &&
     getRemainingTrial(userData.time_email_verified) <= 0
-  )
+  ) {
     return (
       <main className={classNames("h-screen w-screen")}>
         <Upgrade />
       </main>
     );
+  }
+
+  // New User
+  if (isNewUser) {
+    return (
+      <div className="h-full overflow-hidden">
+        <Metadata meta={meta} />
+        <div className="bg-logo flex items-center gap-2 px-2 py-2 shadow-[0_4px_10px_rgba(0,0,0,0.2)] md:px-9">
+          <div className="flex-grow">
+            <Image
+              src="/images/app-logo.svg"
+              width={108}
+              height={28}
+              alt="Application logo"
+              className="h-auto w-auto"
+            />
+          </div>
+        </div>
+        <main
+          className={classNames(
+            styles.main ?? "",
+            "grid-cols-sidebar",
+            "transition-[grid-template-columns] duration-300 ease-in-out",
+            inter.variable,
+            "font-sans",
+          )}
+        >
+          <Skeleton
+            className={cn(
+              {
+                "z-50 pb-4": true,
+                "fixed lg:static lg:translate-x-0": true,
+                "w-screen lg:w-[300px]": true,
+              },
+              styles.sidebar,
+            )}
+          />
+          <WelcomeGuide />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full overflow-hidden">
@@ -230,7 +278,7 @@ const Sidebar: React.FC<ISidebar> = ({
             {searchTerm ? (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute right-5 md:top-3 top-5"
+                className="absolute right-5 top-5 md:top-3"
               >
                 <X size={18} className="text-red-700" strokeWidth={3} />
               </button>
