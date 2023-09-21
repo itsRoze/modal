@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { api } from "@/utils/api";
 import { motion } from "framer-motion";
 import { BookOpenCheck, CloudMoon, Home, Plus, X } from "lucide-react";
 
 import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
 import ModalPopup from "./modalpopup";
 
 type SeenSlide = { [key: number]: boolean };
 
-const WelcomeGuide = () => {
+interface IWelcomeGuide {
+  open: boolean;
+  close: () => void;
+}
+const WelcomeGuide: React.FC<IWelcomeGuide> = ({ open, close }) => {
   const [seenSlide, setSeenSlide] = useState<SeenSlide>({
     1: false,
     2: false,
@@ -22,10 +24,15 @@ const WelcomeGuide = () => {
     <Slide3 key={3} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
     <Slide4 key={4} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
     <Slide5 key={5} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
-    <Slide6 key={6} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide6
+      key={6}
+      seenSlide={seenSlide}
+      setSeenSlide={setSeenSlide}
+      close={close}
+    />,
   ];
 
-  return <ModalPopup slides={slides} />;
+  return <ModalPopup slides={slides} open={open} close={close} />;
 };
 
 export default WelcomeGuide;
@@ -38,7 +45,6 @@ interface ISlide {
 const Slide1: React.FC<ISlide> = ({ setSeenSlide, seenSlide }) => {
   useEffect(() => {
     setSeenSlide((prev) => ({ ...prev, 1: true }));
-    console.log("seen");
   }, [setSeenSlide]);
 
   const variants = {
@@ -59,7 +65,7 @@ const Slide1: React.FC<ISlide> = ({ setSeenSlide, seenSlide }) => {
         initial="hidden" // Set the initial state to variants.hidden
         animate="enter" // Animated state to variants.enter
         exit="exit" // Exit state (used later) to variants.exit
-        transition={{ delay: 1.5, duration: 1 }} // Set the transition to linear
+        transition={{ delay: 0.3, duration: 1 }} // Set the transition to linear
         className="text-center text-lg text-gray-500 md:text-2xl"
       >
         Success Starts with Just One Step
@@ -69,7 +75,7 @@ const Slide1: React.FC<ISlide> = ({ setSeenSlide, seenSlide }) => {
           variants={!seenSlide[1] ? welcomeVariants : undefined}
           initial="hidden"
           animate="enter"
-          transition={{ delay: 2.5, duration: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
           className="text-2xl md:text-5xl"
         >
           Welcome to Modal
@@ -78,7 +84,7 @@ const Slide1: React.FC<ISlide> = ({ setSeenSlide, seenSlide }) => {
           variants={!seenSlide[1] ? welcomeVariants : undefined}
           initial="hidden"
           animate="enter"
-          transition={{ delay: 3.5, duration: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
           className="text-2xl md:text-5xl"
         >
           We have a few guiding principles to get you started
@@ -87,7 +93,7 @@ const Slide1: React.FC<ISlide> = ({ setSeenSlide, seenSlide }) => {
           variants={!seenSlide[1] ? welcomeVariants : undefined}
           initial="hidden"
           animate="enter"
-          transition={{ delay: 3.5, duration: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
           className="mt-4 md:text-xl"
         >
           Click the arrow to continue
@@ -242,24 +248,12 @@ const Slide5: React.FC<ISlide> = () => {
   );
 };
 
-const Slide6: React.FC<ISlide> = () => {
-  const { toast } = useToast();
-  const ctx = api.useContext();
-  const { mutate } = api.featureNotification.completeWelcome.useMutation({
-    onSuccess: () => {
-      void ctx.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
-      });
-    },
-  });
-
+interface IFinalSlide extends ISlide {
+  close: () => void;
+}
+const Slide6: React.FC<IFinalSlide> = ({ close }) => {
   const complete = () => {
-    mutate();
+    close();
   };
 
   return (

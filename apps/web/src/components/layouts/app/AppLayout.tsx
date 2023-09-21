@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import WelcomeGuide from "@/components/featureNotifications/welcome";
 import { ProjectMenu } from "@/components/forms/newProject";
@@ -32,7 +31,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import Upgrade from "@/components/upgrade";
 import { api } from "@/utils/api";
@@ -66,14 +64,41 @@ export interface IAppLayout {
 }
 
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
+
   const { data: userData, isLoading } = api.user.get.useQuery();
   const { data: isNewUser, isLoading: newUserLoading } =
     api.user.isNewUser.useQuery();
 
+  const { mutate } = api.featureNotification.completeWelcome.useMutation({
+    onSuccess: () => {
+      void ctx.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  useEffect(() => {
+    setShowWelcome(isNewUser ?? false);
+  }, [isNewUser]);
+
   const meta: MetaType = {
     path: "/app",
+  };
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+    mutate();
   };
 
   const onMenuButtonClick = () => {
@@ -109,47 +134,6 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
     );
   }
 
-  // New User
-  if (isNewUser) {
-    return (
-      <div className="h-full overflow-hidden">
-        <Metadata meta={meta} />
-        <div className="bg-logo flex items-center gap-2 px-2 py-2 shadow-[0_4px_10px_rgba(0,0,0,0.2)] md:px-9">
-          <div className="flex-grow">
-            <Image
-              src="/images/app-logo.svg"
-              width={108}
-              height={28}
-              alt="Application logo"
-              className="h-auto w-auto"
-            />
-          </div>
-        </div>
-        <main
-          className={classNames(
-            styles.main ?? "",
-            "grid-cols-sidebar",
-            "transition-[grid-template-columns] duration-300 ease-in-out",
-            inter.variable,
-            "font-sans",
-          )}
-        >
-          <Skeleton
-            className={cn(
-              {
-                "z-50 pb-4": true,
-                "fixed lg:static lg:translate-x-0": true,
-                "w-screen lg:w-[300px]": true,
-              },
-              styles.sidebar,
-            )}
-          />
-          <WelcomeGuide />
-        </main>
-      </div>
-    );
-  }
-
   return (
     <div className="h-full overflow-hidden">
       <Metadata meta={meta} />
@@ -172,6 +156,9 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
           handleMobileClick={handleMobileClick}
         />
         {children}
+        {isNewUser ? (
+          <WelcomeGuide open={showWelcome} close={closeWelcome} />
+        ) : null}
       </main>
     </div>
   );

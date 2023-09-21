@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import WelcomeGuide from "@/components/featureNotifications/welcome";
 import MailTo from "@/components/mailto";
 import {
   DropdownMenu,
@@ -26,6 +28,8 @@ interface IHeader {
 }
 
 const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
+  const [openGuide, setOpenGuide] = useState(false);
+
   const { mutateAsync: createBillingPortalSession } =
     api.stripe.createBillingPortalSession.useMutation();
 
@@ -43,6 +47,10 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
   const handleManageSubscription = async () => {
     const { billingPortalUrl } = await createBillingPortalSession();
     if (billingPortalUrl) void push(billingPortalUrl);
+  };
+
+  const handleGuide = () => {
+    setOpenGuide(true);
   };
 
   return (
@@ -79,6 +87,9 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
             </button>
           </DropdownMenuItem>
           <DropdownMenuItem>
+            <button onClick={handleGuide}>Guide</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
             <button>
               <MailTo
                 email="contact@codestache.com"
@@ -90,6 +101,7 @@ const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <WelcomeGuide open={openGuide} close={() => setOpenGuide(false)} />
     </div>
   );
 };
