@@ -16,7 +16,23 @@ const WelcomeGuide: React.FC<IWelcomeGuide> = ({ open, close }) => {
   const [seenSlide, setSeenSlide] = useState<SeenSlide>({
     1: false,
     2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
   });
+
+  const closeWelcome = () => {
+    setSeenSlide({
+      1: false,
+      2: false,
+      3: false,
+      4: false,
+      5: false,
+      6: false,
+    });
+    close();
+  };
 
   const slides = [
     <Slide1 key={1} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
@@ -28,11 +44,11 @@ const WelcomeGuide: React.FC<IWelcomeGuide> = ({ open, close }) => {
       key={6}
       seenSlide={seenSlide}
       setSeenSlide={setSeenSlide}
-      close={close}
+      close={closeWelcome}
     />,
   ];
 
-  return <ModalPopup slides={slides} open={open} close={close} />;
+  return <ModalPopup slides={slides} open={open} close={closeWelcome} />;
 };
 
 export default WelcomeGuide;
