@@ -233,7 +233,6 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
         variant: "success",
         title: "Space deleted!",
       });
-      void push("/app");
     },
     onError(error) {
       toast({
@@ -247,6 +246,7 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
   const onSubmit = () => {
     setOpen(false);
     mutate({ id: data.id });
+    void push("/app");
   };
 
   const onOpenChange = () => {

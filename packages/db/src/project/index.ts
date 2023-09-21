@@ -40,7 +40,7 @@ export const create = zod(
         }
       }
 
-      await db.insert(project).values({
+      await tx.insert(project).values({
         id,
         name: input.name,
         spaceId: input.spaceId,

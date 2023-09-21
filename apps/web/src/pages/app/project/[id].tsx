@@ -72,7 +72,7 @@ const ProjectPage: NextPageWithLayout = () => {
         <Menu data={data} />
       </div>
       <div className="custom-scroll flex h-[calc(100%-150px)] flex-col overflow-y-scroll md:h-[calc(100%-69px)]">
-        <div className="flex flex-col flex-grow py-2">
+        <div className="flex flex-grow flex-col py-2">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <TodoList listType="project" listId={id} />
@@ -277,7 +277,6 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
         variant: "success",
         title: "Project deleted!",
       });
-      void push("/app");
     },
     onError(error) {
       toast({
@@ -291,6 +290,7 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
   const onSubmit = () => {
     setOpen(false);
     mutate({ id: data.id });
+    void push("/app");
   };
 
   const onOpenChange = () => {

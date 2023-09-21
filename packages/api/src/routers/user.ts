@@ -1,3 +1,4 @@
+import { FeatureNotification } from "@modal/db";
 import { User, fromId } from "@modal/db/src/user";
 import { TRPCError } from "@trpc/server";
 import { and, eq, like } from "drizzle-orm";
@@ -48,6 +49,28 @@ export const userRouter = createTRPCRouter({
     }
 
     return user.subscriptionStatus;
+  }),
+  isNewUser: protectedProcedure.query(async ({ ctx }) => {
+    const { session } = ctx;
+
+    const welcomeNotification = await FeatureNotification.fromUserId({
+      userId: session.userId,
+      modalType: "welcome",
+    });
+
+    if (!welcomeNotification) {
+      // Record doesn't exist, meaning it's an older user
+      // Create a record for them and return false
+      await FeatureNotification.create({
+        userId: session.userId,
+        modalType: "welcome",
+        showModal: false,
+      });
+
+      return false;
+    }
+
+    return welcomeNotification.showModal;
   }),
   getLists: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;

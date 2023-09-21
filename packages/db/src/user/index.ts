@@ -4,6 +4,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
 
 import { db } from "../..";
+import { FeatureNotification } from "../feature_notification";
 import { zod } from "../utils/zod";
 import { user } from "./user.sql";
 
@@ -23,6 +24,7 @@ export const create = zod(
     id: true,
   }),
   async (input) => {
+    // Create User
     const user = await auth.createUser({
       key: {
         providerId: "email",
@@ -33,6 +35,16 @@ export const create = zod(
         email: input.email,
       },
     });
+
+    // Create Record to Display Welcome
+    if (user) {
+      await FeatureNotification.create({
+        userId: user.userId,
+        modalType: "welcome",
+        showModal: true,
+      });
+    }
+
     return user;
   },
 );

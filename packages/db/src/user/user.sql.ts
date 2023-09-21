@@ -6,6 +6,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
+import { project } from "../project/project.sql";
 import { space } from "../space/space.sql";
 import { task } from "../task/task.sql";
 import { timestamps } from "../utils/sql";
@@ -39,5 +40,6 @@ export const user = mysqlTable("user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   spaces: many(space),
+  projects: many(project),
   tasks: many(task),
 }));

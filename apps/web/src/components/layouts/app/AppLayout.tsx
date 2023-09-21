@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import WelcomeGuide from "@/components/featureNotifications/welcome";
 import { ProjectMenu } from "@/components/forms/newProject";
 import { ProjectIcon } from "@/components/icons/project";
 import { SpaceIcon } from "@/components/icons/space";
@@ -63,12 +64,41 @@ export interface IAppLayout {
 }
 
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
+
   const { data: userData, isLoading } = api.user.get.useQuery();
+  const { data: isNewUser, isLoading: newUserLoading } =
+    api.user.isNewUser.useQuery();
+
+  const { mutate } = api.featureNotification.completeWelcome.useMutation({
+    onSuccess: () => {
+      void ctx.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.message ?? "Something went wrong",
+      });
+    },
+  });
+
+  useEffect(() => {
+    setShowWelcome(isNewUser ?? false);
+  }, [isNewUser]);
 
   const meta: MetaType = {
     path: "/app",
+  };
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+    mutate();
   };
 
   const onMenuButtonClick = () => {
@@ -85,22 +115,24 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
   };
 
   // Loading state
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || newUserLoading) return <LoadingPage />;
 
   // Potential Errors
   if (!userData && !isLoading) return <div>404</div>;
   if (!userData.time_email_verified) return <div>404</div>;
+  if (isNewUser === undefined && !newUserLoading) return <div>404</div>;
 
   // Free trial over
   if (
     userData.stripeSubscriptionStatus !== "active" &&
     getRemainingTrial(userData.time_email_verified) <= 0
-  )
+  ) {
     return (
       <main className={classNames("h-screen w-screen")}>
         <Upgrade />
       </main>
     );
+  }
 
   return (
     <div className="h-full overflow-hidden">
@@ -124,6 +156,9 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
           handleMobileClick={handleMobileClick}
         />
         {children}
+        {isNewUser ? (
+          <WelcomeGuide open={showWelcome} close={closeWelcome} />
+        ) : null}
       </main>
     </div>
   );
@@ -230,7 +265,7 @@ const Sidebar: React.FC<ISidebar> = ({
             {searchTerm ? (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute right-5 md:top-3 top-5"
+                className="absolute right-5 top-5 md:top-3"
               >
                 <X size={18} className="text-red-700" strokeWidth={3} />
               </button>
