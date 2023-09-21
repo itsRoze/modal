@@ -37,14 +37,19 @@ const ModalPopup: React.FC<IModalPopup> = ({ slides, open, close }) => {
     setDirection("prev");
   };
 
+  const closePopup = () => {
+    setSlide(0);
+    close();
+  };
+
   if (isLoading) return <LoadingPage />;
   if (isNewUser == undefined && !isLoading) return <div>404</div>;
 
   return (
-    <Dialog open={open} onOpenChange={close}>
+    <Dialog open={open} onOpenChange={closePopup}>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
-        className="custom-scroll relative flex h-3/4 flex-col  shadow-2xl shadow-black sm:max-w-5xl md:px-20 lg:h-1/2"
+        className="custom-scroll relative flex h-3/4 flex-col  shadow-2xl shadow-black sm:max-w-5xl md:px-20 lg:h-3/4"
       >
         <motion.div
           key={currentSlide}
