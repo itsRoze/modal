@@ -59,10 +59,15 @@ export const userRouter = createTRPCRouter({
     });
 
     if (!welcomeNotification) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: `User ${session.userId} has no welcome notification`,
+      // Record doesn't exist, meaning it's an older user
+      // Create a record for them and return false
+      await FeatureNotification.create({
+        userId: session.userId,
+        modalType: "welcome",
+        showModal: false,
       });
+
+      return false;
     }
 
     return welcomeNotification.showModal;
