@@ -2,6 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { auth, isWithinExpiration } from "@modal/auth";
 import { dateToMySqlFormat } from "@modal/common";
 import { getByUserIdAndToken } from "@modal/db/src/auth_token";
+import { sendWelcomeEmail } from "@modal/email";
 import { LuciaError } from "lucia";
 
 type Data = {
@@ -10,7 +11,6 @@ type Data = {
 };
 
 type RequestBody = {
-  email: string;
   userProvidedToken: string;
   userId: string;
 };
@@ -59,11 +59,19 @@ export default async function handler(
     const authRequest = auth.handleRequest(req, res);
     authRequest.setSession(session);
 
+    // Send welcome email
+    if (process.env.NODE_ENV !== "development") {
+      const user = await auth.getUser(userId);
+      await sendWelcomeEmail({
+        userEmail: user.email,
+        fromEmail: "no-reply@account.usemodal.com",
+      });
+    }
+
     res.redirect(302, "/app");
   } catch (error) {
     if (error instanceof LuciaError) {
       res.status(400).json({ error: error.message });
-      // generate new password and send new email
     } else {
       res.status(400).json({ error: "Something went wrong" });
     }
