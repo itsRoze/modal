@@ -7,6 +7,7 @@ import {
   Heading,
   Html,
   Img,
+  Link,
   Section,
   Tailwind,
   Text,
@@ -36,30 +37,36 @@ export const WelcomeEmail = () => {
             </Heading>
             <Section className="px-2">
               <Text className="text-lg text-gray-500">
-                Well hello, friend 👋. I&apos;m so glad you&apos;ve decided to
-                use Modal.
+                Well hello, friend 👋. Welcome to Modal! I&apos;m thrilled to
+                have you on board.
               </Text>
               <Text className="text-lg text-gray-500">
                 My name is Roze, I built Modal, and I&apos;m <em>dedicated</em>{" "}
-                to making sure this is a <b>great experience for you</b> 😇.
+                to making sure this is a <b>fantastic experience for you</b> 😇.
               </Text>
               <Text className="text-lg text-gray-500">
-                If you want to a quick tour of Modal, you can schedule a block
-                of time with me. I can answer any questions you have and take
-                any feedback you may have! This is a great way for you to get
-                started and it also helps me understand how I can continue to
-                enhance this app.
+                To kick things off, why not schedule a quick tour with me? I can
+                answer questions and gather any feedback you may have! This is a
+                great way for you to get started and your insights will help me
+                continue to improve this app.
               </Text>
-            </Section>
-            <Section className="relative mx-auto my-0 inline-block w-full px-2">
               <Button
-                href="https://example.com"
-                className="mx-auto my-0 block rounded-lg bg-orange-400 p-2 text-center font-semibold text-gray-700"
+                href="https://cal.com/itsroze/modal-tour"
+                className="mx-auto my-0 block w-1/4 rounded-lg bg-orange-400 p-2 text-center font-semibold text-gray-700"
               >
                 Schedule a Tour
               </Button>
-            </Section>
-            <Section className="px-2">
+              <Text className="text-center text-sm italic text-gray-500">
+                If the button above doesn&apos;t work, you can copy this URL
+                into your browser: https://cal.com/itsroze/modal-tour
+              </Text>
+              <Text className="text-lg text-gray-500">
+                If you have any immediate questions or need assistance, feel
+                free to reach out anytime at{" "}
+                <Link href="mailto:contact@codestache.com?subject=Modal App - Feedback">
+                  contact@codestache.com
+                </Link>
+              </Text>
               <Text className="text-lg text-gray-500">
                 And with that, enjoy the app!
               </Text>
