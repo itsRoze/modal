@@ -3,7 +3,6 @@ import { auth, isWithinExpiration } from "@modal/auth";
 import { dateToMySqlFormat } from "@modal/common";
 import { getByUserIdAndToken } from "@modal/db/src/auth_token";
 import { sendWelcomeEmail } from "@modal/email";
-import { LuciaError } from "lucia";
 
 type Data = {
   error?: string;
@@ -70,7 +69,7 @@ export default async function handler(
 
     res.redirect(302, "/app");
   } catch (error) {
-    if (error instanceof LuciaError) {
+    if (error instanceof Error) {
       res.status(400).json({ error: error.message });
     } else {
       res.status(400).json({ error: "Something went wrong" });

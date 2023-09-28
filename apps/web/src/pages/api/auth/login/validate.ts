@@ -2,7 +2,6 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { auth, isWithinExpiration } from "@modal/auth";
 import { dateToMySqlFormat } from "@modal/common";
 import { getByUserIdAndToken } from "@modal/db/src/auth_token";
-import { LuciaError } from "lucia";
 
 type Data = {
   error?: string;
@@ -60,9 +59,8 @@ export default async function handler(
 
     res.redirect(302, "/app");
   } catch (error) {
-    if (error instanceof LuciaError) {
+    if (error instanceof Error) {
       res.status(400).json({ error: error.message });
-      // generate new password and send new email
     } else {
       res.status(400).json({ error: "Something went wrong" });
     }
