@@ -142,7 +142,7 @@ const LoginTokenForm = ({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const formSchema = z.object({
-    otp: z.string().length(8),
+    otp: z.string().length(8, "Token too short"),
   });
 
   const variants = {
@@ -169,7 +169,11 @@ const LoginTokenForm = ({
       throw new Error(data.error ?? "Something went wrong");
     } catch (error) {
       if (error instanceof ZodError) {
+        setError(error.issues[0]?.message ?? "Something went wrong");
+      } else if (error instanceof Error) {
         setError(error.message);
+      } else {
+        setError("Something went wrong");
       }
     }
   };
