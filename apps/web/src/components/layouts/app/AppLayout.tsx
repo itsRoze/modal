@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import ErrorPage from "@/components/error";
 import WelcomeGuide from "@/components/featureNotifications/welcome";
 import { ProjectMenu } from "@/components/forms/newProject";
 import { ProjectIcon } from "@/components/icons/project";
@@ -64,6 +66,7 @@ export interface IAppLayout {
 }
 
 const AppLayout: React.FC<IAppLayout> = ({ children }) => {
+  const { push } = useRouter();
   const { toast } = useToast();
   const ctx = api.useContext();
 
@@ -114,13 +117,24 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
     }
   };
 
+  // User is not logged in
+  if (!userData && !isLoading) {
+    void push("/login");
+    return null;
+  }
+
   // Loading state
   if (isLoading || newUserLoading) return <LoadingPage />;
 
-  // Potential Errors
-  if (!userData && !isLoading) return <div>404</div>;
-  if (!userData.time_email_verified) return <div>404</div>;
-  if (isNewUser === undefined && !newUserLoading) return <div>404</div>;
+  // Email not verified
+  if (!userData.time_email_verified) {
+    return <ErrorPage code={403} message="Email not verified" />;
+  }
+
+  if (isNewUser === undefined && !newUserLoading) {
+    void push("/404");
+    return null;
+  }
 
   // Free trial over
   if (

@@ -42,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
 const SpacePage: NextPageWithLayout = () => {
+  const { push } = useRouter();
   const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
@@ -56,7 +57,10 @@ const SpacePage: NextPageWithLayout = () => {
 
   const { data, isLoading } = api.space.getSpaceInfo.useQuery(id);
   if (isLoading) return <LoadingPage />;
-  if (!data && !isLoading) return <div>404</div>;
+  if (!data && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   return (
     <article id="space-page" className="relative flex flex-col">

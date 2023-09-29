@@ -49,6 +49,7 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
 const ProjectPage: NextPageWithLayout = () => {
+  const { push } = useRouter();
   const { setListInfo } = useAppContext();
   const { query } = useRouter();
   const id = query.id as string;
@@ -63,7 +64,10 @@ const ProjectPage: NextPageWithLayout = () => {
 
   const { data, isLoading } = api.project.getProjectInfo.useQuery(id);
   if (isLoading) return <LoadingPage />;
-  if (!data && !isLoading) return <div>404</div>;
+  if (!data && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   return (
     <article id="project-page" className="relative flex flex-col">
