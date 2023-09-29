@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Divider from "@/components/divider";
 import { ProjectIcon } from "@/components/icons/project";
 import { SpaceIcon } from "@/components/icons/space";
@@ -12,12 +13,16 @@ import { CloudMoon } from "lucide-react";
 import { type NextPageWithLayout } from "../_app";
 
 const Someday: NextPageWithLayout = () => {
+  const { push } = useRouter();
   const { data, isLoading } = api.task.getSomedayTasksByList.useQuery();
   const { data: taskCount, isLoading: isTaskCountLoading } =
     api.task.getSomedayTaskCount.useQuery();
 
   if (isLoading || isTaskCountLoading) return <LoadingPage />;
-  if (!data && !isLoading) return <div>404</div>;
+  if (!data && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   // == since taskCount type also includes undefined
   if (taskCount !== undefined && taskCount == 0) {

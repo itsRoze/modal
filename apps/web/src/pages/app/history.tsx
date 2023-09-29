@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Divider from "@/components/divider";
 import AppLayout from "@/components/layouts/app/AppLayout";
 import { LoadingPage } from "@/components/loading";
@@ -11,6 +12,7 @@ import { BookOpenCheck } from "lucide-react";
 import { type NextPageWithLayout } from "../_app";
 
 const History: NextPageWithLayout = () => {
+  const { push } = useRouter();
   const { data, isLoading } = api.task.getAllCompletedForUser.useQuery();
   const [groupedTasks, setGroupedTasks] = useState<IGroupedTasks[]>([]);
 
@@ -21,7 +23,10 @@ const History: NextPageWithLayout = () => {
   }, [data]);
 
   if (isLoading) return <LoadingPage />;
-  if (!data && !isLoading) return <div>404</div>;
+  if (!data && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   return (
     <article>

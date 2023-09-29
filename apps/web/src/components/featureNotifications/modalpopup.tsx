@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ interface IModalPopup {
 }
 
 const ModalPopup: React.FC<IModalPopup> = ({ slides, open, close }) => {
+  const { push } = useRouter();
   const [currentSlide, setSlide] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
 
@@ -43,7 +45,10 @@ const ModalPopup: React.FC<IModalPopup> = ({ slides, open, close }) => {
   };
 
   if (isLoading) return <LoadingPage />;
-  if (isNewUser == undefined && !isLoading) return <div>404</div>;
+  if (isNewUser == undefined && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={closePopup}>

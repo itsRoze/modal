@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
 import { useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ interface ITodoList {
 }
 
 const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
+  const { push } = useRouter();
   const { setSelectedTodo, addingNewTodo } = useAppContext();
 
   const {
@@ -32,7 +34,10 @@ const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
   }, [listType, listId, setSelectedTodo]);
 
   if (isLoading) return <LoadingPage />;
-  if (!tasks && !isLoading) return <div>404</div>;
+  if (!tasks && !isLoading) {
+    void push("/404");
+    return null;
+  }
 
   if (tasks.length === 0 && !addingNewTodo && !isRefetching) {
     return (
