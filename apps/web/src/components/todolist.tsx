@@ -97,6 +97,8 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   };
 
   const onSubmit = (data: FormValues) => {
+    console.log("submitting");
+    console.log(listType, listId);
     if (!listInfo) return;
     const { name } = data;
 
@@ -108,8 +110,8 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
 
     mutate({
       name: trimmedName,
-      listType,
-      listId,
+      listType: listType,
+      listId: listId,
     });
 
     close();

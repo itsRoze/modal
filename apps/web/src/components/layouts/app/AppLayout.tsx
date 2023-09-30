@@ -51,6 +51,7 @@ import {
   ChevronsRight,
   CloudMoon,
   Home,
+  Inbox,
   Loader2,
   Plus,
   X,
@@ -340,6 +341,25 @@ const Sidebar: React.FC<ISidebar> = ({
                   >
                     <CloudMoon size={18} className="text-indigo-300" />
                     Someday
+                  </Link>
+                </li>
+
+                <li
+                  key={4}
+                  className={cn({
+                    "flex hover:bg-slate-200": true,
+                    "transition-colors duration-300": true,
+                    "gap-4 rounded-md py-1 pl-5": !collapsed,
+                    "h-10 w-10 rounded-full py-1 pl-5": collapsed,
+                  })}
+                >
+                  <Link
+                    onClick={handleMobileClick}
+                    href="/app/unassigned"
+                    className="flex w-full items-center gap-1"
+                  >
+                    <Inbox size={18} className="text-rose-400" />
+                    Unassigned
                   </Link>
                 </li>
               </ul>

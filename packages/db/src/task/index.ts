@@ -28,13 +28,15 @@ export const create = zod(
     deadline: true,
     priority: true,
     completedTime: true,
+    userId: true,
     listType: true,
     listId: true,
-    userId: true,
   }).partial({
     deadline: true,
     priority: true,
     completedTime: true,
+    listType: true,
+    listId: true,
   }),
   async (input) => {
     const id = createId();
@@ -94,11 +96,17 @@ export const getAllForList = zod(
   Info.pick({ listType: true, listId: true }),
   async ({ listType, listId }) =>
     db.transaction(async (tx) => {
+      if (!listType || !listId) {
+        return [];
+      }
+
       return tx
         .select()
         .from(task)
         .where(
           and(
+            isNotNull(task.listType),
+            isNotNull(task.listId),
             eq(task.listType, listType),
             eq(task.listId, listId),
             isNull(task.completedTime),

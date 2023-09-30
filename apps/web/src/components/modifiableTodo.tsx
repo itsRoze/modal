@@ -8,7 +8,7 @@ import { dateToMySqlFormat, mySqlFormatToDate } from "@modal/common";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { addDays } from "date-fns";
 import dayjs from "dayjs";
-import { CalendarIcon, Check, StarIcon, Trash } from "lucide-react";
+import { CalendarIcon, Check, StarIcon, Trash, X } from "lucide-react";
 import { useForm, type ControllerRenderProps } from "react-hook-form";
 import { z } from "zod";
 
@@ -28,6 +28,8 @@ import {
 } from "./ui/select";
 import { useToast } from "./ui/use-toast";
 
+const NONE_LIST = "None";
+
 enum PriorityValues {
   Important = "Important",
   Unimportant = "Not important",
@@ -36,7 +38,7 @@ const schema = z.object({
   name: z.string().nonempty(),
   deadline: z.date().nullable(),
   priority: z.enum([PriorityValues.Important, PriorityValues.Unimportant]),
-  listInfo: z.string().nonempty(),
+  listInfo: z.string(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -96,23 +98,33 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
       priority: task.priority
         ? PriorityValues.Important
         : PriorityValues.Unimportant,
-      listInfo: `${task.listType}-${task.listId}`,
+      listInfo: task.listType ? `${task.listType}-${task.listId}` : NONE_LIST,
     },
     resolver: zodResolver(schema),
   });
 
   const onSubmit = (values: FormValues) => {
-    const [listType, listId] = values.listInfo.split("-");
+    let listType = null;
+    let listId = null;
+
+    if (values.listInfo !== NONE_LIST) {
+      console.log(values.listInfo);
+      [listType, listId] = values.listInfo.split("-");
+    }
+
     mutate({
       id: task.id,
       name: values.name.trim(),
       deadline: values.deadline ? dateToMySqlFormat(values.deadline) : null,
       priority: values.priority === PriorityValues.Important ? true : false,
       listType:
-        listType === "space" || listType === "project"
+        listType === "space" ||
+        listType === "project" ||
+        listType === null ||
+        listType === undefined
           ? listType
           : task.listType,
-      listId: listId ?? task.listId,
+      listId: listId,
     });
     closeTodo();
   };
@@ -121,7 +133,6 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
     closeTodo,
     mutate,
     task.id,
-    task.listId,
     task.listType,
   ]);
 
@@ -433,19 +444,27 @@ const ListPicker: React.FC<IListPicker> = ({
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
   if (!lists) return null;
-  if (!listInfo) return null;
+
   return (
     <FormItem>
       <Select
         open={open}
         onOpenChange={setOpen}
         onValueChange={field.onChange}
-        defaultValue={field.value}
+        defaultValue={field.value ?? undefined}
       >
         <SelectTrigger className="m-0 h-fit w-fit border-none p-0 hover:ring-2 hover:ring-slate-300 ">
-          <SelectValue placeholder={listInfo.name} className="text-sm" />
+          <SelectValue
+            placeholder={listInfo ? listInfo.name : "None"}
+            className="text-sm"
+          />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value={NONE_LIST}>
+            <div className="flex items-center gap-1">
+              <X size={isSmallDevice ? 12 : 14} /> None
+            </div>
+          </SelectItem>
           {lists.map((list) => (
             <SelectItem
               key={`${list.type}-${list.id}`}

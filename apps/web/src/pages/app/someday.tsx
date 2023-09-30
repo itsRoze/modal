@@ -8,7 +8,7 @@ import { LoadingPage } from "@/components/loading";
 import Todo from "@/components/todo";
 import Title from "@/components/ui/title";
 import { api } from "@/utils/api";
-import { CloudMoon } from "lucide-react";
+import { CloudMoon, Inbox } from "lucide-react";
 
 import { type NextPageWithLayout } from "../_app";
 
@@ -86,6 +86,25 @@ const Someday: NextPageWithLayout = () => {
             </div>
           ) : null,
         )}
+        {data.unassignedTasks.length ? (
+          <div className="mb-6">
+            <Link href={`/app/unassigned`}>
+              <h2 className="flex w-fit items-center gap-1 text-lg font-bold text-gray-500">
+                <Inbox className="text-red-400" />
+                Unassigned
+              </h2>
+            </Link>
+            <Divider widthMargin="mx-1" heightPadding="py-2" />
+
+            <ul>
+              {data.unassignedTasks.map((task) => (
+                <li key={task.id} className="">
+                  <Todo task={task} displayDeadline={false} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </section>
     </article>
   );
