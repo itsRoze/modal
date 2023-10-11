@@ -108,7 +108,6 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
     let listId = null;
 
     if (values.listInfo !== NONE_LIST) {
-      console.log(values.listInfo);
       [listType, listId] = values.listInfo.split("-");
     }
 

@@ -1,4 +1,8 @@
-import { getDeadlineDiffFromToday, sortTasks } from "@modal/common";
+import {
+  DUE_SOON_DAYS,
+  getDeadlineDiffFromToday,
+  sortTasks,
+} from "@modal/common";
 import { fromID as fromProjectId } from "@modal/db/src/project";
 import { fromID as fromSpaceId } from "@modal/db/src/space";
 import {
@@ -43,7 +47,6 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("input", input);
       const { userId } = ctx.session.user;
       await ratelimit(ratelimiter, userId, "You are creating tasks too fast");
 
@@ -212,7 +215,8 @@ export const taskRouter = createTRPCRouter({
       )
       .orderBy(task.deadline);
     const tasksDueSoon = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+      (t) =>
+        t.deadline && getDeadlineDiffFromToday(t.deadline) <= DUE_SOON_DAYS,
     );
 
     return tasksDueSoon ?? [];
@@ -233,7 +237,7 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > DUE_SOON_DAYS,
     );
 
     return tasksDueLater ?? [];
@@ -254,7 +258,8 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueSoon = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+      (t) =>
+        t.deadline && getDeadlineDiffFromToday(t.deadline) <= DUE_SOON_DAYS,
     );
 
     return tasksDueSoon ?? [];
@@ -275,7 +280,7 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > DUE_SOON_DAYS,
     );
 
     return tasksDueLater ?? [];
