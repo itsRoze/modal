@@ -12,7 +12,8 @@
     "lint:fix": "turbo lint:fix",
     "sst": "sst",
     "db:push": "turbo db:push",
-    "email:dev": "turbo email:dev"
+    "email:dev": "turbo email:dev",
+    "type-check": "turbo type-check"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
