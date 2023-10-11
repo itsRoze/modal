@@ -1,13 +1,13 @@
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { dateToMySqlFormat } from "@modal/common";
+import { DUE_SOON_DAYS, dateToMySqlFormat } from "@modal/common";
 
 import { NewTodo } from "./newTodo";
 import Todo from "./todo";
 
 const TODAY_DATE = new Date();
 const LATER_DATE = new Date();
-LATER_DATE.setDate(LATER_DATE.getDate() + 4);
+LATER_DATE.setDate(LATER_DATE.getDate() + DUE_SOON_DAYS + 1);
 
 const Matrix = () => {
   return (

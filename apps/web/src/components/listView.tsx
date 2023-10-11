@@ -6,10 +6,16 @@ import {
 } from "@/components/ui/collapsible";
 import { api } from "@/utils/api";
 import { type TaskType } from "@/utils/types";
+import { DUE_SOON_DAYS, dateToMySqlFormat } from "@modal/common";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import Divider from "./divider";
+import { NewTodo } from "./newTodo";
 import Todo from "./todo";
+
+const TODAY_DATE = new Date();
+const LATER_DATE = new Date();
+LATER_DATE.setDate(LATER_DATE.getDate() + DUE_SOON_DAYS + 1);
 
 const ListView = () => {
   return (
@@ -26,7 +32,12 @@ const ListSectionOne = () => {
   const { data: tasks } = api.task.getImportantAndDueSoon.useQuery();
 
   return (
-    <ListSectionDefault title="Important and Due Soon" tasks={tasks ?? []} />
+    <ListSectionDefault
+      title="Important and Due Soon"
+      tasks={tasks ?? []}
+      todoDeadline={dateToMySqlFormat(TODAY_DATE)}
+      todoPriority={true}
+    />
   );
 };
 
@@ -34,7 +45,12 @@ const ListSectionTwo = () => {
   const { data: tasks } = api.task.getImportantAndDueLater.useQuery();
 
   return (
-    <ListSectionDefault title="Important and Due Later" tasks={tasks ?? []} />
+    <ListSectionDefault
+      title="Important and Due Later"
+      tasks={tasks ?? []}
+      todoDeadline={dateToMySqlFormat(LATER_DATE)}
+      todoPriority={true}
+    />
   );
 };
 
@@ -45,6 +61,8 @@ const ListSectionThree = () => {
     <ListSectionDefault
       title="Not Important and Due Soon"
       tasks={tasks ?? []}
+      todoDeadline={dateToMySqlFormat(TODAY_DATE)}
+      todoPriority={false}
     />
   );
 };
@@ -56,6 +74,8 @@ const ListSectionFour = () => {
     <ListSectionDefault
       title="Not Important and Due Later"
       tasks={tasks ?? []}
+      todoDeadline={dateToMySqlFormat(LATER_DATE)}
+      todoPriority={false}
     />
   );
 };
@@ -63,9 +83,16 @@ const ListSectionFour = () => {
 interface IListSection {
   title: string;
   tasks: TaskType[];
+  todoDeadline: string;
+  todoPriority: boolean;
 }
 
-const ListSectionDefault: React.FC<IListSection> = ({ title, tasks }) => {
+const ListSectionDefault: React.FC<IListSection> = ({
+  title,
+  tasks,
+  todoDeadline,
+  todoPriority,
+}) => {
   const [open, setOpen] = useState(true);
   const Icon = open ? ChevronDown : ChevronRight;
 
@@ -77,7 +104,7 @@ const ListSectionDefault: React.FC<IListSection> = ({ title, tasks }) => {
       </CollapsibleTrigger>
       <Divider widthMargin="mx-1" heightPadding="py-3" />
       <CollapsibleContent>
-        <div className="h-full w-full pb-3">
+        <div className="flex h-full w-full flex-col pb-3">
           <ul className="custom-scroll h-full w-full overflow-y-scroll">
             {tasks
               ? tasks.map((task) => (
@@ -87,6 +114,7 @@ const ListSectionDefault: React.FC<IListSection> = ({ title, tasks }) => {
                 ))
               : null}
           </ul>
+          <NewTodo dueDate={todoDeadline} priority={todoPriority} />
         </div>
       </CollapsibleContent>
     </Collapsible>
