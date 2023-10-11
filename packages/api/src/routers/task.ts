@@ -43,7 +43,6 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("input", input);
       const { userId } = ctx.session.user;
       await ratelimit(ratelimiter, userId, "You are creating tasks too fast");
 
