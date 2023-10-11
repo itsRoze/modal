@@ -27,8 +27,8 @@ export const task = mysqlTable(
     completedTime: date("completed_time", {
       mode: "string",
     }),
-    listType: mysqlEnum("listType", ["space", "project"]).notNull(),
-    listId: cuid("listId").notNull(),
+    listType: mysqlEnum("listType", ["space", "project"]),
+    listId: cuid("listId"),
     userId: varchar("user_id", {
       length: 15,
     }).notNull(),

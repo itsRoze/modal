@@ -1,7 +1,13 @@
 import { api } from "@/utils/api";
 import { cn } from "@/utils/cn";
+import { DUE_SOON_DAYS, dateToMySqlFormat } from "@modal/common";
 
+import { NewTodo } from "./newTodo";
 import Todo from "./todo";
+
+const TODAY_DATE = new Date();
+const LATER_DATE = new Date();
+LATER_DATE.setDate(LATER_DATE.getDate() + DUE_SOON_DAYS + 1);
 
 const Matrix = () => {
   return (
@@ -37,8 +43,8 @@ const MatrixQuadrantOne = () => {
         <MatrixLabel type="Important" />
       </div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pt-4">
+      <div className="flex h-full w-full flex-col pl-8 pr-2 pt-8">
+        <ul className="custom-scroll h-fit w-full overflow-y-scroll pt-2">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -47,6 +53,7 @@ const MatrixQuadrantOne = () => {
               ))
             : null}
         </ul>
+        <NewTodo dueDate={dateToMySqlFormat(TODAY_DATE)} priority={true} />
       </div>
       {/* Number */}
       <div
@@ -76,8 +83,8 @@ const MatrixQuadrantTwo = () => {
         <MatrixLabel type="Due Later" />
       </div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-8">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll pt-2">
+      <div className="flex h-full w-full flex-col pl-8 pr-2 pt-8">
+        <ul className="custom-scroll h-fit w-full overflow-y-scroll pt-2">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -86,6 +93,7 @@ const MatrixQuadrantTwo = () => {
               ))
             : null}
         </ul>
+        <NewTodo dueDate={dateToMySqlFormat(LATER_DATE)} priority={true} />
       </div>
       {/* Number */}
       <div
@@ -115,8 +123,8 @@ const MatrixQuadrantThree = () => {
         <MatrixLabel type="Not Important" />
       </div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-2">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll">
+      <div className="flex h-full w-full flex-col pl-8 pr-2 pt-2">
+        <ul className="custom-scroll h-fit w-full overflow-y-scroll">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -125,6 +133,7 @@ const MatrixQuadrantThree = () => {
               ))
             : null}
         </ul>
+        <NewTodo dueDate={dateToMySqlFormat(TODAY_DATE)} priority={false} />
       </div>
       {/* Number */}
       <div
@@ -152,8 +161,8 @@ const MatrixQuadrantFour = () => {
       {/* Labels */}
       <div></div>
       {/* Tasks */}
-      <div className="h-full w-full pl-8 pt-2">
-        <ul className="custom-scroll h-full w-full overflow-y-scroll">
+      <div className="flex h-full w-full flex-col pl-8 pr-2 pt-2">
+        <ul className="custom-scroll h-fit w-full overflow-y-scroll">
           {tasks
             ? tasks.map((task) => (
                 <li key={task.id}>
@@ -162,6 +171,7 @@ const MatrixQuadrantFour = () => {
               ))
             : null}
         </ul>
+        <NewTodo dueDate={dateToMySqlFormat(LATER_DATE)} priority={false} />
       </div>
       {/* Number */}
       <div

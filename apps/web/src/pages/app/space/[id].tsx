@@ -74,7 +74,7 @@ const SpacePage: NextPageWithLayout = () => {
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <ProjectsView projects={data.projects} />
         </div>
-        <div className="flex-grow py-2">
+        <div className="flex-grow py-2 flex flex-col">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <TodoList listType="space" listId={id} />

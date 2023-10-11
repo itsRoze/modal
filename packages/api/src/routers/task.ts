@@ -1,4 +1,8 @@
-import { getDeadlineDiffFromToday, sortTasks } from "@modal/common";
+import {
+  DUE_SOON_DAYS,
+  getDeadlineDiffFromToday,
+  sortTasks,
+} from "@modal/common";
 import { fromID as fromProjectId } from "@modal/db/src/project";
 import { fromID as fromSpaceId } from "@modal/db/src/space";
 import {
@@ -38,6 +42,8 @@ export const taskRouter = createTRPCRouter({
       }).partial({
         deadline: true,
         priority: true,
+        listType: true,
+        listId: true,
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -126,9 +132,23 @@ export const taskRouter = createTRPCRouter({
         },
       });
 
+      const unassignedTasks = await tx
+        .select()
+        .from(task)
+        .where(
+          and(
+            eq(task.userId, session.userId),
+            isNull(task.listType),
+            isNull(task.listId),
+            isNull(task.completedTime),
+            isNull(task.deadline),
+          ),
+        );
+
       return {
         spaceTasks,
         projectTasks,
+        unassignedTasks,
       };
     });
 
@@ -151,9 +171,30 @@ export const taskRouter = createTRPCRouter({
 
     return tasks[0] ? tasks[0].count : 0;
   }),
+  getUnassigned: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+
+    const tasks = await db
+      .select()
+      .from(task)
+      .where(
+        and(
+          eq(task.userId, session.userId),
+          isNull(task.listType),
+          isNull(task.listId),
+          isNull(task.completedTime),
+        ),
+      );
+
+    return tasks;
+  }),
   getListInfo: protectedProcedure
     .input(Info.pick({ listId: true, listType: true }))
     .query(async ({ input }) => {
+      if (!input.listId || !input.listType) {
+        return null;
+      }
+
       if (input.listType === "space") {
         return await fromSpaceId(input.listId);
       }
@@ -174,7 +215,8 @@ export const taskRouter = createTRPCRouter({
       )
       .orderBy(task.deadline);
     const tasksDueSoon = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+      (t) =>
+        t.deadline && getDeadlineDiffFromToday(t.deadline) <= DUE_SOON_DAYS,
     );
 
     return tasksDueSoon ?? [];
@@ -195,7 +237,7 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > DUE_SOON_DAYS,
     );
 
     return tasksDueLater ?? [];
@@ -216,7 +258,8 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueSoon = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) <= 3,
+      (t) =>
+        t.deadline && getDeadlineDiffFromToday(t.deadline) <= DUE_SOON_DAYS,
     );
 
     return tasksDueSoon ?? [];
@@ -237,7 +280,7 @@ export const taskRouter = createTRPCRouter({
       .orderBy(task.deadline);
 
     const tasksDueLater = tasks.filter(
-      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > 3,
+      (t) => t.deadline && getDeadlineDiffFromToday(t.deadline) > DUE_SOON_DAYS,
     );
 
     return tasksDueLater ?? [];

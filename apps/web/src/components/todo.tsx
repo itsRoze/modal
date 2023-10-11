@@ -18,7 +18,7 @@ import {
   isOverdue,
 } from "@modal/common";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import { CheckIcon, StarIcon } from "lucide-react";
+import { CheckIcon, StarIcon, X } from "lucide-react";
 
 import { ProjectIcon } from "./icons/project";
 import { SpaceIcon } from "./icons/space";
@@ -265,16 +265,16 @@ const CompletedTodo: React.FC<ICheckableTodo> = ({
               "text-sm": true,
             })}
           >
-            {listInfo ? (
-              <div className="flex items-center gap-1">
-                {listType === "project" ? (
-                  <ProjectIcon size={isSmallDevice ? 12 : 14} />
-                ) : (
-                  <SpaceIcon size={isSmallDevice ? 12 : 14} />
-                )}
-                <span>{listInfo.name}</span>
-              </div>
-            ) : null}
+            <div className="flex items-center gap-1">
+              {!listType ? (
+                <X size={14} />
+              ) : listType === "project" ? (
+                <ProjectIcon size={isSmallDevice ? 12 : 14} />
+              ) : (
+                <SpaceIcon size={isSmallDevice ? 12 : 14} />
+              )}
+              <span>{listInfo ? listInfo.name : "None"}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -294,6 +294,7 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
   displayList,
   displayDeadline,
 }) => {
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const { id, name, priority, listId, listType, completedTime } = task;
   const { data: listInfo } = api.task.getListInfo.useQuery({
     listId,
@@ -346,14 +347,16 @@ const CheckableTodo: React.FC<ICheckableTodo> = ({
           "pl-12 text-sm": true,
         })}
       >
-        {displayList && listInfo ? (
+        {displayList ? (
           <div className="flex items-center gap-1 text-sm md:text-base">
-            {listType === "project" ? (
-              <ProjectIcon size={14} />
+            {!listType ? (
+              <X size={isSmallDevice ? 12 : 14} />
+            ) : listType === "project" ? (
+              <ProjectIcon size={isSmallDevice ? 12 : 14} />
             ) : (
-              <SpaceIcon size={14} />
+              <SpaceIcon size={isSmallDevice ? 12 : 14} />
             )}
-            <span>{listInfo.name}</span>
+            <span className='text-sm'>{listInfo ? listInfo.name : "None"}</span>
           </div>
         ) : null}
       </div>
