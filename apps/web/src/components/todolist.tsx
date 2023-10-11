@@ -39,17 +39,14 @@ const TodoList: React.FC<ITodoList> = ({ listType, listId }) => {
     return null;
   }
 
-  if (tasks.length === 0 && !addingNewTodo && !isRefetching) {
-    return (
-      <p className="flex py-4 text-center italic text-gray-500">Zero tasks</p>
-    );
-  }
-
   return (
-    <div className="">
-      {tasks.map((task) => (
-        <Todo key={task.id} task={task} />
-      ))}
+    <div className="todolist group flex flex-grow flex-col">
+      {tasks.length === 0 && !addingNewTodo && !isRefetching ? (
+        <p className="flex py-4 text-center italic text-gray-500">Zero tasks</p>
+      ) : (
+        tasks.map((task) => <Todo key={task.id} task={task} />)
+      )}
+
       <NewTodo listId={listId} listType={listType} />
     </div>
   );
@@ -97,8 +94,6 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
   };
 
   const onSubmit = (data: FormValues) => {
-    console.log("submitting");
-    console.log(listType, listId);
     if (!listInfo) return;
     const { name } = data;
 
@@ -117,6 +112,10 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
     close();
   };
 
+  const createClick = () => {
+    setAddingNewTodo(true);
+  };
+
   useEffect(() => {
     if (addingNewTodo) {
       form.setFocus("name");
@@ -125,7 +124,18 @@ const NewTodo: React.FC<INewTodo> = ({ listType, listId }) => {
 
   if (!listInfo) return null;
 
-  if (!addingNewTodo) return null;
+  if (!addingNewTodo) {
+    return (
+      <div
+        className="flex-grow py-2 opacity-0 hover:opacity-80"
+        onClick={createClick}
+      >
+        <p className="rounded-md border py-2 italic text-gray-400 shadow-sm">
+          Click to add new task
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
