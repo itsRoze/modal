@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { BookOpenCheck, CloudMoon, Home, Plus, X } from "lucide-react";
+import { BookOpenCheck, CloudMoon, Home, Inbox, Plus, X } from "lucide-react";
 
 import { Button } from "../ui/button";
 import ModalPopup from "./modalpopup";
@@ -40,8 +40,9 @@ const WelcomeGuide: React.FC<IWelcomeGuide> = ({ open, close }) => {
     <Slide3 key={3} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
     <Slide4 key={4} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
     <Slide5 key={5} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
-    <Slide6
-      key={6}
+    <Slide6 key={6} seenSlide={seenSlide} setSeenSlide={setSeenSlide} />,
+    <Slide7
+      key={7}
       seenSlide={seenSlide}
       setSeenSlide={setSeenSlide}
       close={closeWelcome}
@@ -153,13 +154,14 @@ const Slide2: React.FC<ISlide> = ({}) => {
               className="h-auto w-4 rounded-md bg-gray-200 md:w-5"
             />
           </div>
-          button or with the hotkey{" "}
+          button, the hotkey{" "}
           <span className="rounded-sm border border-slate-300 p-0.5 text-sm text-gray-500">
             Ctrl
           </span>{" "}
           <span className="rounded-sm border border-slate-300 p-0.5 text-sm text-gray-500">
             N
           </span>
+          , or by clicking into the tasks section
         </div>
       </div>
     </div>
@@ -196,14 +198,32 @@ const Slide3: React.FC<ISlide> = () => {
 const Slide4: React.FC<ISlide> = () => {
   return (
     <div className="flex flex-col gap-5 md:gap-20">
-      <h1 className="text-lg text-gray-500 md:text-2xl">3. Dates</h1>
+      <h1 className="text-lg text-gray-500 md:text-2xl">3. Unassigned</h1>
+      <h2 className="text-2xl md:text-5xl">
+        Tasks without a space or project are <em>unassigned</em>
+      </h2>
+      <div className="space-y-3 md:space-y-10 md:text-2xl">
+        <p>
+          You can find these tasks in the{" "}
+          <span className="inline-block">
+            <Inbox className="inline-block pb-1 text-rose-400" />{" "}
+            <b>Unassigned</b>
+          </span>{" "}
+          page
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const Slide5: React.FC<ISlide> = () => {
+  return (
+    <div className="flex flex-col gap-5 md:gap-20">
+      <h1 className="text-lg text-gray-500 md:text-2xl">4. Dates</h1>
       <h2 className="text-2xl md:text-5xl">
         Tasks without a deadline will be done <em>Someday</em>
       </h2>
       <div className="space-y-3 md:space-y-10 md:text-2xl">
-        <p>
-          By default, tasks are created without <b>deadlines</b>.{" "}
-        </p>
         <p>
           You can view these tasks in the{" "}
           <span className="inline-block">
@@ -220,7 +240,7 @@ const Slide4: React.FC<ISlide> = () => {
           </span>
         </p>
         <p>
-          Any incomplete task with a deadline will appear in your{" "}
+          Any incomplete task <em>with a deadline</em> will appear in your{" "}
           <span className="inline-block">
             <Home className="inline-block pb-1 text-fuchsia-500" />{" "}
             <b>Dashboard</b>
@@ -231,10 +251,10 @@ const Slide4: React.FC<ISlide> = () => {
   );
 };
 
-const Slide5: React.FC<ISlide> = () => {
+const Slide6: React.FC<ISlide> = () => {
   return (
     <div className="flex flex-col gap-5 md:gap-20">
-      <h1 className="text-lg text-gray-500 md:text-2xl">4. Priority</h1>
+      <h1 className="text-lg text-gray-500 md:text-2xl">5. Priority</h1>
       <h2 className="text-2xl md:text-5xl">Modal is opinionated</h2>
       <div className="space-y-3 md:space-y-10 md:text-2xl">
         <p>
@@ -267,7 +287,7 @@ const Slide5: React.FC<ISlide> = () => {
 interface IFinalSlide extends ISlide {
   close: () => void;
 }
-const Slide6: React.FC<IFinalSlide> = ({ close }) => {
+const Slide7: React.FC<IFinalSlide> = ({ close }) => {
   const complete = () => {
     close();
   };
