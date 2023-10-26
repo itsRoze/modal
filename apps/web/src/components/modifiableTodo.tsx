@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 import { type TaskType } from "@/utils/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
-import { dateToMySqlFormat, mySqlFormatToDate } from "@modal/common";
+import { dateToMySqlFormat, getTrpcClientErrorMsg, mySqlFormatToDate } from "@modal/common";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { addDays } from "date-fns";
 import dayjs from "dayjs";
@@ -70,9 +70,10 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
       void ctx.invalidate();
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error)
       toast({
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
         variant: "destructive",
       });
     },
@@ -83,10 +84,11 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
       void ctx.invalidate();
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error)
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });
@@ -185,13 +187,13 @@ const ModifiableTodo: React.FC<IModifiableTodo> = ({ task, closeTodo }) => {
         onKeyDown={onKeyDown}
         className="mb-10 flex w-full items-start justify-between"
       >
-        <div>
-          <div className="flex items-start">
+        <div className="w-full xl:flex-1">
+          <div className="flex w-full items-start">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormControl>
                     <Input
                       placeholder="New Task"

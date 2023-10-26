@@ -195,10 +195,16 @@ export const taskRouter = createTRPCRouter({
         return null;
       }
 
-      if (input.listType === "space") {
-        return await fromSpaceId(input.listId);
+      const listData =
+        input.listType === "space"
+          ? await fromSpaceId(input.listId)
+          : await fromProjectId(input.listId);
+
+      if (!listData) {
+        return null;
       }
-      return await fromProjectId(input.listId);
+
+      return listData;
     }),
   getImportantAndDueSoon: protectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;

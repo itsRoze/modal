@@ -35,6 +35,7 @@ import { type NextPageWithLayout } from "@/pages/_app";
 import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
+import { getTrpcClientErrorMsg } from "@modal/common";
 import { editSpaceSchema } from "@modal/common/schemas/space/editSchema";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { Boxes, Loader2, MoreHorizontal } from "lucide-react";
@@ -74,7 +75,7 @@ const SpacePage: NextPageWithLayout = () => {
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <ProjectsView projects={data.projects} />
         </div>
-        <div className="flex-grow py-2 flex flex-col">
+        <div className="flex flex-grow flex-col py-2">
           <h2 className="text-gray-500">Tasks</h2>
           <Divider widthMargin="mx-1" heightPadding="my-2" />
           <TodoList listType="space" listId={id} />
@@ -143,10 +144,11 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
       });
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });
@@ -239,10 +241,11 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
       });
     },
     onError(error) {
+      const clientErrorMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrorMsg,
       });
     },
   });

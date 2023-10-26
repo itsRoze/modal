@@ -10,6 +10,7 @@ import {
 import { api } from "@/utils/api";
 import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getTrpcClientErrorMsg } from "@modal/common";
 import { createProjectSchema } from "@modal/common/schemas/project/createSchema";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -48,10 +49,12 @@ export const ProjectMenu: React.FC<IProjectMenu> = ({
       });
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error);
+
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });
