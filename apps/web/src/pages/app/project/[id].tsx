@@ -42,6 +42,7 @@ import { api } from "@/utils/api";
 import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
+import { getTrpcClientErrorMsg } from "@modal/common";
 import { editProjectSchema } from "@modal/common/schemas/project/editSchema";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { Loader2, MoreHorizontal, type LucideIcon } from "lucide-react";
@@ -148,10 +149,11 @@ const EditForm: React.FC<IForm> = ({ open, setOpen, data }) => {
       });
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });
@@ -283,10 +285,11 @@ const DeleteForm: React.FC<IForm> = ({ open, setOpen, data }) => {
       });
     },
     onError(error) {
+      const clientErrMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });

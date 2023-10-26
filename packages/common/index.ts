@@ -12,3 +12,4 @@ export { getCompletedDate } from "./helpers/getCompletedDate";
 export { getRemainingTrial } from "./helpers/getRemainingTrial";
 export { getDeadlineDiffFromToday } from "./helpers/getDeadlineDiffFromToday";
 export { DUE_SOON_DAYS } from "./helpers/constants";
+export { getTrpcClientErrorMsg } from "./helpers/getTrpcClientErrorMsg";

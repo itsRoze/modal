@@ -10,7 +10,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
-import { classNames } from "@modal/common";
+import { classNames, getTrpcClientErrorMsg } from "@modal/common";
 import { ListPlus, Plus, Trash } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -26,10 +26,11 @@ const ActionBar: React.FC = () => {
       void ctx.invalidate();
     },
     onError(error) {
+      const clientErrorMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrorMsg,
       });
     },
   });

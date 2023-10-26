@@ -40,7 +40,11 @@ import { cn } from "@/utils/cn";
 import { inter } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterOutputs } from "@modal/api";
-import { classNames, getRemainingTrial } from "@modal/common";
+import {
+  classNames,
+  getRemainingTrial,
+  getTrpcClientErrorMsg,
+} from "@modal/common";
 import { createSpaceSchema } from "@modal/common/schemas/space/createSchema";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import {
@@ -84,10 +88,11 @@ const AppLayout: React.FC<IAppLayout> = ({ children }) => {
       void ctx.invalidate();
     },
     onError: (error) => {
+      const clientErrorMsg = getTrpcClientErrorMsg(error);
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrorMsg,
       });
     },
   });
@@ -609,10 +614,12 @@ const SpaceMenu: React.FC<ISpaceMenu> = ({ open, setOpen }) => {
       });
     },
     onError(error) {
+      const clientErrorMsg = getTrpcClientErrorMsg(error);
+
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrorMsg,
       });
     },
   });

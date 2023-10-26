@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAppContext from "@/hooks/useAppContext";
 import { api } from "@/utils/api";
+import { getTrpcClientErrorMsg } from "@modal/common/";
 import { useForm } from "react-hook-form";
 
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
@@ -40,10 +41,13 @@ export const NewTodo: React.FC<INewTodo> = ({
     onError(error) {
       setAddingNewTodo(false);
       setLocalAddingNewTodo(false);
+
+      const clientErrMsg = getTrpcClientErrorMsg(error);
+
       toast({
         variant: "destructive",
         title: "Uh oh!",
-        description: error.message ?? "Something went wrong",
+        description: clientErrMsg,
       });
     },
   });
