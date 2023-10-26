@@ -49,6 +49,9 @@ export default async function handler(
     if (!user) throw new Error("No user found");
     const key = await auth.useKey("email", email, null);
 
+    // delete any dead sessions
+    await auth.deleteDeadUserSessions(user.id);
+
     // delete previous tokens
     await deleteTokenByUserId(user.id);
     // generate new token

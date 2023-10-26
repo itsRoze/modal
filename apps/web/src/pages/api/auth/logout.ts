@@ -18,6 +18,7 @@ export default async function handler(
     res.status(401).json({ error: "Unauthorized" });
   } else {
     await auth.invalidateSession(session.sessionId);
+    await auth.deleteDeadUserSessions(session.user.userId);
     authRequest.setSession(null);
     res.redirect(302, "/");
   }
