@@ -23,7 +23,7 @@ export const projectRouter = createTRPCRouter({
       const { userId } = ctx.session.user;
       await ratelimit(
         ratelimiter,
-        userId,
+        `projectCreate-${userId}`,
         "You are creating projects too fast",
       );
       return await create({
@@ -39,7 +39,7 @@ export const projectRouter = createTRPCRouter({
 
       await ratelimit(
         ratelimiter,
-        userId,
+        `projectUpdate-${userId}`,
         "You are modifying projects too fast",
       );
 
@@ -65,7 +65,7 @@ export const projectRouter = createTRPCRouter({
 
       await ratelimit(
         ratelimiter,
-        userId,
+        `projectRemove-${userId}`,
         "You are deleting projects too fast",
       );
 

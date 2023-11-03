@@ -6,9 +6,7 @@ interface ITokenForm {
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   otp: string;
   setOtp: React.Dispatch<React.SetStateAction<string>>;
-  onSubmit: (
-    e: React.FormEvent<HTMLFormElement>,
-  ) => Promise<boolean | undefined>;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const TokenForm: React.FC<ITokenForm> = ({

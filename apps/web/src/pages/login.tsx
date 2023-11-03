@@ -7,6 +7,7 @@ import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import Metadata from "@/components/metadata";
 import TokenForm from "@/components/tokenform";
+import { api } from "@/utils/api";
 import { auth } from "@modal/auth";
 import { motion } from "framer-motion";
 import { ZodError, z } from "zod";
@@ -79,32 +80,23 @@ const Login: NextPageWithLayout = () => {
   );
 };
 
-type ResponseData = {
-  userId?: string;
-  error?: string;
-};
-
 const LoginEmailForm = ({
   setUserId,
 }: {
   setUserId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
+  const { mutate } = api.auth.issueLogin.useMutation({
+    onSuccess(data) {
+      setUserId(data.userId);
+    },
+    onError(error) {
+      setError(error.message ?? "Something went wrong");
+    },
+  });
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (formData: { email: string }) => {
-    try {
-      const response = await fetch("/api/auth/login/issue", {
-        method: "POST",
-        body: JSON.stringify({ email: formData.email }),
-      });
-
-      const data = (await response.json()) as ResponseData;
-      if (!data.userId) throw new Error(data.error ?? "Something went wrong");
-      setUserId(data.userId);
-    } catch (error) {
-      if (error instanceof Error) setError(error.message);
-      else setError("Something went wrong");
-    }
+  const onSubmit = (formData: { email: string }) => {
+    mutate({ email: formData.email });
   };
 
   return <EmailForm onSubmit={onSubmit} error={error} />;
@@ -140,6 +132,14 @@ const LoginTokenForm = ({
   userId: string;
 }) => {
   const router = useRouter();
+  const { mutate } = api.auth.validateLogin.useMutation({
+    onSuccess() {
+      return router.push("/app");
+    },
+    onError(error) {
+      setError(error.message ?? "Something went wrong");
+    },
+  });
   const [error, setError] = useState<string | null>(null);
   const formSchema = z.object({
     otp: z.string().length(8, "Token too short"),
@@ -151,22 +151,12 @@ const LoginTokenForm = ({
     exit: { opacity: 0, x: 0, y: -100 },
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       formSchema.parse({ otp });
-      const response = await fetch("/api/auth/login/validate", {
-        method: "POST",
-        body: JSON.stringify({ token: otp, userId }),
-      });
-      if (response.redirected) return router.push(response.url);
-
-      const data = (await response.json()) as {
-        error: string;
-      };
-
-      throw new Error(data.error ?? "Something went wrong");
+      mutate({ userProvidedToken: otp, userId });
     } catch (error) {
       if (error instanceof ZodError) {
         setError(error.issues[0]?.message ?? "Something went wrong");

@@ -37,7 +37,11 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are creating spaces too fast");
+      await ratelimit(
+        ratelimiter,
+        `spaceCreate-${userId}`,
+        "You are creating spaces too fast",
+      );
 
       return await create({ name: input.name, userId: ctx.session.userId });
     }),
@@ -46,7 +50,11 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are modifying spaces too fast");
+      await ratelimit(
+        ratelimiter,
+        `spaceUpdate-${userId}`,
+        "You are modifying spaces too fast",
+      );
 
       await update({ id: input.id, name: input.name });
       const result = await fromID(input.id);
@@ -63,7 +71,11 @@ export const spaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.session.user;
 
-      await ratelimit(ratelimiter, userId, "You are deleting spaces too fast");
+      await ratelimit(
+        ratelimiter,
+        `spaceRemove-${userId}`,
+        "You are deleting spaces too fast",
+      );
 
       return await remove({ id: input.id });
     }),

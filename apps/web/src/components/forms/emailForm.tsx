@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 
 interface IEmailForm {
-  onSubmit: (formData: { email: string }) => Promise<void>;
+  onSubmit: (formData: { email: string }) => void;
   error: string | null;
   label?: string;
 }
