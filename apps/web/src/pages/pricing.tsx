@@ -59,7 +59,7 @@ const Pricing: NextPageWithLayout = () => {
                 whileTap={{ scale: 0.8 }}
                 className="bg-logo w-fit rounded-lg p-2 text-white shadow-xl md:p-4 md:text-3xl"
               >
-                <Link href="/sign-up">Sign up today</Link>
+                <Link href="/signup">Sign up today</Link>
               </motion.div>
             </div>
             <div className="absolute -right-10 -top-5 rotate-6 transform rounded-md bg-orange-400 p-2 font-medium uppercase text-white md:p-4">
