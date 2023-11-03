@@ -13,7 +13,7 @@ import { z } from "zod";
 
 import { ratelimit } from "../ratelimit";
 import { redis } from "../redis";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 const ratelimiter = {
   // 10 requests per 1 minute
@@ -200,4 +200,20 @@ export const authRouter = createTRPCRouter({
 
       return true;
     }),
+  logout: protectedProcedure.mutation(async ({ ctx }) => {
+    const { req, res } = ctx;
+
+    const authRequest = auth.handleRequest(req, res);
+    const session = await authRequest.validate();
+
+    if (!session) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid session" });
+    }
+
+    await auth.invalidateSession(session.sessionId);
+    await auth.deleteDeadUserSessions(session.user.userId);
+    authRequest.setSession(null);
+
+    return true;
+  }),
 });

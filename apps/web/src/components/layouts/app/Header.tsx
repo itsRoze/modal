@@ -30,18 +30,19 @@ interface IHeader {
 const Header: React.FC<IHeader> = ({ userData, onMenuButtonClick }) => {
   const [openGuide, setOpenGuide] = useState(false);
 
+  const { mutate: logoutMutate } = api.auth.logout.useMutation({
+    onSuccess() {
+      return push("/login");
+    },
+  });
+
   const { mutateAsync: createBillingPortalSession } =
     api.stripe.createBillingPortalSession.useMutation();
 
   const { push } = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-      return push("/login");
-    } catch (error) {}
+  const handleLogout = () => {
+    logoutMutate();
   };
 
   const handleManageSubscription = async () => {
