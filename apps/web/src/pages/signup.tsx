@@ -7,6 +7,7 @@ import EmailForm from "@/components/forms/emailForm";
 import CommercialLayout from "@/components/layouts/commerical/CommercialLayout";
 import Metadata from "@/components/metadata";
 import TokenForm from "@/components/tokenform";
+import { api } from "@/utils/api";
 import { anybody } from "@/utils/fonts";
 import { auth } from "@modal/auth";
 import { motion } from "framer-motion";
@@ -82,17 +83,25 @@ const SignUp: NextPageWithLayout = () => {
   );
 };
 
-type ResponseData = {
-  userId?: string;
-  email?: string;
-  error?: string;
-};
-
 interface IEmailFrom {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
 }
 const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
+  const { mutate } = api.auth.issueSignup.useMutation({
+    onSuccess(data) {
+      setEmail(data.email);
+      setUserId(data.userId);
+    },
+    onError(error) {
+      let message = error.message ?? "Something went wrong";
+
+      if (error.message === "AUTH_DUPLICATE_KEY_ID") {
+        message = "Email already exists";
+      }
+      setError(message);
+    },
+  });
   const [error, setError] = useState<string | null>(null);
 
   const formSchema = z.object({
@@ -101,21 +110,8 @@ const SignupEmailForm: React.FC<IEmailFrom> = ({ setEmail, setUserId }) => {
 
   type FormInput = z.infer<typeof formSchema>;
 
-  const onSubmit = async (values: FormInput) => {
-    try {
-      const response = await fetch("/api/auth/signup/issue", {
-        method: "POST",
-        body: JSON.stringify({ email: values.email }),
-      });
-
-      const data = (await response.json()) as ResponseData;
-      if (data.error) throw new Error(data.error);
-      setEmail(values.email);
-      if (data.userId) setUserId(data.userId);
-    } catch (error) {
-      if (error instanceof Error) setError(error.message);
-      else setError("Something went wrong");
-    }
+  const onSubmit = (values: FormInput) => {
+    mutate({ email: values.email });
   };
 
   return (
@@ -137,6 +133,14 @@ const SignupTokenForm = ({
   userId: string;
 }) => {
   const router = useRouter();
+  const { mutate } = api.auth.validateSignup.useMutation({
+    onSuccess() {
+      return router.push("/app");
+    },
+    onError(error) {
+      setError(error.message ?? "Something went wrong");
+    },
+  });
   const [error, setError] = useState<string | null>(null);
   const formSchema = z.object({
     otp: z.string().length(8, "Token too short"),
@@ -148,22 +152,12 @@ const SignupTokenForm = ({
     exit: { opacity: 0, x: 0, y: -100 },
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       formSchema.parse({ otp });
-      const response = await fetch("/api/auth/signup/validate", {
-        method: "POST",
-        body: JSON.stringify({ userProvidedToken: otp, userId }),
-      });
-      if (response.redirected) return router.push(response.url);
-
-      const data = (await response.json()) as {
-        error: string;
-      };
-
-      throw new Error(data.error ?? "Something went wrong");
+      mutate({ userProvidedToken: otp, userId });
     } catch (error) {
       if (error instanceof ZodError) {
         setError(error.issues[0]?.message ?? "Something went wrong");

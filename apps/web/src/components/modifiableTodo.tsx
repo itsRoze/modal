@@ -432,7 +432,7 @@ interface IListPicker {
   open: boolean;
   setOpen: (open: boolean) => void;
   lists: RouterOutputs["user"]["getLists"];
-  listInfo: RouterOutputs["task"]["getListInfo"];
+  listInfo: RouterOutputs["task"]["getListInfo"] | undefined;
 }
 
 const ListPicker: React.FC<IListPicker> = ({

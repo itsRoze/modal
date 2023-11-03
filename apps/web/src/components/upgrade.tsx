@@ -10,6 +10,12 @@ import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
 const Upgrade = () => {
+  const { mutate: logoutMutate } = api.auth.logout.useMutation({
+    onSuccess() {
+      return push("/login");
+    },
+  });
+
   const { mutateAsync: createCheckoutSession } =
     api.stripe.createCheckoutSession.useMutation();
 
@@ -29,13 +35,8 @@ const Upgrade = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-      return push("/login");
-    } catch (error) {}
+  const handleLogout = () => {
+    logoutMutate();
   };
 
   const variants = {
