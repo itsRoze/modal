@@ -96,6 +96,8 @@ const LoginEmailForm = ({
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = (formData: { email: string }) => {
+    console.log("submitted");
+
     mutate({ email: formData.email });
   };
 

@@ -27,6 +27,11 @@ const ratelimiter = {
     limiter: Ratelimit.slidingWindow(3, "1 m"),
     analytics: true,
   }),
+  email: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(1, "30 s"),
+    analytics: true,
+  }),
 };
 
 export const authRouter = createTRPCRouter({
@@ -35,18 +40,25 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { email } = input;
 
-      const { success } = await ratelimiter.app.limit("login_issue");
-      if (!success) {
-        throw new TRPCError({
-          code: "TOO_MANY_REQUESTS",
-          message: "Too many login requests across the app. Please wait",
-        });
-      }
+      // Rate limit across the app
+      await ratelimit(
+        ratelimiter.app,
+        "login_issue",
+        "Too many login requests across the app. Please wait",
+      );
 
+      // Rate limit per user email
       await ratelimit(
         ratelimiter.user,
         `authLogin-${email}`,
         "You are making too many login requests. Please wait",
+      );
+
+      // Rate limit to fix strange bug of multiple emails being sent. TODO: Fix this with re-write
+      await ratelimit(
+        ratelimiter.email,
+        `authLoginEmail-${email}`,
+        "Too many emails sent. Please wait",
       );
 
       const user = await fromEmail(email);
@@ -122,13 +134,19 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { email } = input;
 
-      const { success } = await ratelimiter.app.limit("signup_issue");
-      if (!success) {
-        throw new TRPCError({
-          code: "TOO_MANY_REQUESTS",
-          message: "Too many signup requests across the app. Please wait",
-        });
-      }
+      // Rate limit across the app
+      await ratelimit(
+        ratelimiter.app,
+        "signup_issue",
+        "Too many signup requests across the app. Please wait",
+      );
+
+      // Rate limit to fix strange bug of multiple emails being sent. TODO: Fix this with re-write
+      await ratelimit(
+        ratelimiter.email,
+        `authSignupIssue-${email}`,
+        "Too many emails sent. Please wait",
+      );
 
       const user = await createUser({ email });
 
@@ -162,6 +180,13 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { userProvidedToken, userId } = input;
       const { req, res } = ctx;
+
+      // Rate limit to fix strange bug of multiple emails being sent. TODO: Fix this with re-write
+      await ratelimit(
+        ratelimiter.email,
+        `authSignupValidate-${userId}`,
+        "Too many emails sent. Please wait",
+      );
 
       const otp = await getByUserIdAndToken({
         token: userProvidedToken,
