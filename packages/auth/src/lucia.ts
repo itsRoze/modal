@@ -1,7 +1,7 @@
 import { planetscale } from "@lucia-auth/adapter-mysql";
 import { connect } from "@planetscale/database";
 import { lucia } from "lucia";
-import { node } from "lucia/middleware";
+import { web } from "lucia/middleware";
 import { Config } from "sst/node/config";
 
 const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
@@ -19,7 +19,7 @@ export const auth = lucia({
     session: "auth_session",
   }),
   env,
-  middleware: node(),
+  middleware: web(),
   getUserAttributes: (userData) => ({
     email: userData.email,
     time_email_verified: userData.time_email_verified,
