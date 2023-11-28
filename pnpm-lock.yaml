@@ -251,7 +251,7 @@ importers:
         specifier: workspace:*
         version: link:../common
       '@modal/db':
-        specifier: 1.0.0
+        specifier: workspace:*
         version: link:../db
       '@modal/email':
         specifier: workspace:*
@@ -259,9 +259,6 @@ importers:
       '@modal/stripe':
         specifier: workspace:*
         version: link:../stripe
-      '@trpc/client':
-        specifier: ^10.25.1
-        version: 10.25.1(@trpc/server@10.25.1)
       '@trpc/server':
         specifier: ^10.25.1
         version: 10.25.1

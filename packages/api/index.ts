@@ -1,20 +1,19 @@
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import { z } from "zod";
 
-import { type AppRouter } from "./src/root";
+import { createTRPCRouter, publicProcedure } from "./src/trpc";
 
-export { appRouter, type AppRouter } from "./src/root";
-export { createTRPCContext } from "./src/trpc";
+export const appRouter = createTRPCRouter({
+  hello: publicProcedure.query(() => {
+    return { message: "hello!" };
+  }),
+  echo: publicProcedure.input(z.string()).query(({ input, ctx }) => {
+    const { user } = ctx;
+    return { message: `you said ${input}`, user };
+  }),
+});
 
-/**
- * Inference helpers for input types
- * @example type HelloInput = RouterInputs['example']['hello']
- **/
+export type AppRouter = typeof appRouter;
+
 export type RouterInputs = inferRouterInputs<AppRouter>;
-
-/**
- * Inference helpers for output types
- * @example type HelloOutput = RouterOutputs['example']['hello']
- **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
-
-export { redis } from "./src/redis";

@@ -9,23 +9,22 @@
     "lint:fix": "pnpm lint --fix",
     "type-check": "tsc --noEmit"
   },
+  "devDependencies": {
+    "@modal/eslint-config": "1.0.0",
+    "eslint": "^8.40.0",
+    "typescript": "^5.0.4"
+  },
   "dependencies": {
     "@modal/auth": "workspace:*",
     "@modal/common": "workspace:*",
-    "@modal/db": "1.0.0",
-    "@modal/stripe": "workspace:*",
+    "@modal/db": "workspace:*",
     "@modal/email": "workspace:*",
-    "@trpc/client": "^10.25.1",
+    "@modal/stripe": "workspace:*",
     "@trpc/server": "^10.25.1",
     "@upstash/ratelimit": "^0.4.3",
     "@upstash/redis": "^1.22.0",
     "drizzle-orm": "^0.27.0",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
-  },
-  "devDependencies": {
-    "@modal/eslint-config": "1.0.0",
-    "eslint": "^8.40.0",
-    "typescript": "^5.0.4"
   }
 }
