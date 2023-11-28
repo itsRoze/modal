@@ -17,15 +17,14 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
-    "@modal/eslint-config": "^1.0.0",
     "@types/prettier": "^2.7.2",
     "aws-cdk-lib": "2.101.1",
     "constructs": "10.2.69",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
-    "sst": "2.33.3",
-    "turbo": "^1.9.3",
-    "typescript": "^5.0.4"
+    "sst": "2.36.7",
+    "typescript": "^5.0.4",
+    "@tsconfig/node18": "^18.2.2"
   },
   "packageManager": "pnpm@8.5.0"
 }
