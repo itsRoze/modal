@@ -1,7 +1,8 @@
 import { type SSTConfig } from "sst";
 
+import { Dns } from "./stacks/Dns";
+import { RemixStack } from "./stacks/RemixStack";
 import { Secrets } from "./stacks/Secrets";
-import { WebStack } from "./stacks/WebStack";
 
 export default {
   config(_input) {
@@ -11,6 +12,6 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(Secrets).stack(WebStack);
+    app.stack(Dns).stack(Secrets).stack(RemixStack);
   },
 } satisfies SSTConfig;

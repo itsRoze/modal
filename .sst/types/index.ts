@@ -107,8 +107,8 @@ declare module "sst/node/config" {
 
 import "sst/node/site";
 declare module "sst/node/site" {
-  export interface NextjsSiteResources {
-    "modal-web": {
+  export interface RemixSiteResources {
+    "site": {
       url: string;
     }
   }
