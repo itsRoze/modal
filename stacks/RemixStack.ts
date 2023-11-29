@@ -8,7 +8,12 @@ export function RemixStack({ app, stack }: StackContext) {
   const { database, stripe, resend, upstash } = use(Secrets);
   const site = new RemixSite(stack, "site", {
     path: "apps/frontend",
-    customDomain: dns.domain,
+    customDomain: dns
+      ? {
+          domainName: dns.domain,
+          hostedZone: dns.hostedZone,
+        }
+      : undefined,
     environment: {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
       SST_REGION: app.region,

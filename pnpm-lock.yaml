@@ -42,12 +42,15 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@modal/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@modal/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@modal/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@modal/functions':
+        specifier: workspace:*
+        version: link:../../packages/functions
       '@remix-run/css-bundle':
         specifier: ^2.3.1
         version: 2.3.1
@@ -90,22 +93,6 @@ importers:
         version: 8.40.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
-
-  packages/api:
-    dependencies:
-      '@modal/auth':
-        specifier: workspace:*
-        version: link:../auth
-      '@modal/db':
-        specifier: workspace:*
-        version: link:../db
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
-    devDependencies:
-      typescript:
-        specifier: ^5.0.4
         version: 5.1.6
 
   packages/auth:
@@ -166,6 +153,22 @@ importers:
       resend:
         specifier: ^0.17.2
         version: 0.17.2
+
+  packages/functions:
+    dependencies:
+      '@modal/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@modal/db':
+        specifier: workspace:*
+        version: link:../db
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      typescript:
+        specifier: ^5.0.4
+        version: 5.1.6
 
 packages:
 
