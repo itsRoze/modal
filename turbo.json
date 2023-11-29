@@ -22,5 +22,5 @@
     "email:dev": {},
     "email:export": {}
   },
-  "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD"]
+  "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD", "SST_REGION"]
 }

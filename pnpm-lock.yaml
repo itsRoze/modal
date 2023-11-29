@@ -42,6 +42,9 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@modal/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@modal/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -66,6 +69,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      remix-easy-mode:
+        specifier: ^0.2.2
+        version: 0.2.2(@remix-run/react@2.3.1)(@remix-run/server-runtime@2.3.1)(react@18.2.0)(zod@3.21.4)
     devDependencies:
       '@remix-run/dev':
         specifier: ^2.3.1
@@ -84,6 +90,22 @@ importers:
         version: 8.40.0
       typescript:
         specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/api:
+    dependencies:
+      '@modal/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@modal/db':
+        specifier: workspace:*
+        version: link:../db
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      typescript:
+        specifier: ^5.0.4
         version: 5.1.6
 
   packages/auth:
@@ -3001,6 +3023,10 @@ packages:
   /@jspm/core@2.0.1:
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
     dev: true
+
+  /@kiruna/form-data@0.0.0-alpha.31:
+    resolution: {integrity: sha512-T3aVvZX4vhTOjkopNHelnNRip/REUEm2SnOCBJxuZdEYUrprvximitR2byDuibIkeAC1jTVYRcuSfw2gir5rPw==}
+    dev: false
 
   /@lucia-auth/adapter-mysql@2.1.0(lucia@2.7.4):
     resolution: {integrity: sha512-LkqsJHQS9KuMs+cTJQJnaqb6obqMyJfblyyLM0Ogoimzikb5orbkWI0C8eY3Supr60bgP4PYuQxYZm8xxera0Q==}
@@ -10631,6 +10657,21 @@ packages:
   /remeda@1.24.0:
     resolution: {integrity: sha512-tjLxwU4yLtvX8yHlePnE7CdQXRe2pKatlVY+AunqAQV5t9FNw1yuiIAqKpu6zevd+No5LQHEJ/HK3r3ZFK7KXg==}
     dev: true
+
+  /remix-easy-mode@0.2.2(@remix-run/react@2.3.1)(@remix-run/server-runtime@2.3.1)(react@18.2.0)(zod@3.21.4):
+    resolution: {integrity: sha512-HOgWcZeiJD13Ru2/6kJqm0ahRwhn0ixMMkh/pfWkUeUkAy5tmeBtFVVitwn0dLOXGfSBoJRHZawaJasTQsNhRA==}
+    peerDependencies:
+      '@remix-run/react': '>=2.0.0'
+      '@remix-run/server-runtime': '>=2.0.0'
+      react: '>=18'
+      zod: '>=3'
+    dependencies:
+      '@kiruna/form-data': 0.0.0-alpha.31
+      '@remix-run/react': 2.3.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
+      '@remix-run/server-runtime': 2.3.1(typescript@5.1.6)
+      react: 18.2.0
+      zod: 3.21.4
+    dev: false
 
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}

@@ -11,6 +11,7 @@ export function RemixStack({ app, stack }: StackContext) {
     customDomain: dns.domain,
     environment: {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
+      SST_REGION: app.region,
     },
     bind: [
       database.DB_HOST,
@@ -28,6 +29,6 @@ export function RemixStack({ app, stack }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.url || "https://localhost:3000",
+    SiteUrl: site.customDomainUrl || "https://localhost:3000",
   });
 }

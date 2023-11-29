@@ -12,6 +12,7 @@
     "clean": "git clean -xdf build node_modules .cache"
   },
   "dependencies": {
+    "@modal/api": "workspace:*",
     "@modal/auth": "workspace:*",
     "@remix-run/css-bundle": "^2.3.1",
     "@remix-run/node": "^2.3.1",
@@ -19,7 +20,8 @@
     "@remix-run/serve": "^2.3.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "remix-easy-mode": "^0.2.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.3.1",
