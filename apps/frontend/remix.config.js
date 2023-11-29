@@ -9,7 +9,7 @@ export default {
     "@modal/auth",
     "@modal/api",
     "@modal/db",
-    "@modal/email",
+    // "@modal/email",
   ],
   browserNodeBuiltinsPolyfill: {
     modules: {
