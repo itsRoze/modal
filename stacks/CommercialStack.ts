@@ -3,20 +3,21 @@ import { RemixSite, use, type StackContext } from "sst/constructs";
 import { Dns } from "./Dns";
 import { Secrets } from "./Secrets";
 
-export function RemixStack({ app, stack }: StackContext) {
+export function CommercialStack({ app, stack }: StackContext) {
   const dns = use(Dns);
   const { database, stripe, resend, upstash } = use(Secrets);
-  const site = new RemixSite(stack, "site", {
-    path: "apps/frontend",
+  const site = new RemixSite(stack, "commercial-site", {
+    path: "apps/commercial",
     customDomain: dns
       ? {
-          domainName: dns.domain,
+          domainName: dns.commercialDomain,
           hostedZone: dns.hostedZone,
         }
       : undefined,
     environment: {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
       SST_REGION: app.region,
+      PORT: "4000",
     },
     bind: [
       database.DB_HOST,
@@ -34,6 +35,6 @@ export function RemixStack({ app, stack }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.customDomainUrl || "https://localhost:3000",
+    SiteUrl: site.customDomainUrl || "https://localhost:4000",
   });
 }

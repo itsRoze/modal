@@ -1,26 +1,26 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".sst/**"]
+      "outputs": [".sst/**", "build/**"]
     },
+    "typecheck": {},
     "clean": {
       "cache": false
     },
     "//#clean": {
       "cache": false
     },
-    "typecheck": {},
     "db:push": {},
     "db:studio": {},
     "db:clean": {},
     "email:dev": {},
-    "email:export": {}
+    "email:export": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
   },
-  "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD", "SST_REGION"]
+  "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD", "SST_REGION", "PORT"]
 }

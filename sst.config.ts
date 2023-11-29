@@ -1,8 +1,9 @@
 import { type SSTConfig } from "sst";
 
+import { CommercialStack } from "./stacks/CommercialStack";
 import { Dns } from "./stacks/Dns";
-import { RemixStack } from "./stacks/RemixStack";
 import { Secrets } from "./stacks/Secrets";
+import { WebAppStack } from "./stacks/WebAppStack";
 
 export default {
   config(_input) {
@@ -12,6 +13,9 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(Dns).stack(Secrets).stack(RemixStack);
+    if (app.stage !== "prod") {
+      app.setDefaultRemovalPolicy("destroy");
+    }
+    app.stack(Dns).stack(Secrets).stack(CommercialStack).stack(WebAppStack);
   },
 } satisfies SSTConfig;
