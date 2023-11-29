@@ -5,9 +5,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "sst bind remix build",
+    "build": "remix build",
     "dev": "sst bind remix dev --manual",
-    "start": "sst bind remix-serve ./build/index.js",
+    "start": "remix-serve ./build/index.js",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf build node_modules .cache"
   },
