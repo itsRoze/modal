@@ -1,0 +1,8 @@
+{
+  "include": ["sst-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules"]
+}
