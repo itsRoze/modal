@@ -18,7 +18,9 @@
     "typecheck": {},
     "db:push": {},
     "db:studio": {},
-    "db:clean": {}
+    "db:clean": {},
+    "email:dev": {},
+    "email:export": {}
   },
   "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD"]
 }
