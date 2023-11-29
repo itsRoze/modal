@@ -2,13 +2,13 @@
 export default {
   ignoredRouteFiles: ["**/.*"],
   serverDependenciesToBundle: [
-    "lucia",
-    "lucia/middleware",
-    "lucia/polyfill/node",
-    "@lucia-auth/adapter-mysql", // adapter you're using
+    // "lucia",
+    // "lucia/middleware",
+    // "lucia/polyfill/node",
+    // "@lucia-auth/adapter-mysql", // adapter you're using
     "@modal/auth",
-    "@modal/api",
-    "@modal/db",
+    // "@modal/functions",
+    // "@modal/db",
     // "@modal/email",
   ],
   browserNodeBuiltinsPolyfill: {
