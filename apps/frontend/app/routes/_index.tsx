@@ -1,7 +1,7 @@
-import { UserAPI } from "@modal/api";
+import { auth, generateToken } from "@modal/auth";
 import {
   json,
-  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
@@ -13,44 +13,31 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
-  console.log("ENV", process.env.SST_REGION);
-  const users = await UserAPI.get_all();
-  return json({ message: "hello", users });
-}
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const authRequest = auth.handleRequest(request);
+  const session = await authRequest.validate();
+  return json({ session });
+};
 
 export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const { session } = useLoaderData<typeof loader>();
+  const data = useActionData<typeof action>();
 
   return (
     <>
       <h1>Welcome</h1>
-      <h2>{loaderData.message}</h2>
+      <h2>Token</h2>
+      <p>{data && data.token ? JSON.stringify(data.token.token) : "NONE"}</p>
       <Form method="post">
-        <input name="title" />
-        <button type="submit">Submit</button>
+        <button type="submit">Generate Token</button>
       </Form>
-      <h2>
-        {actionData && actionData.message
-          ? JSON.stringify(actionData?.message)
-          : "No message"}
-      </h2>
-      <h2>Users</h2>
-      {loaderData.users.length ? (
-        <ul>
-          {loaderData.users.map((user) => (
-            <li key={user.id}>{user.email}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No users</p>
-      )}
     </>
   );
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-  const form = await request.formData();
-  return json({ ok: true, message: form.get("title") });
-}
+export const action = async () => {
+  console.log("in here");
+  const token = generateToken();
+  console.log(token);
+  return json({ token });
+};

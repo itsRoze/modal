@@ -8,7 +8,7 @@ export const isWithinExpiration = (expiresIn: number) => {
 };
 
 // generates new password
-export const otpToken = () => {
+export const generateToken = () => {
   const token = generateRandomString(8, "1234567890");
   return {
     token,
