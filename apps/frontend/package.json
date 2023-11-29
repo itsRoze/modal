@@ -12,6 +12,7 @@
     "clean": "git clean -xdf build node_modules .cache"
   },
   "dependencies": {
+    "@modal/auth": "workspace:*",
     "@remix-run/css-bundle": "^2.3.1",
     "@remix-run/node": "^2.3.1",
     "@remix-run/react": "^2.3.1",
