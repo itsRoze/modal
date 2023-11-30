@@ -16,6 +16,6 @@ export default {
     if (app.stage !== "prod") {
       app.setDefaultRemovalPolicy("destroy");
     }
-    app.stack(Dns).stack(Secrets).stack(CommercialStack).stack(WebAppStack);
+    app.stack(Dns).stack(Secrets).stack(WebAppStack).stack(CommercialStack);
   },
 } satisfies SSTConfig;

@@ -207,24 +207,6 @@ declare module "sst/node/config" {
 import "sst/node/site";
 declare module "sst/node/site" {
   export interface RemixSiteResources {
-    "commercial-site": {
-      url: string;
-    }
-  }
-}
-
-import "sst/node/site";
-declare module "sst/node/site" {
-  export interface RemixSiteResources {
-    "commercial-site": {
-      url: string;
-    }
-  }
-}
-
-import "sst/node/site";
-declare module "sst/node/site" {
-  export interface RemixSiteResources {
     "app-site": {
       url: string;
     }
@@ -235,6 +217,24 @@ import "sst/node/site";
 declare module "sst/node/site" {
   export interface RemixSiteResources {
     "app-site": {
+      url: string;
+    }
+  }
+}
+
+import "sst/node/site";
+declare module "sst/node/site" {
+  export interface RemixSiteResources {
+    "commercial-site": {
+      url: string;
+    }
+  }
+}
+
+import "sst/node/site";
+declare module "sst/node/site" {
+  export interface RemixSiteResources {
+    "commercial-site": {
       url: string;
     }
   }

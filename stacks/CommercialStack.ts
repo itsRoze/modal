@@ -2,9 +2,12 @@ import { RemixSite, use, type StackContext } from "sst/constructs";
 
 import { Dns } from "./Dns";
 import { Secrets } from "./Secrets";
+import { WebAppStack } from "./WebAppStack";
 
 export function CommercialStack({ app, stack }: StackContext) {
   const dns = use(Dns);
+  const { appSite } = use(WebAppStack);
+
   const { database, stripe, resend, upstash } = use(Secrets);
   const site = new RemixSite(stack, "commercial-site", {
     path: "apps/commercial",
@@ -18,6 +21,7 @@ export function CommercialStack({ app, stack }: StackContext) {
       NODE_ENV: app.mode === "dev" ? "development" : "production",
       SST_REGION: app.region,
       PORT: "4000",
+      APP_URL: appSite.customDomainUrl || "https://localhost:4001",
     },
     bind: [
       database.DB_HOST,
@@ -35,6 +39,6 @@ export function CommercialStack({ app, stack }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.customDomainUrl || "https://localhost:4000",
+    CommercialUrl: site.customDomainUrl || "https://localhost:4000",
   });
 }

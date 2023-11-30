@@ -22,5 +22,12 @@
       "persistent": true
     }
   },
-  "globalEnv": ["DB_HOST", "DB_USERNAME", "DB_PASSWORD", "SST_REGION", "PORT"]
+  "globalEnv": [
+    "DB_HOST",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "SST_REGION",
+    "PORT",
+    "APP_URL"
+  ]
 }
