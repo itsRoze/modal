@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*.ts"]
+  // "include": ["**/*.ts", "lucia.d.ts", "sst-env.d.ts"],
+  "compilerOptions": {
+    "lib": ["DOM"]
+  }
 }

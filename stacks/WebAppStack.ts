@@ -6,7 +6,8 @@ import { Secrets } from "./Secrets";
 export function WebAppStack({ app, stack }: StackContext) {
   const dns = use(Dns);
   const { database, stripe, resend, upstash } = use(Secrets);
-  const site = new RemixSite(stack, "app-site", {
+
+  const appSite = new RemixSite(stack, "app-site", {
     path: "apps/frontend",
     customDomain: dns
       ? {
@@ -35,6 +36,10 @@ export function WebAppStack({ app, stack }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.customDomainUrl || "https://localhost:4001",
+    AppUrl: appSite.customDomainUrl || "https://localhost:4001",
   });
+
+  return {
+    appSite,
+  };
 }
