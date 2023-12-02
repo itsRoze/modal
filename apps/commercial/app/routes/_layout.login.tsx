@@ -1,20 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { isValidationError, publicProcedure } from "@/utils/procedures";
-import { APIError, AuthAPI } from "@modal/functions";
+import redirectIfLoggedIn from "@/utils/redirectIfLoggedIn";
+import { Api } from "@modal/functions";
 import {
-  json,
-  redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "@remix-run/node";
 import { useActionData, useFetcher } from "@remix-run/react";
-import { validationError } from "remix-validated-form";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const isLoggedIn = await AuthAPI.isLoggedIn({ request });
-  if (isLoggedIn) return redirect(process.env.APP_URL ?? "/");
-  return null;
+  return redirectIfLoggedIn(request);
 };
 
 export default function Login() {
@@ -45,30 +41,24 @@ const EmailError = ({ actionData }: { actionData: ActionData }) => {
   if (!actionData) return null;
 
   if (isValidationError(actionData)) {
+    console.log("here1");
     return <pre>{JSON.stringify(actionData.fieldErrors)}</pre>;
   }
 
   if ("error" in actionData) {
-    return <pre>{JSON.stringify(actionData.error)}</pre>;
+    console.log("here2");
+    return <pre>{actionData.message}</pre>;
   }
 
-  return <pre>{JSON.stringify(actionData.token)}</pre>;
+  return <pre>{actionData.data.token}</pre>;
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await publicProcedure(
+  const result = await publicProcedure(
     request,
-    AuthAPI.issueLoginToken.schema,
+    Api.Auth.issueLoginToken.schema,
+    Api.Auth.issueLoginToken,
   );
 
-  if (formData.error) return validationError(formData.error);
-
-  try {
-    const token = await AuthAPI.issueLoginToken(formData.data);
-    return json({ token });
-  } catch (error) {
-    if (error instanceof APIError) {
-      return json({ error: error.code, message: error.message });
-    }
-  }
+  return result;
 };

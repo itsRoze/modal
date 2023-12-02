@@ -4,10 +4,10 @@ export default {
   tailwind: true,
   postcss: true,
   serverDependenciesToBundle: [
-    // "lucia",
-    // "lucia/middleware",
-    // "lucia/polyfill/node",
-    // "@lucia-auth/adapter-mysql", // adapter you're using
+    "lucia",
+    "lucia/middleware",
+    "lucia/polyfill/node",
+    "@lucia-auth/adapter-mysql", // adapter you're using
     "@modal/auth",
     "@modal/functions",
     "@modal/db",
