@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@modal/auth": "workspace:*",
+    "@modal/common": "workspace:*",
     "@modal/db": "workspace:*",
+    "@modal/email": "workspace:*",
     "zod": "^3.21.4"
   },
   "devDependencies": {

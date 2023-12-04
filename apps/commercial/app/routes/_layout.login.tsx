@@ -50,7 +50,7 @@ const EmailError = ({ actionData }: { actionData: ActionData }) => {
     return <pre>{actionData.message}</pre>;
   }
 
-  return <pre>{actionData.data.token}</pre>;
+  return <pre>{actionData.data.userId}</pre>;
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

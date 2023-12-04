@@ -30,6 +30,8 @@ export const publicProcedure = async <T, R>(
 
     return json({ data: result });
   } catch (error) {
+    console.error(error);
+
     if (error instanceof APIError) {
       return json({ error: error.code, message: error.message });
     }
