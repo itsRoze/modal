@@ -1,2 +1,7 @@
-export { sendTokenEmail } from "./utils/sendTokenEmail";
-export { sendWelcomeEmail } from "./utils/sendWelcomeEmail";
+import { sendTokenEmail } from "./utils/sendTokenEmail";
+import { sendWelcomeEmail } from "./utils/sendWelcomeEmail";
+
+export const Email = {
+  sendTokenEmail,
+  sendWelcomeEmail,
+};

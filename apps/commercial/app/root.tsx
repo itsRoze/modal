@@ -26,7 +26,9 @@ export default function App() {
         <Links />
       </head>
       <body className="h-[100svh] w-screen">
-        <Outlet />
+        <main className="flex h-full w-full flex-col items-center justify-center">
+          <Outlet />
+        </main>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

@@ -23,6 +23,9 @@ export const auth = lucia({
   }),
   env,
   middleware: web(),
+  sessionCookie: {
+    expires: false,
+  },
   getUserAttributes: (userData) => ({
     email: userData.email,
     time_email_verified: userData.time_email_verified,

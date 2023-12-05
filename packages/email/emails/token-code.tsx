@@ -17,7 +17,7 @@ interface ITokenCodeEmail {
 const logoUrl =
   process.env.NODE_ENV === "production"
     ? `https://usemodal.com/images/Logo.png`
-    : "/static/Logo.png";
+    : "../static/Logo.png";
 
 export const TokenCodeEmail = ({ tokenCode = "INVALID" }: ITokenCodeEmail) => {
   return (
