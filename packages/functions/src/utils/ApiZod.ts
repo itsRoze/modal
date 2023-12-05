@@ -8,8 +8,9 @@ export function ApiZod<T, R>(
   schema: z.ZodSchema<T, any, any>,
   fn: ApiZodFn<T, R>,
 ) {
-  const result = (...params: Parameters<ApiZodFn<T, R>>) => {
-    return fn(...params);
+  const result = (...input: Parameters<ApiZodFn<T, R>>) => {
+    const parsed = schema.parse(...input);
+    return fn(parsed);
   };
 
   result.schema = schema;

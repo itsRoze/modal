@@ -13,8 +13,11 @@ export { user } from "./user.sql";
 export * as User from "./";
 
 export const Info = createSelectSchema(user, {
-  id: (schema) => schema.id.min(1).max(15),
-  email: (schema) => schema.email.email(),
+  id: (schema) =>
+    schema.id
+      .min(1, "ID is required")
+      .max(15, "ID must be 15 characters or less"),
+  email: (schema) => schema.email.email("Invalid email"),
 });
 
 export type Info = z.infer<typeof Info>;

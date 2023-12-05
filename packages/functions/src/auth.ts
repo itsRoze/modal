@@ -7,8 +7,6 @@ import { z } from "zod";
 import { APIError } from "./utils/APIError";
 import { ApiZod } from "./utils/ApiZod";
 
-export * as AuthAPI from "./auth";
-
 export const getSession = ApiZod(
   z.object({ request: z.custom<Request>() }),
   async (input) => {
@@ -68,6 +66,7 @@ export const validateLogin = ApiZod(
     userId: z.string(),
   }),
   async (input) => {
+    console.log("made it here");
     const { userId, request } = input;
 
     const otp = await Token.getByUserIdAndToken(input);
@@ -78,6 +77,8 @@ export const validateLogin = ApiZod(
       });
     }
 
+    console.log("made it here2");
+
     if (!isWithinExpiration(otp.expires)) {
       throw new APIError({
         message: "Token expired",
@@ -86,7 +87,6 @@ export const validateLogin = ApiZod(
     }
 
     const user = await auth.getUser(userId);
-
     // In case the user never verified their email, update it now
     if (!user.time_email_verified) {
       await auth.updateUserAttributes(userId, {
@@ -99,9 +99,7 @@ export const validateLogin = ApiZod(
       userId: userId,
       attributes: {},
     });
-    const authRequest = auth.handleRequest(request);
-    authRequest.setSession(session);
-
-    return true;
+    const cookie = auth.createSessionCookie(session);
+    return cookie;
   },
 );

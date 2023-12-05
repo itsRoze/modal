@@ -1,5 +1,5 @@
-import { AuthAPI } from "./src/auth";
-import { UserAPI } from "./src/user";
+import * as AuthAPI from "./src/auth";
+import * as UserAPI from "./src/user";
 
 export const Api = {
   User: UserAPI,
@@ -7,3 +7,4 @@ export const Api = {
 };
 
 export { APIError } from "./src/utils/APIError";
+export { getHTTPStatusCodeFromError } from "./src/utils/APIError";

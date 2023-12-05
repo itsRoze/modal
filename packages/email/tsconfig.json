@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "jsx": "preserve",
     "skipLibCheck": true
   }

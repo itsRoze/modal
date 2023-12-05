@@ -42,6 +42,9 @@ importers:
 
   apps/commercial:
     dependencies:
+      '@lucia-auth/adapter-mysql':
+        specifier: ^2.0.0
+        version: 2.1.0(lucia@2.7.4)
       '@modal/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -84,6 +87,9 @@ importers:
       isbot:
         specifier: ^3.6.8
         version: 3.7.1
+      lucia:
+        specifier: ^2.0.0
+        version: 2.7.4
       lucide-react:
         specifier: ^0.294.0
         version: 0.294.0(react@18.2.0)

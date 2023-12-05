@@ -17,7 +17,7 @@ export const sendTokenEmail = async ({
   const resend = new Resend(Config.RESEND_API_KEY);
 
   try {
-    const data = await resend.sendEmail({
+    const data = await resend.emails.send({
       from: fromEmail,
       to: userEmail,
       subject: "Modal | Verification Code",
@@ -25,5 +25,7 @@ export const sendTokenEmail = async ({
     });
 
     return data;
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 };
