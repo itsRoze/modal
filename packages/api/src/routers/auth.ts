@@ -134,6 +134,8 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { email } = input;
 
+      console.log("hello");
+
       // Rate limit across the app
       await ratelimit(
         ratelimiter.app,
@@ -148,7 +150,11 @@ export const authRouter = createTRPCRouter({
         "Too many emails sent. Please wait",
       );
 
+      console.log("here");
+
       const user = await createUser({ email });
+
+      console.log("don");
 
       if (!user) throw new Error("User not created");
 

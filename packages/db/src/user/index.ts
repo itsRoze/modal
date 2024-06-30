@@ -24,6 +24,7 @@ export const create = zod(
     id: true,
   }),
   async (input) => {
+    console.log("in");
     // Create User
     const user = await auth.createUser({
       key: {
@@ -35,6 +36,8 @@ export const create = zod(
         email: input.email,
       },
     });
+
+    console.log("oh");
 
     // Create Record to Display Welcome
     if (user) {

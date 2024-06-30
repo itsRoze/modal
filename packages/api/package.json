@@ -12,19 +12,19 @@
   "dependencies": {
     "@modal/auth": "workspace:*",
     "@modal/common": "workspace:*",
-    "@modal/db": "1.0.0",
+    "@modal/db": "workspace:*",
     "@modal/stripe": "workspace:*",
     "@modal/email": "workspace:*",
     "@trpc/client": "^10.25.1",
     "@trpc/server": "^10.25.1",
     "@upstash/ratelimit": "^0.4.3",
     "@upstash/redis": "^1.22.0",
-    "drizzle-orm": "^0.27.0",
+    "drizzle-orm": "^0.31.2",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@modal/eslint-config": "1.0.0",
+    "@modal/eslint-config": "workspace:*",
     "eslint": "^8.40.0",
     "typescript": "^5.0.4"
   }

@@ -1,5 +1,4 @@
-import { sql } from "drizzle-orm";
-import { char, timestamp } from "drizzle-orm/mysql-core";
+import { char, timestamp } from "drizzle-orm/pg-core";
 
 export { createId } from "@paralleldrive/cuid2";
 
@@ -10,14 +9,15 @@ export const id = {
 
 export const timestamps = {
   timeCreated: timestamp("time_created", {
+    withTimezone: true,
     mode: "string",
   })
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
   timeUpdated: timestamp("time_updated", {
+    withTimezone: true,
     mode: "string",
   })
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .onUpdateNow(),
+    .defaultNow(),
 };

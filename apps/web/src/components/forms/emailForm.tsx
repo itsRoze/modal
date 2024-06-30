@@ -50,7 +50,6 @@ const EmailForm: React.FC<IEmailForm> = ({
               <FormLabel>{label}</FormLabel>
               <FormControl>
                 <Input
-                  disabled={true} // sunset
                   type="email"
                   placeholder="tim@apple.com"
                   className="w-72 "
@@ -67,9 +66,7 @@ const EmailForm: React.FC<IEmailForm> = ({
           </p>
         ) : null}
 
-        <Button type="submit" disabled={true}>
-          Submit
-        </Button>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );

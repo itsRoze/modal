@@ -1,15 +1,17 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
-  mysqlTable,
+  pgTableCreator,
   primaryKey,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 
 import { user } from "../user/user.sql";
 import { id, timestamps } from "../utils/sql";
 
-export const feature_notification = mysqlTable(
+const pgTable = pgTableCreator((name) => `modal_${name}`);
+
+export const feature_notification = pgTable(
   "feature_notification",
   {
     ...id,

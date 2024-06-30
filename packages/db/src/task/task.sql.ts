@@ -3,18 +3,22 @@ import {
   boolean,
   date,
   index,
-  mysqlEnum,
-  mysqlTable,
+  pgEnum,
+  pgTableCreator,
   primaryKey,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 
 import { project } from "../project/project.sql";
 import { space } from "../space/space.sql";
 import { user } from "../user/user.sql";
 import { cuid, id, timestamps } from "../utils/sql";
 
-export const task = mysqlTable(
+const pgTable = pgTableCreator((name) => `modal_${name}`);
+
+export const listTypeEnum = pgEnum("listType", ["space", "project"]);
+
+export const task = pgTable(
   "task",
   {
     ...id,
@@ -27,7 +31,7 @@ export const task = mysqlTable(
     completedTime: date("completed_time", {
       mode: "string",
     }),
-    listType: mysqlEnum("listType", ["space", "project"]),
+    listType: listTypeEnum("listType"),
     listId: cuid("listId"),
     userId: varchar("user_id", {
       length: 15,
@@ -35,8 +39,8 @@ export const task = mysqlTable(
   },
   (task) => ({
     primary: primaryKey(task.id),
-    list: index("list").on(task.listType, task.listId),
-    user: index("user").on(task.userId),
+    list: index("list_index").on(task.listType, task.listId),
+    user: index("user_index").on(task.userId),
   }),
 );
 
