@@ -1,6 +1,8 @@
-import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { pgTableCreator, varchar } from "drizzle-orm/pg-core";
 
-export const key = mysqlTable("auth_key", {
+const pgTable = pgTableCreator((name) => `modal_${name}`);
+
+export const key = pgTable("auth_key", {
   id: varchar("id", {
     length: 255,
   }).primaryKey(),

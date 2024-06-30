@@ -10,12 +10,14 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@modal/eslint-config": "1.0.0",
+    "@modal/eslint-config": "workspace:*",
     "eslint": "^8.40.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@lucia-auth/adapter-mysql": "^2.0.0",
-    "lucia": "^2.0.0"
+    "@lucia-auth/adapter-postgresql": "^2.0.2",
+    "lucia": "^2.0.0",
+    "postgres": "^3.4.4"
   }
 }

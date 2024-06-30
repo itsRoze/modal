@@ -3,15 +3,17 @@ import {
   bigint,
   char,
   index,
-  mysqlTable,
+  pgTableCreator,
   primaryKey,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 
 import { user } from "../user/user.sql";
 import { id } from "../utils/sql";
 
-export const auth_token = mysqlTable(
+const pgTable = pgTableCreator((name) => `modal_${name}`);
+
+export const auth_token = pgTable(
   "auth_token",
   {
     ...id,

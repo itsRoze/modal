@@ -1,22 +1,25 @@
-import { planetscale } from "@lucia-auth/adapter-mysql";
-import { connect } from "@planetscale/database";
+import { postgres as postgresAdapter } from "@lucia-auth/adapter-postgresql";
 import { lucia } from "lucia";
 import { node } from "lucia/middleware";
+import postgres from "postgres";
 import { Config } from "sst/node/config";
 
 const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
 
-export const connection = connect({
+export const connection = {
   host: Config.DB_HOST,
-  username: Config.DB_USERNAME,
+  user: Config.DB_USERNAME,
   password: Config.DB_PASSWORD,
-});
+};
+
+const connectionString = `postgresql://${connection.user}:${connection.password}@${connection.host}/neondb?sslmode=require`;
+const sqlConnection = postgres(connectionString);
 
 export const auth = lucia({
-  adapter: planetscale(connection, {
-    user: "user",
-    key: "auth_key",
-    session: "auth_session",
+  adapter: postgresAdapter(sqlConnection, {
+    user: "modal_user",
+    key: "modal_auth_key",
+    session: "modal_auth_session",
   }),
   env,
   middleware: node(),

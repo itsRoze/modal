@@ -1,4 +1,4 @@
-import { type Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
 const connection = {
   user: process.env["SST_Secret_value_DB_USERNAME"],
@@ -6,11 +6,14 @@ const connection = {
   host: process.env["SST_Secret_value_DB_HOST"],
 };
 
-export default {
+const connectionString = `postgresql://${connection.user}:${connection.password}@${connection.host}/neondb?sslmode=require`;
+
+export default defineConfig({
   schema: "./src/**/*.sql.ts",
   out: "./migrations/",
-  driver: "mysql2",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: `mysql://${connection.user}:${connection.password}@${connection.host}/modal-db?ssl={"rejectUnauthorized":true}`,
+    url: connectionString,
   },
-} satisfies Config;
+  // tablesFilter: ["modal_*"],
+});

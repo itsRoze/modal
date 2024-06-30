@@ -1,12 +1,14 @@
 import { relations } from "drizzle-orm";
-import { mysqlTable, primaryKey, varchar } from "drizzle-orm/mysql-core";
+import { pgTableCreator, primaryKey, varchar } from "drizzle-orm/pg-core";
 
 import { project } from "../project/project.sql";
 import { task } from "../task/task.sql";
 import { user } from "../user/user.sql";
 import { id, timestamps } from "../utils/sql";
 
-export const space = mysqlTable(
+const pgTable = pgTableCreator((name) => `modal_${name}`);
+
+export const space = pgTable(
   "space",
   {
     ...id,

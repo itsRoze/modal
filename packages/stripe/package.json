@@ -7,12 +7,12 @@
     "clean": "rm -rf .turbo node_modules"
   },
   "devDependencies": {
-    "@modal/eslint-config": "1.0.0",
+    "@modal/eslint-config": "workspace:*",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@modal/db": "workspace:*",
-    "drizzle-orm": "^0.27.0",
+    "drizzle-orm": "^0.31.2",
     "stripe": "^12.6.0"
   }
 }

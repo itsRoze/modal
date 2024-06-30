@@ -1,5 +1,5 @@
-import { connect } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import { Config } from "sst/node/config";
 
 import * as tokenSchema from "./src/auth_token/token.sql";
@@ -9,11 +9,15 @@ import * as spaceSchema from "./src/space/space.sql";
 import * as taskSchema from "./src/task/task.sql";
 import * as userSchena from "./src/user/user.sql";
 
-export const connection = connect({
-  host: Config.DB_HOST,
-  username: Config.DB_USERNAME,
+const connection = {
+  user: Config.DB_USERNAME,
   password: Config.DB_PASSWORD,
-});
+  host: Config.DB_HOST,
+};
+
+const connectionString = `postgresql://${connection.user}:${connection.password}@${connection.host}/neondb?sslmode=require`;
+
+const client = new Pool({ connectionString });
 
 export const dbSchema = {
   ...projectSchema,
@@ -23,7 +27,7 @@ export const dbSchema = {
   ...tokenSchema,
   ...featureNotificationSchema,
 };
-export const db = drizzle(connection, {
+export const db = drizzle(client, {
   schema: dbSchema,
 });
 export type db = typeof db;
