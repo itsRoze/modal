@@ -1,5 +1,8 @@
 # Modal
 
+<img width="1755" height="1294" alt="image" src="https://github.com/user-attachments/assets/5c4bf7fe-e2c1-42e9-b500-3a3e4f2d363a" />
+
+
 ## About
 
 Modal is an opinionated task manager. I am no longer actively working on this and the hosted version is down. However, feel free to self host (see next section for tech stack and configuration)
